@@ -2,6 +2,7 @@
 \docType{genericFunction}
 \alias{BIC}
 \alias{BIC,logLik-method}
+\alias{BIC,flexmix-method}
 \title{Bayesian Information Criterion}
 \description{
   This generic function calculates the Bayesian information criterion,

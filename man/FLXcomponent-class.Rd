@@ -1,6 +1,7 @@
 \name{FLXcomponent-class}
 \docType{class}
 \alias{FLXcomponent-class}
+\alias{show,FLXcomponent-method}
 \title{Class "FLXcomponent"}
 \description{A fitted component of a \code{\link{flexmix}} model.}
 \section{Objects from the Class}{

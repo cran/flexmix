@@ -1,6 +1,7 @@
 \name{FLXmodel-class}
 \docType{class}
 \alias{FLXmodel-class}
+\alias{show,FLXmodel-method}
 \title{Class "FLXmodel"}
 \description{FlexMix model specification.}
 \section{Objects from the Class}{

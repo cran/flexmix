@@ -1,8 +1,6 @@
 \name{AIC-methods}
 \docType{methods}
 \title{Methods for Function AIC}
-\alias{AIC-methods}
-\alias{AIC,ANY-method}
 \alias{AIC,flexmix-method}
 \description{Evaluate the Akaike Information Criterion.
   This function is defined as an old-style generic in the \code{base}

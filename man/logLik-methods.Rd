@@ -1,8 +1,6 @@
 \name{logLik-methods}
 \docType{methods}
 \title{Methods for Function logLik}
-\alias{logLik-methods}
-\alias{logLik,ANY-method}
 \alias{logLik,flexmix-method}
 \description{Evaluate the log-likelihood.  This function is defined as
   an old-style generic in the \code{base} package.  In this package is

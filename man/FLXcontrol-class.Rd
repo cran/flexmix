@@ -1,6 +1,8 @@
 \name{FLXcontrol-class}
 \docType{class}
 \alias{FLXcontrol-class}
+\alias{coerce,list,FLXcontrol-method}
+\alias{coerce,NULL,FLXcontrol-method}
 \title{Class "FLXcontrol"}
 \description{Hyperparameters for the EM algorithm.}
 \section{Objects from the Class}{
