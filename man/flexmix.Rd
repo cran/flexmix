@@ -7,6 +7,8 @@
 \alias{parameters,flexmix-method}
 \alias{predict,flexmix-method}
 \alias{show,flexmix-method}
+\alias{summary,flexmix-method}
+\alias{show,summary.flexmix-method}
 \title{Flexible Mixture Modeling}
 \description{
   FlexMix implements a general framework for finite
@@ -17,10 +19,13 @@
 \usage{
 flexmix(formula, data = list(), k = NULL, cluster = NULL,
         model=NULL, control = NULL)
+\S4method{summary}{flexmix}(object, eps=1e-4, ...)
 }
 \arguments{
-  \item{formula}{A symbolic description of the model to be fit. The details of
-    model specification are given below.}
+  \item{formula}{A symbolic description of the model to be fit. The
+    general form is \code{y~x|g} where \code{y} is the response,
+    \code{x} the set of predictors and \code{g} an optional grouping
+    factor for repeated measurements.}
   \item{data}{An optional data frame containing the variables in the model.}
   \item{k}{Number of clusters (not needed if \code{cluster} is specified).}
   \item{cluster}{Factor or integer vector with the initial cluster
@@ -31,64 +36,64 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     objects. Default is the object returned by calling
     \code{\link{FLXglm}()}.}
   \item{control}{Object of class \code{FLXcontrol} or a named list.}
+  \item{object}{Object of class \code{flexmix}.}
+  \item{eps}{Probabilities below this treshold are treated as zero in the
+    summary method.}
+  \item{\dots}{Currently not used.}
 }
 \details{
   FlexMix models are described by objects of class \code{FLXmodel},
   which in turn are created by driver functions like
   \code{\link{FLXglm}} or \code{\link{FLXmclust}}. Multivariate
   responses with independent components can be specified using a
-  list of \code{FLXmodel} objects. 
+  list of \code{FLXmodel} objects.
+
+  The \code{summary} method lists for each component the prior
+  probability, the number of observations assigned to the corresponding
+  cluster, the number of observations with a posterior probability
+  larger than \code{eps} and the ratio of the latter two numbers (which
+  indicates how separated the cluster is from the others).
 }
 \value{
   Returns an object of class \code{flexmix}.
 }
 \author{Friedrich Leisch}
-\seealso{\code{\link{flexmix-class}}, \code{\link{FLXglm}},
-  \code{\link{FLXmclust}}}
 \keyword{regression}
 \keyword{cluster}
 \examples{
 
-## generate some artificial data with a Gaussian response y and a
-## Poisson response yp
-x <- runif(200, 0, 10)
-mydf <- data.frame(x=x,
-                 y=c(5*x[1:100], 40-(x[101:200]-5)^2)+3*rnorm(200),
-                 yp=rpois(200, exp(c(2-0.2*x[1:100], 1+0.1*x[101:200]))),
-                 class=rep(1:2, c(100,100)))
-
-plot(y~x, data=mydf, col=class)
+data(NPreg)
 
 ## mixture of two linear regression models. Note that control parameters
 ## can be specified as named list and abbreviated if unique.
-ex.qpol <- flexmix(y~x+I(x^2), data=mydf, k=2,
+ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2,
                    control=list(verb=5, iter=100))
 
-ex.qpol
-ex.qpol@components
-
-## now use both responses simultanously
-## first we have a look at the data
-opar <- par("mfrow")
-par(mfrow=1:2)
-plot(y~x, data=mydf, col=class)
-plot(yp~x, data=mydf, col=class)
-par(mfrow=opar)
+ex1
+summary(ex1)
 
 ## now we fit a model with one Gaussian response and one Poisson
 ## response. Note that the formulas inside the call to FLXglm are
 ## relative to the overall model formula.
-ex.qpol1 <- flexmix(y~x, data=mydf, k=2,
-                    model=list(FLXglm(y~.+I(x^2)), 
-                               FLXglm(yp~., family="poisson")))  
+ex2 <- flexmix(yn~x, data=NPreg, k=2,
+               model=list(FLXglm(yn~.+I(x^2)), 
+                          FLXglm(yp~., family="poisson")))
 
-ex.qpol1
-table(ex.qpol1@cluster, mydf$class)
+ex2
+table(ex2@cluster, NPreg$class)
 
 ## for Gaussian responses we get coefficients and standard deviation
-parameters(ex.qpol1, component=1, model=1)
+parameters(ex2, component=1, model=1)
 
 ## for Poisson response we get only coefficients
-parameters(ex.qpol1, component=1, model=2)
+parameters(ex2, component=1, model=2)
+
+## fitting a model only to the Poisson response is of course
+## done like this
+ex3 <- flexmix(yp~x, data=NPreg, k=2, model=FLXglm(family="poisson"))
+
+## if observations are grouped, i.e., we have several observations per
+## individual, fitting is usually much faster:
+ex4 <- flexmix(yp~x|id1, data=NPreg, k=2, model=FLXglm(family="poisson"))
 }
 

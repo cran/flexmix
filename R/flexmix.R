@@ -1,27 +1,35 @@
-.list2object = function(from, to){
-    n = names(from)
-    s = slotNames(to)
-    p = pmatch(n, s)
-    if(any(is.na(p)))
-        stop(paste("\nInvalid slot name(s) for class",
-                   to, ":", paste(n[is.na(p)], collapse=" ")))
-    names(from) = s[p]
-    do.call("new", c(from, Class=to))
-}
-
-###**********************************************************
+#
+#  FlexMix: Flexible mixture modelling in R
+#  Copyright (C) 2004 Friedrich Leisch
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
 
 setClass("FLXcontrol",
          representation(iter.max="numeric",
                         minprior="numeric",
                         tolerance="numeric",
                         verbose="numeric",
-                        classify="character"),
+                        classify="character",
+                        nrep="numeric"),
          prototype(iter.max=200,
                    minprior=0.05,
                    tolerance=10e-7,
                    verbose=10,
-                   classify="auto"))
+                   classify="auto",
+                   nrep=1))
 
 setAs("list", "FLXcontrol",
 function(from, to){
@@ -44,8 +52,11 @@ setClass("FLXmodel",
                         weighted="logical",
                         name="character",
                         formula="formula",
+                        fullformula="formula",
                         x="matrix",
-                        y="matrix"))
+                        y="matrix"),
+         prototype(formula=.~.,
+                   fullformula=.~.))
 
 setMethod("show", "FLXmodel",
 function(object){
@@ -90,7 +101,10 @@ setClass("flexmix",
                         components="list",
                         formula="formula",
                         control="FLXcontrol",
-                        call="call"))
+                        call="call",
+                        group="factor"),
+         prototype(group=(factor(integer(0))),
+                   formula=.~.))
 
 
 setMethod("show", "flexmix",
@@ -99,13 +113,49 @@ function(object){
         sep="\n")
     cat("\nCluster sizes:")
     print(table(object@cluster))
-    cat("\nComponent priors:\n")
-    print(object@prior)
+})
+
+
+###**********************************************************
+
+setClass("summary.flexmix",
+         representation(call="call",
+                        AIC="numeric",
+                        BIC="numeric",
+                        logLik="logLik",
+                        comptab="ANY"))
+
+setMethod("summary", "flexmix",
+function(object, eps=1e-4, ...){    
+    z <- new("summary.flexmix",
+             call = object@call,
+             AIC = AIC(object),
+             BIC = BIC(object),
+             logLik = logLik(object))
+
+    TAB <- data.frame(prior=object@prior,
+                      size=as(table(object@cluster), "integer"))
+    rownames(TAB) <- paste("Comp.", 1:nrow(TAB), sep="")
+    TAB[["post>0"]] <- colSums(object@posterior$scaled > eps)
+    TAB[["ratio"]] <- TAB[["size"]]/TAB[["post>0"]]
+    
+    z@comptab = TAB
+    z
+    
+})
+
+setMethod("show", "summary.flexmix",
+function(object){
+    cat("\nCall:", deparse(object@call,0.75*getOption("width")),
+        sep="\n")
     cat("\n")
-    print(logLik(object))
-    cat("AIC:", AIC(object), "  BIC:", BIC(object), "\n")
+    print(object@comptab, digits=3)
+    cat("\n")
+    print(object@logLik)
+    cat("AIC:", object@AIC, "  BIC:", object@BIC, "\n")
     cat("\n")    
 })
+
 
 ###**********************************************************
 
@@ -137,19 +187,28 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     mycall = match.call()
     control = as(control, "FLXcontrol")
     if(is(model, "FLXmodel")) model = list(model)
+
+    group = factor(integer(0))
+    lf = length(formula)
+    formula1 = formula
+    if(length(formula[[lf]])>1 &&
+       deparse(formula[[lf]][[1]]) == "|"){
+        group = as.factor(eval(formula[[lf]][[3]], data))
+        formula1[[lf]] = formula[[lf]][[2]]
+    }
     
     for(n in seq(1,length(model))){
         if(is.null(model[[n]]@formula))
-            model[[n]]@formula = formula
+            model[[n]]@formula = formula1
         
-        famform = update.formula(formula, model[[n]]@formula)
-
-        mf <- model.frame(famform, data=data)
+        model[[n]]@fullformula = update.formula(formula1, model[[n]]@formula)
+        mf <- model.frame(model[[n]]@fullformula, data=data)
         model[[n]]@x = model.matrix(attr(mf, "terms"), data=mf)
         model[[n]]@y = as.matrix(model.response(mf))
     }
     
-    z = FLXfit(model=model, control=control, k=k, cluster=cluster)
+    z = FLXfit(model=model, control=control, k=k,
+               cluster=cluster, group=group)
     z@formula = formula
     z@call = mycall
     z
@@ -170,7 +229,7 @@ function(formula, data=list(), k=NULL, cluster=NULL,
 ###**********************************************************
 
 
-FLXfit <- function(k=NULL, cluster=NULL, model, control)
+FLXfit <- function(k=NULL, cluster=NULL, model, control, group)
 {
     N = nrow(model[[1]]@x)
         
@@ -232,6 +291,21 @@ FLXfit <- function(k=NULL, cluster=NULL, model, control)
                                                   model[[n]]@y)
             }
         }
+
+        
+        ## if we have a group variable, set the posterior to the product
+        ## of all density values for that group (=sum in logarithm)
+        if(length(group)>0){
+            for(g in levels(group)){
+                gok <- group==g
+                if(any(gok)){
+                    postunscaled[gok,] <-
+                        matrix(colSums(postunscaled[gok,,drop=FALSE]),
+                               nrow=sum(gok), ncol=k, byrow=TRUE)
+                }
+            }
+        }
+
         for(m in 1:k)
             postunscaled[,m] <- prior[m] * exp(postunscaled[,m])
         postscaled <- postunscaled/rowSums(postunscaled)
@@ -276,8 +350,8 @@ FLXfit <- function(k=NULL, cluster=NULL, model, control)
                                   unscaled=postunscaled),
                    iter=iter,
                    cluster=apply(postscaled,1,which.max),
-                   logLik=llh, components=components, formula=.~.,
-                  control=control, df=df)
+                   logLik=llh, components=components,
+                   control=control, df=df, group=group)
 
     retval
 }
@@ -355,3 +429,26 @@ function(object, component=1, model=1)
 
 
 
+stepFlexmix <- function(..., K, nrep=3)
+{
+    K = as.integer(K)
+    if(length(K)==0)
+        return(list())
+    
+    z = list()
+    for(n in 1:length(K)){
+        z[[n]] = new("flexmix", logLik=-Inf)
+        for(m in 1:nrep){
+            x = flexmix(k=K[n], ...)
+            if(logLik(x) > logLik(z[[n]]))
+                z[[n]] = x
+        }
+    }
+    if(length(K)==1)
+        return(z[[1]])
+
+    names(z) <- as.character(K)
+    z
+}
+
+            

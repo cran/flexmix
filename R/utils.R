@@ -17,25 +17,16 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-setGeneric("logLik")
-setGeneric("AIC")
-setGeneric("BIC")
+.list2object = function(from, to){
+    n = names(from)
+    s = slotNames(to)
+    p = pmatch(n, s)
+    if(any(is.na(p)))
+        stop(paste("\nInvalid slot name(s) for class",
+                   to, ":", paste(n[is.na(p)], collapse=" ")))
+    names(from) = s[p]
+    do.call("new", c(from, Class=to))
+}
 
-setMethod("logLik", signature(object="flexmix"),
-function(object, ...){
-    z <- object@logLik
-    attr(z, "df") <- object@df
-    attr(z, "nobs") <- nrow(object@posterior$scaled)
-    class(z) <- "logLik"
-    z
-})
 
-setMethod("AIC", signature(object="flexmix"),
-function(object, ..., k=2){
-    AIC(logLik(object, ...), k=k)
-})
 
-setMethod("BIC", signature(object="flexmix"),
-function(object, ...){
-    BIC(logLik(object, ...))
-})

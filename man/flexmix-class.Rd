@@ -25,21 +25,7 @@ Objects are typically created by calling function \code{\link{flexmix}}.
     \item{\code{control}:}{Object of class \code{"FLXcontrol"}.}
     \item{\code{call}:}{The function call
       used to create the object.}
-  }
-}
-
-\section{Methods}{
-  \describe{
-    \item{AIC}{\code{signature(object = "flexmix")}: calculate Akaike's
-      information criterion.}
-    \item{BIC}{\code{signature(object = "flexmix")}: calculate the
-      Bayesian information criterion.}
-    \item{logLik}{\code{signature(object = "flexmix")}: calculate the
-      log-likelihood for the model.}
-    \item{parameters}{\code{signature(object = "flexmix")}: extract
-      parameters of model components.}
-    \item{predict}{\code{signature(object = "flexmix")}: predict
-      response for new data.}
+    \item{\code{group}:}{Object of class \code{"factor"}.}
   }
 }
 \author{Friedrich Leisch}

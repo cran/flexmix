@@ -1,3 +1,22 @@
+Changes in flexmix version 0.9-0
+
+  o new summary() and plot() methods for flexmix objects
+
+  o FLXglm objects can now be automatically refit()ted to get table of
+    significance tests for coefficients
+
+  o new function stepFlexmix() for more automated model search
+
+  o the artificial example data now have functions to
+    create them and a pre-stored data sets, new function plotEll() to
+    plot 2d Gaussians with confidence ellipses.
+
+  o new function KLdiv() to compute Kullbach leibler divergence of
+    components
+
+  o the calculation of the degrees of freedom for FLXmclust was wrong
+
+
 Changes in flexmix version 0.7-1
 
   o fixed some codoc problems (missing aliases)

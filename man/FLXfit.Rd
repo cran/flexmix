@@ -3,11 +3,10 @@
 \title{Fitter Function for FlexMix Models}
 \description{
   This is the basic computing engine called by \code{\link{flexmix}}, it
-  should usually not be used directly unless
-  by experienced users.
+  should usually not be used directly.
 }
 \usage{
-FLXfit(k = NULL, cluster = NULL, model, control)
+FLXfit(k = NULL, cluster = NULL, model, control, group)
 }
 \arguments{
   \item{k}{Number of clusters (not needed if \code{cluster} is specified).}
@@ -16,6 +15,7 @@ FLXfit(k = NULL, cluster = NULL, model, control)
     clusters).}
   \item{model}{List of \code{FLXmodel} objects.}
   \item{control}{Object of class \code{FLXcontrol}.}
+  \item{group}{Factor with optional grouping of observations.}
 }
 \value{
   Returns an object of class \code{flexmix}.
