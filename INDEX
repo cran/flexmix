@@ -1,0 +1,11 @@
+AIC-methods             Methods for Function AIC
+BIC                     Bayesian Information Criterion
+FLXcomponent-class      Class "FLXcomponent"
+FLXcontrol-class        Class "FLXcontrol"
+FLXfit                  Fitter Function for FlexMix Models
+FLXglm                  FlexMix Interface to Generalized Linear Models
+FLXmclust               FlexMix Clustering Demo Driver
+FLXmodel-class          Class "FLXmodel"
+flexmix-class           Class "flexmix"
+flexmix                 Flexible Mixture Modeling
+logLik-methods          Methods for Function logLik
