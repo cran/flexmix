@@ -27,6 +27,11 @@ stepFlexmix(..., K=NULL, nrep=3,
   else directly an object of class \code{"flexmix"}.
 }
 \author{Friedrich Leisch}
+\references{
+  Friedrich Leisch. FlexMix: A general framework for finite mixture
+  models and latent class regression in R. Journal of Statistical
+  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+}
 \examples{
 data(NPreg)
 

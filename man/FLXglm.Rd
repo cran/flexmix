@@ -24,6 +24,11 @@ FLXglm(formula = . ~ ., family = c("gaussian", "binomial", "poisson", "Gamma"))
   Returns an object of class \code{FLXmodel}.
 }
 \author{Friedrich Leisch}
+\references{
+  Friedrich Leisch. FlexMix: A general framework for finite mixture
+  models and latent class regression in R. Journal of Statistical
+  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+}
 \seealso{\code{\link{flexmix}}, \code{\link{glm}}}
 \keyword{regression}
 \keyword{models}

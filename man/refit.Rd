@@ -29,6 +29,11 @@
 }
 \keyword{methods}
 \author{Friedrich Leisch}
+\references{
+  Friedrich Leisch. FlexMix: A general framework for finite mixture
+  models and latent class regression in R. Journal of Statistical
+  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+}
 \examples{
 data(NPreg)
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)

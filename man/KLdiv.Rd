@@ -36,8 +36,9 @@ KLdiv(object, ...)
 \author{Friedrich Leisch}
 \references{
   Friedrich Leisch. Exploring the structure of mixture model
-  components. In Compstat 2004 -- Proceedings in Computational
-  Statistics, 2004. Accepted for publication.
+  components. In Jaromir Antoch, editor, Compstat 2004 - Proceedings in
+  Computational Statistics, pages 1405-1412. Physika Verlag, Heidelberg,
+  Germany, 2004. ISBN 3-7908-1554-3.
 }
 \examples{
 x = (1:100)/100

@@ -1,0 +1,17 @@
+citHeader("To cite package flexmix in publications use:")
+
+citEntry(entry="Article",
+         title = "{FlexMix}: A general framework for finite mixture models and latent class regression in {R}",
+         author = person(first="Friedrich", last="Leisch"),
+         journal = "Journal of Statistical Software",
+         year = "2004",
+         volume = "11",
+         number = "8",
+         url = "http://www.jstatsoft.org/v11/i08/",
+         
+         textVersion = paste("Friedrich Leisch. FlexMix: A general framework for finite mixture models",
+                             "and latent class regression in R. Journal of Statistical Software, 11(8), 2004.",
+                             "http://www.jstatsoft.org/v11/i08/")
+         )
+
+

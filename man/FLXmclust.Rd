@@ -32,6 +32,11 @@ plotEll(object, data, ...)
   \code{FLXmclust} returns an object of class \code{FLXmodel}.
 }
 \author{Friedrich Leisch}
+\references{
+  Friedrich Leisch. FlexMix: A general framework for finite mixture
+  models and latent class regression in R. Journal of Statistical
+  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+}
 \seealso{\code{\link{flexmix}}}
 \keyword{cluster}
 \examples{

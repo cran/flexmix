@@ -1,4 +1,15 @@
+Changes in flexmix version 1.0-0
 
+  o The package has now an introductionary vignette which can be
+    accessed using the command vignette("flexmix-intro"). The vignette
+    has been published in the Journal of Statistical Software, Volume
+    11, Issue 8 (www.jstatsoft.org), and the paper should be used as
+    citation for flexmix, run citation("flexmix") in R 2.0.0 or newer
+    for details.
+
+  o Several typos in help pages have been fixed.
+  
+	
 Changes in flexmix version 0.9-1
 
   o Adjust for R 2.0.0.
