@@ -6,9 +6,9 @@
 \title{Class "FLXcontrol"}
 \description{Hyperparameters for the EM algorithm.}
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("FLXcontrol",
-  ...)}. In addition, named lists can be coerced to \code{FLXcontrol}
-objects, names are completed if unique (see examples).
+  Objects can be created by calls of the form \code{new("FLXcontrol",
+    ...)}. In addition, named lists can be coerced to \code{FLXcontrol}
+  objects, names are completed if unique (see examples).
 }
 \section{Slots}{
   \describe{
@@ -24,11 +24,15 @@ objects, names are completed if unique (see examples).
     \item{\code{classify}:}{Character string, one of \code{"auto"},
       \code{"weighted"}, \code{"hard"}, \code{"random"}.}
   }
+  Run \code{new("FLXcontrol")} to see the default settings of all slots.
 }
-
 \author{Friedrich Leisch}
 \keyword{classes}
 \examples{
+## have a look at the defaults
+new("FLXcontrol")
+
+## corce a list
 mycont = list(iter=200, tol=0.001, class="r")
 as(mycont, "FLXcontrol")
 }

@@ -132,6 +132,8 @@ setClass("summary.flexmix",
                         logLik="logLik",
                         comptab="ANY"))
 
+setGeneric("summary")
+
 setMethod("summary", "flexmix",
 function(object, eps=1e-4, ...){    
     z <- new("summary.flexmix",
@@ -390,9 +392,9 @@ FLXfit <- function(k=NULL, cluster=NULL, model, control, group)
     z   
 }    
 
-.FLXprintLogLik = function(iter, logLik)
+.FLXprintLogLik = function(iter, logLik, label="Log-likelihood")
     cat(formatC(iter, width=4),
-        "Log-likelihood:", formatC(logLik, width=12, format="f"),"\n")
+        label, ":", formatC(logLik, width=12, format="f"),"\n")
     
 
 ###**********************************************************
@@ -435,6 +437,24 @@ setMethod("parameters", signature(object="flexmix"),
 function(object, component=1, model=1)
 {
     object@components[[component]][[model]]@parameters
+})
+    
+setGeneric("posterior",
+           function(object, ...) standardGeneric("posterior"))
+
+setMethod("posterior", signature(object="flexmix"),
+function(object)
+{
+    object@posterior$scaled
+})
+    
+setGeneric("cluster",
+           function(object, ...) standardGeneric("cluster"))
+
+setMethod("cluster", signature(object="flexmix"),
+function(object)
+{
+    object@cluster
 })
     
 

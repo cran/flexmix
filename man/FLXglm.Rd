@@ -6,7 +6,9 @@
   family of models.
 }
 \usage{
-FLXglm(formula = . ~ ., family = c("gaussian", "binomial", "poisson", "Gamma"))
+FLXglm(formula = . ~ .,
+       family = c("gaussian", "binomial", "poisson", "Gamma"),
+       offset = NULL)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula
@@ -16,6 +18,8 @@ FLXglm(formula = . ~ ., family = c("gaussian", "binomial", "poisson", "Gamma"))
     formula.}
   \item{family}{A character string naming a \code{\link{glm}}
     family function.}
+  \item{offset}{this can be used to specify an \emph{a priori} known
+    component to be included in the linear predictor during fitting.}
 }
 \details{
   See \code{\link{flexmix}} for examples.

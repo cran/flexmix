@@ -5,7 +5,7 @@
 \description{Compute the Bayesian Information Criterion.}
 \section{Methods}{
   \describe{
-    \item{object = flexmix:}{Compute the BIC of an \code{flexmix} object}
+    \item{object = flexmix:}{Compute the BIC of a \code{flexmix} object}
   }
 }
 \keyword{methods}

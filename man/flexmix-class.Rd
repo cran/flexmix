@@ -1,10 +1,23 @@
 \name{flexmix-class}
 \docType{class}
 \alias{flexmix-class}
+\alias{cluster}
+\alias{cluster,flexmix-method}
+\alias{parameters}
+\alias{parameters,flexmix-method}
+\alias{posterior}
+\alias{posterior,flexmix-method}
 \title{Class "flexmix"}
 \description{A fitted \code{\link{flexmix}} model.}
-\section{Objects from the Class}{
-Objects are typically created by calling function \code{\link{flexmix}}.
+\usage{
+\S4method{cluster}{flexmix}(object)
+\S4method{parameters}{flexmix}(object, component=1, model=1)
+\S4method{posterior}{flexmix}(object)
+}
+\arguments{
+  \item{object}{An object of class "flexmix".}
+  \item{component}{Number of component.}
+  \item{model}{Number of model.}
 }
 \section{Slots}{
   \describe{
@@ -29,6 +42,17 @@ Objects are typically created by calling function \code{\link{flexmix}}.
       used to create the object.}
     \item{\code{group}:}{Object of class \code{"factor"}.}
     \item{\code{converged}}{Logical, \code{TRUE} if EM algorithm converged.}
+  }
+}
+\section{Accessor Functions}{
+  The following functions should be used for accessing the corresponding
+  slots:
+  \describe{
+    \item{\code{cluster}:}{Cluster assignments of observations.}
+    \item{\code{parameters}:}{The parameters for each model and component,
+      return value depends on the model.}
+    \item{\code{posterior}:}{A matrix of posterior probabilities for each
+      observation.}
   }
 }
 \author{Friedrich Leisch}

@@ -1,6 +1,6 @@
 \name{plot-methods}
 \docType{methods}
-\alias{plot-methods}
+%%%\alias{plot-methods}
 \alias{plot,flexmix,missing-method}
 \title{Rootogram of Posterior Probabilities}
 \description{
@@ -19,7 +19,7 @@
   \item{markcol}{color used for marking components}
   \item{eps}{posteriors smaller than \code{eps} are ignored}
   \item{root}{if \code{TRUE}, a rootogram of the posterior probabilities
-    is drawn, otherwise a standard historgram}
+    is drawn, otherwise a standard histogram}
   \item{ylim}{A logical value or a numeric vector of length n2. If
     \code{TRUE}, the y axes of all rootograms are aligned
     to have the same limits, if \code{FALSE} each y axis is scaled

@@ -18,27 +18,40 @@
 #
 
 setClass("FLXglmmodel",
-         representation(family="character"),
+         representation(family="character",
+                        refit="function"),
          contains="FLXmodel")
 
 FLXglm <- function(formula=.~.,
-                   family=c("gaussian", "binomial", "poisson", "Gamma"))
+                   family=c("gaussian", "binomial", "poisson", "Gamma"),
+                   offset=NULL)
 {
     family <- match.arg(family)
+
+    glmrefit <- function(x, y, w)
+        glm.fit(x, y, weights=w, offset=offset,
+                family=get(family, mode="function")())
+                
     z <- new("FLXglmmodel", weighted=TRUE, formula=formula,
              name=paste("FLXglm", family, sep=":"),
-             family=family)
+             family=family, refit=glmrefit)
 
     if(family=="gaussian"){
+
+        z@refit <- function(x, y, w) lm.wfit(x, y, w=w, offset=offset)
+        
         z@fit <- function(x, y, w){
-            fit <- lm.wfit(x, y, w=w)
+            fit <- lm.wfit(x, y, w=w, offset=offset)
             sigma <- sqrt(sum(fit$weights * fit$residuals^2 /
                               mean(fit$weights))/ fit$df.residual)
             fit = fit[c("coefficients")]
 
-            predict <- function(x)
-                x%*%coef(fit)
-            
+            predict <- function(x) {
+              p <- x%*%coef(fit)
+              if (!is.null(offset)) p <-  p + offset
+              p
+            }
+
             logLik <- function(x, y)
                 dnorm(y, mean=predict(x), sd=sigma, log=TRUE)
             
@@ -51,12 +64,15 @@ FLXglm <- function(formula=.~.,
     }
     else if(family=="binomial"){
         z@fit <- function(x, y, w){
-            fit <- glm.fit(x, y, weights=w, family=binomial())
+            fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset)
             fit = fit[c("coefficients","family")]
 
-            predict <- function(x)
-                fit$family$linkinv(x%*%coef(fit))
-            
+            predict <- function(x) {
+                p <- x%*%coef(fit)
+                if (!is.null(offset)) p <- p + offset
+                fit$family$linkinv(p)
+            }
+
             logLik <- function(x, y){
                 dbinom(y[,1], size=rowSums(y), prob=predict(x), log=TRUE)
             }
@@ -70,12 +86,16 @@ FLXglm <- function(formula=.~.,
     }
     else if(family=="poisson"){
         z@fit <- function(x, y, w){
-            fit <- glm.fit(x, y, weights=w, family=poisson())
+            fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset)
             fit = fit[c("coefficients","family")]
             rm(w)
-            predict <- function(x)
-                fit$family$linkinv(x%*%coef(fit))
             
+            predict <- function(x) {
+                p <- x%*%coef(fit)
+                if (!is.null(offset)) p <- p + offset
+                fit$family$linkinv(p)
+            }
+
             logLik <- function(x, y){
                 dpois(y, lambda=predict(x), log=TRUE)
             }
@@ -89,15 +109,22 @@ FLXglm <- function(formula=.~.,
     }
     else if(family=="Gamma"){
         z@fit <- function(x, y, w){
-            fit <- glm.fit(x, y, weights=w, family=Gamma())
+            fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset)
             shape <- sum(fit$prior.weights)/fit$deviance
             fit = fit[c("coefficients","family")]
             rm(w)
+
+            predict <- function(x) {
+                p <- x%*%coef(fit)
+                if (!is.null(offset)) p <- p + offset
+                fit$family$linkinv(p)
+            }
+
             logLik <- function(x, y){
                 p = fit$family$linkinv(x%*%coef(fit))
                 dgamma(y, shape = shape, scale=p/shape, log=TRUE)
             }
-            new("FLXcomponent",
+            new("FLXcomponent", predict=predict,
                 parameters=list(coef=coef(fit), shape=shape),
                 logLik=logLik, df=ncol(x)+1)
         }
@@ -140,12 +167,11 @@ setMethod("refit", signature(object="FLXglmmodel"),
 function(object, weights, ...)
 {
     z = new("FLXrefitglm")
-    
+
     z@fitted =
-        glm.fit(object@x,
-                object@y,
-                family=get(object@family)(),
-                weights=weights)
+        object@refit(object@x,
+                     object@y,
+                     weights)
     z
 })
 
@@ -178,6 +204,47 @@ function(object)
         cat(ifelse(k==n, "\n\n", "\n-------------\n"))
     }
 })
+
+###**********************************************************
+
+setGeneric("fitted")
+
+setMethod("fitted", signature(object="flexmix"),
+function(object, drop=TRUE, ...)
+{
+    z <- list()
+    for(n in 1:object@k){
+        z[[n]] <- list()
+        for(m in 1:length(object@components[[n]]))
+            z[[n]][[m]] <- object@components[[n]][[m]]@predict(object@model[[m]]@x)
+        if(drop)
+            z[[n]] <- sapply(z[[n]], unlist)
+    }
+    names(z) <- paste("Comp", 1:object@k, sep=".")
+    if(drop & all(lapply(z, ncol)==1)){
+        z <- sapply(z, unlist)
+    }
+    z
+})
+
+                
+
+setMethod("fitted", signature(object="FLXrefitglm"),
+function(object, ...)
+{
+    object@fitted$fitted.values
+})
+        
+setMethod("fitted", signature(object="FLXrefit"),
+function(object, ...)
+{
+    sapply(object@model, fitted)
+})
+        
+
+
+                              
+
 
 ###**********************************************************
 
@@ -214,3 +281,4 @@ FLXmclust <- function(formula=.~., diagonal=TRUE)
 
 
 
+###**********************************************************

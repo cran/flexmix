@@ -56,5 +56,19 @@ print(ex2)
 
 plotEll(ex2, Nclus)
 
+## Get paramters of first component
 parameters(ex2, component=1)
+
+## Have a look at the posterior probabilies of 10 random observations
+ok <- sample(1:nrow(Nclus), 10)
+p  <- posterior(ex2)[ok,]
+p
+
+## The following two should be the same
+max.col(p)
+cluster(ex2)[ok]
+
+\testonly{
+  stopifnot(all.equal(max.col(p), cluster(ex2)[ok]))
+}
 }

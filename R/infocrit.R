@@ -32,10 +32,10 @@ function(object, ...){
 
 setMethod("AIC", signature(object="flexmix"),
 function(object, ..., k=2){
-    AIC(logLik(object, ...), k=k)
+    -2 * object@logLik + object@df * k
 })
 
 setMethod("BIC", signature(object="flexmix"),
 function(object, ...){
-    BIC(logLik(object, ...))
+    -2 * object@logLik + object@df * log(nrow(object@posterior$scaled))
 })

@@ -1,0 +1,45 @@
+importFrom(stats, fitted, predict)
+importFrom(stats4, AIC, BIC, logLik, plot, summary)
+
+export(
+       ExNPreg,
+       ExNclus,
+       FLXglm,
+       FLXmclust,
+       KLdiv,
+       flexmix,
+       plotEll,
+       refit,
+       stepFlexmix
+       )
+
+
+exportClasses(
+              FLXcomponent,
+              FLXcontrol,
+              FLXglmmodel,
+              FLXmodel,
+              FLXrefit,
+              FLXrefitglm, 
+              flexmix,
+              summary.flexmix
+              )
+
+
+exportMethods(
+              AIC,
+              BIC,
+              KLdiv,
+              coerce,
+              cluster,
+              fitted,
+              flexmix,
+              logLik,
+              parameters,
+              plot,
+              posterior,
+              predict,
+              refit,
+              show,
+              summary
+              )

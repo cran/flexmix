@@ -5,7 +5,7 @@
 \description{Compute the Akaike Information Criterion.}
 \section{Methods}{
   \describe{
-    \item{object = flexmix:}{Compute the AIC of an \code{flexmix} object}
+    \item{object = flexmix:}{Compute the AIC of a \code{flexmix} object}
   }
 }
 \keyword{methods}

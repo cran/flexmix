@@ -3,9 +3,9 @@
 \alias{KLdiv-methods}
 \alias{KLdiv,matrix-method}
 \alias{KLdiv,flexmix-method}
-\title{Kullbach Leibler Divergence}
+\title{Kullback-Leibler Divergence}
 \description{
-  Estimate the Kullbach Leibler divergence of several distributions.}
+  Estimate the Kullback-Leibler divergence of several distributions.}
 \usage{
 KLdiv(object, ...)
 \S4method{KLdiv}{matrix}(object, eps=1e-4, ...)
@@ -21,7 +21,7 @@ KLdiv(object, ...)
     \item{object = "matrix":}{Takes as input a matrix of
       density values with one row per observation and one column per
       distribution.}
-    \item{object = "flexmix":}{Returns the Kullbach Leibler divergence
+    \item{object = "flexmix":}{Returns the Kullback-Leibler divergence
       of the mixture components.}
 }}
 \details{
@@ -35,6 +35,9 @@ KLdiv(object, ...)
 \keyword{methods}
 \author{Friedrich Leisch}
 \references{
+  S. Kullback and R. A. Leibler. On information and sufficiency. The
+  Annals of Mathematical Statistics 22(1), pages 79-86, 1951.
+  
   Friedrich Leisch. Exploring the structure of mixture model
   components. In Jaromir Antoch, editor, Compstat 2004 - Proceedings in
   Computational Statistics, pages 1405-1412. Physika Verlag, Heidelberg,

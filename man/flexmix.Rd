@@ -3,8 +3,6 @@
 \alias{flexmix,formula,ANY,ANY,ANY,missing-method}
 \alias{flexmix,formula,ANY,ANY,ANY,list-method}
 \alias{flexmix,formula,ANY,ANY,ANY,FLXmodel-method}
-\alias{parameters}
-\alias{parameters,flexmix-method}
 \alias{predict,flexmix-method}
 \alias{show,flexmix-method}
 \alias{summary,flexmix-method}

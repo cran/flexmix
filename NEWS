@@ -1,3 +1,18 @@
+Changes in flexmix version 1.1-0
+
+  o The FLXglm driver now has an offset argument.
+
+  o New data set seizure as example for a Poisson GLM
+    with an offset.
+
+  o fitted() can be used to extract fitted values from flexmix
+    and FLXrefit objects.
+
+  o New accessor methods cluster() and posterior().
+
+  o The package now uses lazy loading and has a namespace.
+
+
 Changes in flexmix version 1.0-0
 
   o The package has now an introductionary vignette which can be
@@ -38,7 +53,7 @@ Changes in flexmix version 0.9-0
     create them and a pre-stored data sets, new function plotEll() to
     plot 2d Gaussians with confidence ellipses.
 
-  o new function KLdiv() to compute Kullbach leibler divergence of
+  o new function KLdiv() to compute Kullback-Leibler divergence of
     components
 
   o the calculation of the degrees of freedom for FLXmclust was wrong
