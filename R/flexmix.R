@@ -27,7 +27,7 @@ setClass("FLXcontrol",
          prototype(iter.max=200,
                    minprior=0.05,
                    tolerance=10e-7,
-                   verbose=10,
+                   verbose=0,
                    classify="auto",
                    nrep=1))
 
@@ -102,7 +102,10 @@ setClass("flexmix",
                         formula="formula",
                         control="FLXcontrol",
                         call="call",
-                        group="factor"),
+                        group="factor",
+                        k="integer",
+                        size="integer",
+                        converged="logical"),
          prototype(group=(factor(integer(0))),
                    formula=.~.))
 
@@ -111,8 +114,12 @@ setMethod("show", "flexmix",
 function(object){
     cat("\nCall:", deparse(object@call,0.75*getOption("width")),
         sep="\n")
-    cat("\nCluster sizes:")
-    print(table(object@cluster))
+    cat("\nCluster sizes:\n")
+#    print(as.table(TAB))
+    print(object@size)
+    cat("\n")
+    if(!object@converged) cat("no ")
+    cat("convergence after", object@iter, "iterations\n")
 })
 
 
@@ -134,7 +141,7 @@ function(object, eps=1e-4, ...){
              logLik = logLik(object))
 
     TAB <- data.frame(prior=object@prior,
-                      size=as(table(object@cluster), "integer"))
+                      size=object@size)
     rownames(TAB) <- paste("Comp.", 1:nrow(TAB), sep="")
     TAB[["post>0"]] <- colSums(object@posterior$scaled > eps)
     TAB[["ratio"]] <- TAB[["size"]]/TAB[["post>0"]]
@@ -266,6 +273,7 @@ FLXfit <- function(k=NULL, cluster=NULL, model, control, group)
         postscaled[cluster==K, K] <- 0.9
     }
     llh <- -Inf
+    converged <- FALSE
     
     for(iter in 1:control@iter.max){
         postunscaled <- matrix(0, nrow=N, ncol=k)
@@ -322,6 +330,7 @@ FLXfit <- function(k=NULL, cluster=NULL, model, control, group)
                 .FLXprintLogLik(iter, llh)
                 cat("converged\n")
             }
+            converged <- TRUE
             break
         }
         if(control@verbose && (iter%%control@verbose==0))
@@ -345,14 +354,18 @@ FLXfit <- function(k=NULL, cluster=NULL, model, control, group)
     }
 
     names(components) <- paste("Comp", 1:k, sep=".")
+    cluster <- apply(postscaled, 1, which.max)
+    size <-  tabulate(cluster)
+    names(size) <- 1:k
+    
     retval <- new("flexmix", model=model, prior=prior,
-                   posterior=list(scaled=postscaled,
-                                  unscaled=postunscaled),
-                   iter=iter,
-                   cluster=apply(postscaled,1,which.max),
-                   logLik=llh, components=components,
-                   control=control, df=df, group=group)
-
+                  posterior=list(scaled=postscaled,
+                                 unscaled=postunscaled),
+                  iter=iter, cluster=cluster, size = size,
+                  logLik=llh, components=components,
+                  control=control, df=df, group=group, k=as(k, "integer"),
+                  converged=converged)
+                     
     retval
 }
 
@@ -429,25 +442,53 @@ function(object, component=1, model=1)
 
 
 
-stepFlexmix <- function(..., K, nrep=3)
+stepFlexmix <- function(..., K=NULL, nrep=3,
+                        compare=c("logLik", "BIC", "AIC"), verbose=TRUE)
 {
+
+    compare <- match.arg(compare)
+    COMPFUN <- get(compare, mode="function")
+    MYCALL <- match.call()
+    
+    bestFlexmix <- function(...)
+    {
+        z = new("flexmix", logLik=-Inf)
+        for(m in 1:nrep){
+            if(verbose) cat(" *")
+            x = flexmix(...)
+            if(compare=="logLik"){
+                if(logLik(x) > logLik(z))
+                    z = x
+            }
+            else{
+                if(COMPFUN(x) < COMPFUN(z))
+                    z = x
+            }
+        }
+        z
+    }
+
+    if(is.null(K)){
+        z = bestFlexmix(...)
+        z@call <- MYCALL
+        if(verbose) cat("\n")
+        return(z)
+    }
+    
     K = as.integer(K)
     if(length(K)==0)
         return(list())
     
     z = list()
     for(n in 1:length(K)){
-        z[[n]] = new("flexmix", logLik=-Inf)
-        for(m in 1:nrep){
-            x = flexmix(k=K[n], ...)
-            if(logLik(x) > logLik(z[[n]]))
-                z[[n]] = x
-        }
+        if(verbose) cat(K[n], ":")
+        z[[as.character(K[n])]] = bestFlexmix(..., k=K[n])
+        z[[as.character(K[n])]]@call <- MYCALL
+        if(verbose) cat("\n")
     }
     if(length(K)==1)
         return(z[[1]])
-
-    names(z) <- as.character(K)
+    
     z
 }
 

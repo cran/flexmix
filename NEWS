@@ -1,3 +1,19 @@
+
+Changes in flexmix version 0.9-1
+
+  o Adjust for R 2.0.0.
+
+  o Fixed a bug in the summary and plot methods of flexmix objects in
+    case of empty clusters.
+
+  o stepFlexmix takes two new arguments: `compare' allows fo find
+    minimum AIC/BIC solutions in addition to maximum likelihood,
+    `verbose' gives some information about progress.
+
+  o Use a default of verbose=0 in FLXcontrol (better in combination 
+    with stepFlexmix). 
+
+	
 Changes in flexmix version 0.9-0
 
   o new summary() and plot() methods for flexmix objects

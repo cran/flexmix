@@ -9,11 +9,14 @@
   }
 }
 \usage{
-\S4method{plot}{flexmix,missing}(x, eps=1e-4, root=TRUE,
-  ylim=TRUE, main=NULL, mfrow=NULL, ...)
+\S4method{plot}{flexmix,missing}(x, y, mark=NULL, markcol="red",
+  eps=1e-4, root=TRUE, ylim=TRUE, main=NULL, mfrow=NULL, ...)
 }
 \arguments{
   \item{x}{an object of class \code{"flexmix"}}
+  \item{y}{not used}
+  \item{mark}{integer, mark posteriors of this component}
+  \item{markcol}{color used for marking components}
   \item{eps}{posteriors smaller than \code{eps} are ignored}
   \item{root}{if \code{TRUE}, a rootogram of the posterior probabilities
     is drawn, otherwise a standard historgram}

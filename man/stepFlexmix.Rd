@@ -6,7 +6,8 @@
   the maximum likelihood solution for each.}
 }
 \usage{
-stepFlexmix(..., K, nrep=3)
+stepFlexmix(..., K=NULL, nrep=3,
+            compare=c("logLik", "BIC", "AIC"), verbose=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -14,7 +15,12 @@ stepFlexmix(..., K, nrep=3)
   \item{K}{A vector of integers passed in turn to the \code{k} argument
     of \code{\link{flexmix}}}
   \item{nrep}{For each value of \code{k} run \code{\link{flexmix}}
-    \code{nrep} times and keep only the solution with maximum likelihood.}
+    \code{nrep} times and keep only the solution with maximum
+    likelihood.}
+  \item{compare}{Goodness of fit measure used to select the best model,
+    one of \code{"logLik"}, \code{"BIC"} or \code{"AIC"}.}
+  \item{verbose}{If \code{TRUE}, show progress information during
+    computations.}
 }
 \value{
   A list of objects of class \code{"flexmix"} if \code{length(K)>1},
@@ -37,6 +43,7 @@ sapply(ex2, logLik)
 
 ## model selection:
 sapply(ex2, AIC)
+sapply(ex2, BIC)
 }
 \keyword{cluster}% at least one, from doc/KEYWORDS
 \keyword{regression}% __ONLY ONE__ keyword per line

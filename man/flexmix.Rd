@@ -71,6 +71,7 @@ ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2,
 
 ex1
 summary(ex1)
+plot(ex1)
 
 ## now we fit a model with one Gaussian response and one Poisson
 ## response. Note that the formulas inside the call to FLXglm are
@@ -78,6 +79,7 @@ summary(ex1)
 ex2 <- flexmix(yn~x, data=NPreg, k=2,
                model=list(FLXglm(yn~.+I(x^2)), 
                           FLXglm(yp~., family="poisson")))
+plot(ex2)
 
 ex2
 table(ex2@cluster, NPreg$class)

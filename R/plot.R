@@ -20,7 +20,8 @@
 ### setGeneric("plot")
 
 setMethod("plot", signature(x="flexmix", y="missing"),
-function(x, y, eps=1e-4, root=TRUE, ylim=TRUE,
+function(x, y, mark=NULL, markcol="red",
+         eps=1e-4, root=TRUE, ylim=TRUE,
          main=NULL, mfrow=NULL, ...){
 
     k = length(x@prior)
@@ -44,14 +45,26 @@ function(x, y, eps=1e-4, root=TRUE, ylim=TRUE,
     par(oma=c(0,0,3,0))
 
     h = list()
+    h1 <- list()
     for(n in 1:k){
         z = x@posterior$scaled[,n]
-        z = z[z>eps]
-        h[[n]] = hist(z, breaks=seq(0,1,length=log2(length(z))+1),
+        ok = z>eps
+        h[[n]] = hist(z[ok], breaks=seq(0,1,length=log2(length(z[ok]))+1),
                  plot=FALSE)
         
-        if(root)
+        if(!is.null(mark)){
+            h1[[n]] <- hist(z[ok & (x@cluster==mark)],
+                            breaks=h[[n]]$breaks,
+                            plot=FALSE)
+        }
+                        
+        
+        if(root){
             h[[n]]$counts = sqrt(h[[n]]$counts)
+            if(!is.null(mark)){
+                h1[[n]]$counts = sqrt(h1[[n]]$counts)
+            }
+        }
     }
 
     if(is.logical(ylim)){
@@ -64,9 +77,14 @@ function(x, y, eps=1e-4, root=TRUE, ylim=TRUE,
     for(n in 1:k){
         plot(h[[n]], xlab="", ylab="", ylim=ylim, main="", ...)
         title(main=paste("Component", n), line=0)
+        if(!is.null(mark)){
+            lines(h1[[n]], col=markcol)
+        }
+
     }
     
     title(main=main, outer=TRUE)
+    invisible(list(hists=h, marks=h1))
 })
         
     

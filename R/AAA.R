@@ -1,5 +1,14 @@
-require(methods)
-require(stats)
-require(stats4)
+## <FIXME> This is needed only for R 1.9.x, remove eventually
 
-# .onLoad <- function(lib, pkg) require("methods")
+if(R.version$major < "2"){
+    .First.lib <- function(...)
+    {
+        require("graphics")
+        require("methods")
+        require("stats")
+        require("stats4")
+    }
+
+    .First.lib()
+}
+## </FIXME>

@@ -15,7 +15,9 @@ Objects are typically created by calling function \code{\link{flexmix}}.
       and one column per cluster.}
     \item{\code{iter}:}{Number of EM
       iterations.}
+    \item{\code{k}:}{Number of clusters.}
     \item{\code{cluster}:}{Cluster assignments of observations.}
+    \item{\code{size}:}{Cluster sizes.}
     \item{\code{logLik}:}{Log-likelihood at EM convergence.}
     \item{\code{df}:}{Total number of
       parameters of the model.}
@@ -26,6 +28,7 @@ Objects are typically created by calling function \code{\link{flexmix}}.
     \item{\code{call}:}{The function call
       used to create the object.}
     \item{\code{group}:}{Object of class \code{"factor"}.}
+    \item{\code{converged}}{Logical, \code{TRUE} if EM algorithm converged.}
   }
 }
 \author{Friedrich Leisch}
