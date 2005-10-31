@@ -1,13 +1,17 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: ExNPreg.Rd 1896 2005-10-31 12:37:07Z leisch $
+%
 \name{ExNPreg}
 \alias{ExNPreg}
 \alias{NPreg}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{Artificial Example for Normal and Poisson Regression}
+\title{Artificial Example for Normal, Poisson and Binomial Regression}
 \description{
   A simple artificial regression example with 2 latent classes, one
   independent variable
-  (uniform on \eqn{[0,10]}), and two dependent variables with Gaussian and
-  Poisson distribution, respectively.
+  (uniform on \eqn{[0,10]}), and three dependent variables with
+  Gaussian, Poisson and Binomial distribution, respectively.
 }
 \usage{
 ExNPreg(n)
@@ -26,5 +30,6 @@ data(NPreg)
 data(NPreg)
 plot(yn~x, data=NPreg, col=class)
 plot(yp~x, data=NPreg, col=class)
+plot(yb~x, data=NPreg, col=class)
 }
 \keyword{datasets}

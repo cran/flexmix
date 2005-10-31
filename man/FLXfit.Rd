@@ -1,18 +1,21 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: FLXfit.Rd 1673 2005-06-16 16:15:42Z gruen $
+%
 \name{FLXfit}
 \alias{FLXfit}
+\alias{FLXfit,list-method}
 \title{Fitter Function for FlexMix Models}
 \description{
   This is the basic computing engine called by \code{\link{flexmix}}, it
   should usually not be used directly.
 }
 \usage{
-FLXfit(k = NULL, cluster = NULL, model, control, group)
+FLXfit(model, control, postunscaled = NULL, group)
 }
 \arguments{
-  \item{k}{Number of clusters (not needed if \code{cluster} is specified).}
-  \item{cluster}{Initial cluster assignments of observations at the
-    start of the EM algorithm (default is random assignment into \code{k}
-    clusters).}
+  \item{postunscaled}{Initial a posteriori probabilities of the
+    observations at the start of the EM algorithm.}
   \item{model}{List of \code{FLXmodel} objects.}
   \item{control}{Object of class \code{FLXcontrol}.}
   \item{group}{Factor with optional grouping of observations.}

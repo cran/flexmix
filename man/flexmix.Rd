@@ -1,9 +1,12 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: flexmix.Rd 1896 2005-10-31 12:37:07Z leisch $
+%
 \name{flexmix}
 \alias{flexmix}
 \alias{flexmix,formula,ANY,ANY,ANY,missing-method}
 \alias{flexmix,formula,ANY,ANY,ANY,list-method}
 \alias{flexmix,formula,ANY,ANY,ANY,FLXmodel-method}
-\alias{predict,flexmix-method}
 \alias{show,flexmix-method}
 \alias{summary,flexmix-method}
 \alias{show,summary.flexmix-method}
@@ -26,10 +29,11 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     factor for repeated measurements.}
   \item{data}{An optional data frame containing the variables in the model.}
   \item{k}{Number of clusters (not needed if \code{cluster} is specified).}
-  \item{cluster}{Factor or integer vector with the initial cluster
-    assignments of observations at the 
-    start of the EM algorithm (default is random assignment into \code{k}
-    clusters).}
+  \item{cluster}{Either a matrix of posterior probabilities, or a factor
+    or integer vector with the initial cluster
+    assignments of observations at the start of the EM
+    algorithm. Default is random assignment into \code{k}
+    clusters.}
   \item{model}{Object of \code{FLXmodel} of list of \code{FLXmodel}
     objects. Default is the object returned by calling
     \code{\link{FLXglm}()}.}
@@ -100,5 +104,17 @@ ex3 <- flexmix(yp~x, data=NPreg, k=2, model=FLXglm(family="poisson"))
 ## if observations are grouped, i.e., we have several observations per
 ## individual, fitting is usually much faster:
 ex4 <- flexmix(yp~x|id1, data=NPreg, k=2, model=FLXglm(family="poisson"))
+
+## And now a binomial example. Mixtures of binomials are not generically
+## identified, here the grouping variable is necessary:
+set.seed(1234)
+ex5 <- stepFlexmix(cbind(yb,1-yb)~x, data=NPreg, k=2,
+                   model=FLXglm(family="binomial"), nrep=5)
+table(NPreg$class, cluster(ex5))
+
+ex6 <- stepFlexmix(cbind(yb,1-yb)~x|id2, data=NPreg, k=2,
+                   model=FLXglm(family="binomial"), nrep=5)
+table(NPreg$class, cluster(ex6))
+
 }
 

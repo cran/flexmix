@@ -1,9 +1,14 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: ExNclus.Rd 1777 2005-08-18 09:19:27Z leisch $
+%
 \name{ExNclus}
 \alias{ExNclus}
 \alias{Nclus}
-\title{Artificial Example for Normal Clustering}
+\title{Artificial Example with 4 Gaussians}
 \description{
-  A simple artificial regression example with 4 latent classes, all of
+  A simple artificial example for normal clustering with 4 latent
+  classes, all of
   them having a Gaussian distribution. See the function definition for
   true means and covariances.
 }

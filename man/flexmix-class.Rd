@@ -1,23 +1,22 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: flexmix-class.Rd 1664 2005-06-13 06:11:03Z leisch $
+%
 \name{flexmix-class}
 \docType{class}
 \alias{flexmix-class}
 \alias{cluster}
 \alias{cluster,flexmix-method}
-\alias{parameters}
-\alias{parameters,flexmix-method}
 \alias{posterior}
 \alias{posterior,flexmix-method}
 \title{Class "flexmix"}
 \description{A fitted \code{\link{flexmix}} model.}
 \usage{
 \S4method{cluster}{flexmix}(object)
-\S4method{parameters}{flexmix}(object, component=1, model=1)
 \S4method{posterior}{flexmix}(object)
 }
 \arguments{
   \item{object}{An object of class "flexmix".}
-  \item{component}{Number of component.}
-  \item{model}{Number of model.}
 }
 \section{Slots}{
   \describe{
@@ -44,13 +43,15 @@
     \item{\code{converged}}{Logical, \code{TRUE} if EM algorithm converged.}
   }
 }
+\section{Extends}{
+  Class \code{FLXdist}, directly.
+}
+
 \section{Accessor Functions}{
   The following functions should be used for accessing the corresponding
   slots:
   \describe{
     \item{\code{cluster}:}{Cluster assignments of observations.}
-    \item{\code{parameters}:}{The parameters for each model and component,
-      return value depends on the model.}
     \item{\code{posterior}:}{A matrix of posterior probabilities for each
       observation.}
   }

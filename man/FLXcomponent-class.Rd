@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: FLXcomponent-class.Rd 1777 2005-08-18 09:19:27Z leisch $
+%
 \name{FLXcomponent-class}
 \docType{class}
 \alias{FLXcomponent-class}
@@ -9,7 +13,7 @@ Objects can be created by calls of the form \code{new("FLXcomponent", ...)}.
 }
 \section{Slots}{
   \describe{
-    \item{\code{df}:}{Number of paramters used by the component.}
+    \item{\code{df}:}{Number of parameters used by the component.}
     \item{\code{logLik}:}{Function computing the log-likelihood of
       observations.}
     \item{\code{parameters}:}{List with model parameters.}

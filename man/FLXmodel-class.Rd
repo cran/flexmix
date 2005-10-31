@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: FLXmodel-class.Rd 1664 2005-06-13 06:11:03Z leisch $
+%
 \name{FLXmodel-class}
 \docType{class}
 \alias{FLXmodel-class}

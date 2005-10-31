@@ -1,7 +1,12 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: fitted.Rd 1664 2005-06-13 06:11:03Z leisch $
+%
 \name{fitted}
 \docType{methods}
 \alias{fitted-methods}
 \alias{fitted,flexmix-method}
+\alias{fitted,FLXmodel-method}
 \alias{fitted,FLXrefit-method}
 \alias{fitted,FLXrefitglm-method}
 \title{Extract Model Fitted Values}

@@ -4,6 +4,7 @@ importFrom(stats4, AIC, BIC, logLik, plot, summary)
 export(
        ExNPreg,
        ExNclus,
+       FLXfit,
        FLXglm,
        FLXmclust,
        KLdiv,
@@ -17,6 +18,7 @@ export(
 exportClasses(
               FLXcomponent,
               FLXcontrol,
+              FLXdist,
               FLXglmmodel,
               FLXmodel,
               FLXrefit,
@@ -29,6 +31,7 @@ exportClasses(
 exportMethods(
               AIC,
               BIC,
+              FLXfit,
               KLdiv,
               coerce,
               cluster,

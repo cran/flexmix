@@ -1,20 +1,6 @@
 #
-#  FlexMix: Flexible mixture modelling in R
-#  Copyright (C) 2004 Friedrich Leisch
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#  Copyright (C) 2004-2005 Friedrich Leisch
+#  $Id: models.R 1664 2005-06-13 06:11:03Z leisch $
 #
 
 setClass("FLXglmmodel",
@@ -35,7 +21,7 @@ FLXglm <- function(formula=.~.,
     z <- new("FLXglmmodel", weighted=TRUE, formula=formula,
              name=paste("FLXglm", family, sep=":"),
              family=family, refit=glmrefit)
-
+    
     if(family=="gaussian"){
 
         z@refit <- function(x, y, w) lm.wfit(x, y, w=w, offset=offset)
@@ -43,13 +29,15 @@ FLXglm <- function(formula=.~.,
         z@fit <- function(x, y, w){
             fit <- lm.wfit(x, y, w=w, offset=offset)
             sigma <- sqrt(sum(fit$weights * fit$residuals^2 /
-                              mean(fit$weights))/ fit$df.residual)
+                              mean(fit$weights))/ (nrow(x)-fit$rank))
             fit = fit[c("coefficients")]
 
-            predict <- function(x) {
-              p <- x%*%coef(fit)
-              if (!is.null(offset)) p <-  p + offset
-              p
+            predict <- function(x, ...) {
+                dotarg = list(...)
+                if("offset" %in% names(dotarg)) offset <- dotarg$offset
+                p <- x%*%coef(fit)
+                if (!is.null(offset)) p <-  p + offset
+                p
             }
 
             logLik <- function(x, y)
@@ -67,7 +55,9 @@ FLXglm <- function(formula=.~.,
             fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset)
             fit = fit[c("coefficients","family")]
 
-            predict <- function(x) {
+            predict <- function(x, ...) {
+                dotarg = list(...)
+                if("offset" %in% names(dotarg)) offset <- dotarg$offset
                 p <- x%*%coef(fit)
                 if (!is.null(offset)) p <- p + offset
                 fit$family$linkinv(p)
@@ -90,7 +80,9 @@ FLXglm <- function(formula=.~.,
             fit = fit[c("coefficients","family")]
             rm(w)
             
-            predict <- function(x) {
+            predict <- function(x, ...) {
+                dotarg = list(...)
+                if("offset" %in% names(dotarg)) offset <- dotarg$offset
                 p <- x%*%coef(fit)
                 if (!is.null(offset)) p <- p + offset
                 fit$family$linkinv(p)
@@ -114,7 +106,9 @@ FLXglm <- function(formula=.~.,
             fit = fit[c("coefficients","family")]
             rm(w)
 
-            predict <- function(x) {
+            predict <- function(x, ...) {
+                dotarg = list(...)
+                if("offset" %in% names(dotarg)) offset <- dotarg$offset
                 p <- x%*%coef(fit)
                 if (!is.null(offset)) p <- p + offset
                 fit$family$linkinv(p)
@@ -129,9 +123,7 @@ FLXglm <- function(formula=.~.,
                 logLik=logLik, df=ncol(x)+1)
         }
     }
-    else
-        error(paste("Unknown family", family))
-    
+    else stop(paste("Unknown family", family))
     z
 }
 
@@ -150,29 +142,29 @@ setGeneric("refit", function(object, ...) standardGeneric("refit"))
 setMethod("refit", signature(object="flexmix"),
 function(object, model=1, ...)
 {
-    k = length(object@prior)
-
     z = new("FLXrefit",
             call=sys.call(-1))
 
-    for(n in 1:k){
-        z@model[[n]] <- refit(object@model[[model]],
-                              weights=object@posterior$scaled[,n])
-    }
-    names(z@model) <- paste("Comp", 1:k, sep=".")
+    z@model <- refit(object@model[[model]],
+                     weights=object@posterior$scaled)
+
+    names(z@model) <- paste("Comp", 1:object@k, sep=".")
     z
 })
-        
+
 setMethod("refit", signature(object="FLXglmmodel"),
 function(object, weights, ...)
 {
-    z = new("FLXrefitglm")
+  z <- list()
+  for (k in 1:ncol(weights)) {
+    z[[k]] = new("FLXrefitglm")
 
-    z@fitted =
+    z[[k]]@fitted =
         object@refit(object@x,
                      object@y,
-                     weights)
-    z
+                     weights[,k])
+  }
+  z
 })
 
 
@@ -212,22 +204,26 @@ setGeneric("fitted")
 setMethod("fitted", signature(object="flexmix"),
 function(object, drop=TRUE, ...)
 {
+    x<- list()
+    for(m in 1:length(object@model)) {
+      comp <- lapply(object@components, "[[", m)
+      x[[m]] <- fitted(object@model[[m]], comp, ...)
+    }
     z <- list()
-    for(n in 1:object@k){
-        z[[n]] <- list()
-        for(m in 1:length(object@components[[n]]))
-            z[[n]][[m]] <- object@components[[n]][[m]]@predict(object@model[[m]]@x)
-        if(drop)
-            z[[n]] <- sapply(z[[n]], unlist)
+    for (k in 1:object@k) {
+      z[[k]] <- do.call("cbind", lapply(x, "[[", k))
     }
     names(z) <- paste("Comp", 1:object@k, sep=".")
-    if(drop & all(lapply(z, ncol)==1)){
+    if(drop && all(lapply(z, ncol)==1)){
         z <- sapply(z, unlist)
     }
     z
 })
 
-                
+setMethod("fitted", signature(object="FLXmodel"),
+function(object, components, ...) {
+  lapply(components, function(z) z@predict(object@x))
+})
 
 setMethod("fitted", signature(object="FLXrefitglm"),
 function(object, ...)
@@ -240,12 +236,21 @@ function(object, ...)
 {
     sapply(object@model, fitted)
 })
-        
 
-
-                              
-
-
+setMethod("predict", signature(object="FLXglmmodel"), function(object, newdata, components, ...) {
+  mt1 <- terms(object@fullformula)
+  mf <- model.frame(delete.response(mt1), data=newdata)
+  mt <- attr(mf, "terms")
+  attr(mt, "intercept") <- attr(mt1, "intercept")
+  x <- model.matrix(mt, data=mf)
+  
+  z <- list()
+  for(k in 1:length(components)){
+    z[[k]] <- components[[k]]@predict(x, ...)
+  }
+  z
+})
+                           
 ###**********************************************************
 
 FLXmclust <- function(formula=.~., diagonal=TRUE)
@@ -264,7 +269,7 @@ FLXmclust <- function(formula=.~., diagonal=TRUE)
             df <- 2*ncol(y)
         }
         
-        predict <- function(x){
+        predict <- function(x, ...){
             matrix(para$center, nrow=nrow(y), ncol=length(para$center),
                    byrow=TRUE)
         }

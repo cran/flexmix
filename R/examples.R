@@ -1,20 +1,6 @@
 #
-#  FlexMix: Flexible mixture modelling in R
-#  Copyright (C) 2004 Friedrich Leisch
-#
-#  This program is free software; you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
-#  (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software
-#  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#  Copyright (C) 2004-2005 Friedrich Leisch
+#  $Id: examples.R 1896 2005-10-31 12:37:07Z leisch $
 #
 
 ExNPreg = function(n)
@@ -22,10 +8,13 @@ ExNPreg = function(n)
     if(n %% 2 != 0) stop("n must be even")
     
     x <- runif(2*n, 0, 10)
+    mp <- exp(c(2-0.2*x[1:n], 1+0.1*x[(n+1):(2*n)]))
+    mb <- binomial()$linkinv(c(x[1:n]-5, 5-x[(n+1):(2*n)]))
 
     data.frame(x=x,
                yn=c(5*x[1:n], 40-(x[(n+1):(2*n)]-5)^2)+3*rnorm(n),
-               yp=rpois(2*n, exp(c(2-0.2*x[1:n], 1+0.1*x[(n+1):(2*n)]))),
+               yp=rpois(2*n, mp),
+               yb=rbinom(2*n, size=1, prob=mb),
                class = rep(1:2, c(n,n)),
                id1 = factor(rep(1:n, rep(2, n))),
                id2 = factor(rep(1:(n/2), rep(4, n/2))))

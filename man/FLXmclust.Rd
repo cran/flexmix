@@ -1,6 +1,9 @@
+%
+%  Copyright (C) 2004-2005 Friedrich Leisch
+%  $Id: FLXmclust.Rd 1838 2005-09-29 19:23:09Z leisch $
+%
 \name{FLXmclust}
 \alias{FLXmclust}
-\alias{plotEll}
 \title{FlexMix Clustering Demo Driver}
 \description{
   This is a demo driver for \code{\link{flexmix}} implementing
@@ -8,7 +11,6 @@
 }
 \usage{
 FLXmclust(formula = . ~ ., diagonal = TRUE)
-plotEll(object, data, ...)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula
@@ -19,14 +21,10 @@ plotEll(object, data, ...)
     formula.}
   \item{diagonal}{If \code{TRUE}, then the covariance matrix of the
     components is restricted to diagonal matrices.}
-  \item{object}{An object of class \code{flexmix} using \code{FLXmclust}
-    model.}
-  \item{data}{The data that were clustered.}
-  \item{\dots}{Passed to \code{\link[MASS]{eqscplot}}.}
 }
 \details{
-  This is meant as a demo for FlexMix driver programming, use package
-  \pkg{mclust} for real applications. 
+  This is mostly meant as a demo for FlexMix driver programming, you
+  should also look at package \pkg{mclust} for real applications. 
 }
 \value{
   \code{FLXmclust} returns an object of class \code{FLXmodel}.
@@ -56,7 +54,7 @@ print(ex2)
 
 plotEll(ex2, Nclus)
 
-## Get paramters of first component
+## Get parameters of first component
 parameters(ex2, component=1)
 
 ## Have a look at the posterior probabilies of 10 random observations
