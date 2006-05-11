@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix.Rd 1896 2005-10-31 12:37:07Z leisch $
+%  $Id: flexmix.Rd 1946 2006-01-03 16:17:03Z leisch $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -29,7 +29,8 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     factor for repeated measurements.}
   \item{data}{An optional data frame containing the variables in the model.}
   \item{k}{Number of clusters (not needed if \code{cluster} is specified).}
-  \item{cluster}{Either a matrix of posterior probabilities, or a factor
+  \item{cluster}{Either a matrix with \code{k} columns of initial
+    cluster membership probabilities for each observation; or a factor
     or integer vector with the initial cluster
     assignments of observations at the start of the EM
     algorithm. Default is random assignment into \code{k}

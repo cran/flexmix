@@ -1,19 +1,16 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-class.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: flexmix-class.Rd 1932 2005-12-02 16:40:25Z gruen $
 %
 \name{flexmix-class}
 \docType{class}
 \alias{flexmix-class}
 \alias{cluster}
 \alias{cluster,flexmix-method}
-\alias{posterior}
-\alias{posterior,flexmix-method}
 \title{Class "flexmix"}
 \description{A fitted \code{\link{flexmix}} model.}
 \usage{
 \S4method{cluster}{flexmix}(object)
-\S4method{posterior}{flexmix}(object)
 }
 \arguments{
   \item{object}{An object of class "flexmix".}

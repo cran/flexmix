@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: models.R 1664 2005-06-13 06:11:03Z leisch $
+#  $Id: models.R 2599 2006-05-11 14:19:33Z leisch $
 #
 
 setClass("FLXglmmodel",
@@ -24,8 +24,6 @@ FLXglm <- function(formula=.~.,
     
     if(family=="gaussian"){
 
-        z@refit <- function(x, y, w) lm.wfit(x, y, w=w, offset=offset)
-        
         z@fit <- function(x, y, w){
             fit <- lm.wfit(x, y, w=w, offset=offset)
             sigma <- sqrt(sum(fit$weights * fit$residuals^2 /
@@ -270,7 +268,7 @@ FLXmclust <- function(formula=.~., diagonal=TRUE)
         }
         
         predict <- function(x, ...){
-            matrix(para$center, nrow=nrow(y), ncol=length(para$center),
+            matrix(para$center, nrow=nrow(x), ncol=length(para$center),
                    byrow=TRUE)
         }
         
@@ -284,6 +282,44 @@ FLXmclust <- function(formula=.~., diagonal=TRUE)
     z
 }
 
+
+###**********************************************************
+
+FLXbclust <- function(formula=.~.)
+{
+    z <- new("FLXmodel", weighted=TRUE, formula=formula,
+             name="model-based binary clustering")
+
+    ## make sure that y is binary
+    z@preproc.y <- function(x){
+        x <- as.matrix(x)
+        storage.mode(x) <- "logical"
+        storage.mode(x) <- "integer"
+        x
+    }
+    
+    z@fit <- function(x, y, w){
+        
+        m <- colSums(w*y)/sum(w)
+        df <- ncol(y)
+        
+        predict <- function(x, ...){
+            matrix(m, nrow=nrow(x), ncol=length(m),
+                   byrow=TRUE)
+        }
+        
+        logLik <- function(x, y){
+            p <- matrix(m, nrow=nrow(x), ncol=length(m),
+                        byrow=TRUE)
+            rowSums(log(y*p+(1-y)*(1-p)))
+        }
+            
+        new("FLXcomponent", parameters=list(center=m), df=df,
+            logLik=logLik, predict=predict)
+    }
+    
+    z
+}
 
 
 ###**********************************************************

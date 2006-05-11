@@ -1,3 +1,17 @@
+Changes in flexmix version 1.1-2
+
+  o Fixed a bug that made the log-likelihood infinity for observations
+    where all posteriors are numerically zero
+
+  o Fixed a bug for formulae with dots.
+
+  o posterior() now has a newdata argument.
+
+  o New demo driver for model-based clustering of binary data.
+
+  o Adapted to changes in summary.glm() of R version 2.3.0.
+  
+
 Changes in flexmix version 1.1-1
 
   o The 'cluster' argument of flexmix() may now also be a matrix of 

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXmodel-class.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: FLXmodel-class.Rd 1943 2005-12-21 10:36:16Z leisch $
 %
 \name{FLXmodel-class}
 \docType{class}
@@ -22,6 +22,10 @@
     \item{\code{formula}:}{Formula describing the model.}
     \item{\code{x}:}{Model matrix.}
     \item{\code{y}:}{Model response.}
+    \item{\code{preproc.x}:}{Function for preprocessing matrix \code{x}
+      before the EM algorithm starts, by default the identity function.}
+    \item{\code{preproc.y}:}{Function for preprocessing matrix \code{y}
+      before the EM algorithm starts, by default the identity function.}
   }
 }
 

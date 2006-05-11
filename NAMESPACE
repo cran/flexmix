@@ -4,6 +4,7 @@ importFrom(stats4, AIC, BIC, logLik, plot, summary)
 export(
        ExNPreg,
        ExNclus,
+       FLXbclust,
        FLXfit,
        FLXglm,
        FLXmclust,

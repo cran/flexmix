@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: flexmix.R 1729 2005-07-26 07:43:57Z gruen $
+#  Copyright (C) 2004-2005 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmix.R 1943 2005-12-21 10:36:16Z leisch $
 #
 
 setClass("FLXcontrol",
@@ -40,9 +40,13 @@ setClass("FLXmodel",
                         formula="formula",
                         fullformula="formula",
                         x="matrix",
-                        y="matrix"),
+                        y="matrix",
+                        preproc.x="function",
+                        preproc.y="function"),
          prototype(formula=.~.,
-                   fullformula=.~.))
+                   fullformula=.~.,
+                   preproc.x = function(x) x,
+                   preproc.y = function(x) x))
 
 setMethod("show", "FLXmodel",
 function(object){
@@ -269,9 +273,17 @@ function(model, control, postunscaled=NULL, group)
 
         if(length(group)>0)
             postunscaled <- groupPosteriors(postunscaled, group)
+
+        postunscaled <- exp(postunscaled)
+        ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
+        ## kleine postunscaled-werte hat, ist exp(-postunscaled)
+        ## numerisch Null, und damit postscaled Inf
+        postunscaled[postunscaled<.Machine$double.eps] <- .Machine$double.eps
+        ##</FIXME>
         
         for(m in 1:k)
-            postunscaled[,m] <- prior[m] * exp(postunscaled[,m])
+            postunscaled[,m] <- prior[m] * postunscaled[,m]
+
         postscaled <- postunscaled/rowSums(postunscaled)
 
         prior <- colMeans(postscaled[groupfirst,,drop=FALSE])
@@ -360,24 +372,34 @@ function(model, control, postunscaled=NULL, group)
 
 setGeneric(".model", function(model, formula, data, rhs=TRUE) standardGeneric(".model"))
 
-setMethod(".model", signature(model="FLXmodel"), function(model, formula, data, rhs=TRUE)
+setMethod(".model", signature(model="FLXmodel"),
+function(model, formula, data, rhs=TRUE)
 {
   if(is.null(model@formula))
     model@formula = formula
   
-  model@fullformula = update.formula(formula, model@formula)
+  ## model@fullformula = update.formula(formula, model@formula)
+  ## <FIXME>: ist das der richtige weg, wenn ein punkt in beiden
+  ## formeln ist?
+  model@fullformula = update(terms(formula, data=data), model@formula)
+  ## </FIXME>
+  
   if (rhs) {
     mf <- model.frame(model@fullformula, data=data)
     model@x = model.matrix(attr(mf, "terms"), data=mf)
     model@y = as.matrix(model.response(mf))
   }
   else {
-    mt1 <- terms(model@fullformula)
+    mt1 <- terms(model@fullformula, data=data)
     mf <- model.frame(delete.response(mt1), data=data)
     mt <- attr(mf, "terms")
-    attr(mt, "intercept") <- attr(mt1, "intercept")
+    ## <FIXME>: warum war das da???
+    ## attr(mt, "intercept") <- attr(mt1, "intercept")
+    ## </FIXME>
     model@x <- model.matrix(mt, data=mf)
   }
+  model@x <- model@preproc.x(model@x)
+  model@y <- model@preproc.y(model@y)
   model
 })
 
@@ -484,12 +506,36 @@ function(object, component=1, model=1)
 })
     
 setGeneric("posterior",
-           function(object, ...) standardGeneric("posterior"))
+           function(object, newdata, ...) standardGeneric("posterior"))
 
-setMethod("posterior", signature(object="flexmix"),
+setMethod("posterior", signature(object="flexmix", newdata="missing"),
 function(object)
 {
     object@posterior$scaled
+})
+
+setMethod("posterior", signature(object="FLXdist", newdata="data.frame"),
+          function(object, newdata, unscaled=FALSE,...) {
+            postunscaled <- matrix(0, nrow = nrow(newdata), ncol = object@k)
+            for (m in 1:length(object@model)) {
+              comp <- lapply(object@components, "[[", m)
+              postunscaled <- postunscaled + posterior(object@model[[m]], newdata, comp, 
+                                                      ...)
+            }
+            if("group" %in% slotNames(object) && length(object@group)>0)
+              postunscaled <- groupPosteriors(postunscaled, object@group)
+            for(m in 1:object@k)
+              postunscaled[,m] <- object@prior[m] * exp(postunscaled[,m])
+            if (unscaled) return(postunscaled)
+            else return(postunscaled/rowSums(postunscaled))
+})            
+
+setMethod("posterior", signature(object="FLXmodel", newdata="data.frame"),
+          function(object, newdata, components, ...) {
+            mf <- model.frame(terms(object@fullformula, data=newdata), data = newdata)
+            x <- model.matrix(attr(mf, "terms"), data = mf)
+            y <- as.matrix(model.response(mf))
+            sapply(components, function(z) z@logLik(x, y))
 })
     
 setGeneric("cluster",

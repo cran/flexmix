@@ -1,6 +1,6 @@
 Package: flexmix
-Version: 1.1-1
-Date: 2005-10-31
+Version: 1.1-2
+Date: 2006-05-11
 Author: Friedrich Leisch and Bettina Gruen
 Maintainer: Friedrich Leisch <Friedrich.Leisch@ci.tuwien.ac.at>
 Title: Flexible Mixture Modeling
@@ -17,4 +17,4 @@ License: GPL version 2.
 URL: http://www.ci.tuwien.ac.at/~leisch/FlexMix
 SaveImage: no
 LazyLoad: yes
-Packaged: Mon Oct 31 14:07:31 2005; leisch
+Packaged: Thu May 11 17:04:17 2006; leisch

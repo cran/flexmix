@@ -1,12 +1,13 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-internal.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: flexmix-internal.Rd 1932 2005-12-02 16:40:25Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXglmmodel-class}
 \alias{FLXrefit-class}
 \alias{FLXrefitglm-class}
 \alias{summary.flexmix-class}
+\alias{posterior,FLXmodel,data.frame-method}
 \title{Internal FlexMix functions}
 \description{
   Internal flexmix functions, methods and classes.
