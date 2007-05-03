@@ -1,8 +1,9 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXmclust.Rd 1838 2005-09-29 19:23:09Z leisch $
+%  $Id: FLXmclust.Rd 3221 2007-01-22 14:27:40Z gruen $
 %
-\name{FLXmclust}
+\name{FLXMCmvnorm}
+\alias{FLXMCmvnorm}
 \alias{FLXmclust}
 \title{FlexMix Clustering Demo Driver}
 \description{
@@ -10,7 +11,7 @@
   model-based clustering of Gaussian data. 
 }
 \usage{
-FLXmclust(formula = . ~ ., diagonal = TRUE)
+FLXMCmvnorm(formula = . ~ ., diagonal = TRUE)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula
@@ -27,7 +28,7 @@ FLXmclust(formula = . ~ ., diagonal = TRUE)
   should also look at package \pkg{mclust} for real applications. 
 }
 \value{
-  \code{FLXmclust} returns an object of class \code{FLXmodel}.
+  \code{FLXMCmvnorm} returns an object of class \code{FLXM}.
 }
 \author{Friedrich Leisch}
 \references{
@@ -38,18 +39,18 @@ FLXmclust(formula = . ~ ., diagonal = TRUE)
 \seealso{\code{\link{flexmix}}}
 \keyword{cluster}
 \examples{
-data(Nclus)
+data("Nclus")
 
 require("MASS")
 eqscplot(Nclus)
 
 ## This model is wrong (one component has a non-diagonal cov matrix)
-ex1 <- flexmix(Nclus~1, k=4, model=FLXmclust())
+ex1 <- flexmix(Nclus~1, k=4, model=FLXMCmvnorm())
 print(ex1)
 plotEll(ex1, Nclus)
 
 ## True model, wrong number of components
-ex2 <- flexmix(Nclus~1, k=6, model=FLXmclust(diag=FALSE))  
+ex2 <- flexmix(Nclus~1, k=6, model=FLXMCmvnorm(diag=FALSE))  
 print(ex2)
 
 plotEll(ex2, Nclus)

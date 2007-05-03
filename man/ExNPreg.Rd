@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: ExNPreg.Rd 1896 2005-10-31 12:37:07Z leisch $
+%  $Id: ExNPreg.Rd 3221 2007-01-22 14:27:40Z gruen $
 %
 \name{ExNPreg}
 \alias{ExNPreg}
@@ -15,7 +15,7 @@
 }
 \usage{
 ExNPreg(n)
-data(NPreg)
+data("NPreg")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -27,7 +27,7 @@ data(NPreg)
   simplicity of examples only.
 }
 \examples{
-data(NPreg)
+data("NPreg")
 plot(yn~x, data=NPreg, col=class)
 plot(yp~x, data=NPreg, col=class)
 plot(yb~x, data=NPreg, col=class)

@@ -1,30 +1,22 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-class.Rd 1932 2005-12-02 16:40:25Z gruen $
+%  Copyright (C) 2004-2007 Friedrich Leisch
+%  $Id: flexmix-class.Rd 3364 2007-03-08 01:28:57Z leisch $
 %
 \name{flexmix-class}
 \docType{class}
 \alias{flexmix-class}
-\alias{cluster}
-\alias{cluster,flexmix-method}
 \title{Class "flexmix"}
 \description{A fitted \code{\link{flexmix}} model.}
-\usage{
-\S4method{cluster}{flexmix}(object)
-}
-\arguments{
-  \item{object}{An object of class "flexmix".}
-}
 \section{Slots}{
   \describe{
-    \item{\code{model}:}{List of \code{FLXmodel} objects.}
+    \item{\code{model}:}{List of \code{FLXM} objects.}
     \item{\code{prior}:}{Numeric vector with prior probabilities of clusters.}
     \item{\code{posterior}:}{Named list with elements \code{scaled}
       and \code{unscaled}, both matrices with one row per observation
       and one column per cluster.}
-    \item{\code{iter}:}{Number of EM
-      iterations.}
-    \item{\code{k}:}{Number of clusters.}
+    \item{\code{iter}:}{Number of EM iterations.}
+    \item{\code{k}:}{Number of clusters after EM.}
+    \item{\code{k0}:}{Number of clusters at start of EM.}
     \item{\code{cluster}:}{Cluster assignments of observations.}
     \item{\code{size}:}{Cluster sizes.}
     \item{\code{logLik}:}{Log-likelihood at EM convergence.}
@@ -37,7 +29,9 @@
     \item{\code{call}:}{The function call
       used to create the object.}
     \item{\code{group}:}{Object of class \code{"factor"}.}
-    \item{\code{converged}}{Logical, \code{TRUE} if EM algorithm converged.}
+    \item{\code{converged}:}{Logical, \code{TRUE} if EM algorithm converged.}
+    \item{\code{concomitant}:}{Object of class \code{"FLXP"}..}
+    \item{\code{weights}:}{Optional weights of the observations.}
   }
 }
 \section{Extends}{

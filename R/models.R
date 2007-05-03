@@ -1,125 +1,136 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: models.R 2599 2006-05-11 14:19:33Z leisch $
+#  Copyright (C) 2004-2006 Friedrich Leisch
+#  $Id: models.R 3467 2007-04-27 16:05:26Z gruen $
 #
 
-setClass("FLXglmmodel",
-         representation(family="character",
-                        refit="function"),
-         contains="FLXmodel")
-
-FLXglm <- function(formula=.~.,
-                   family=c("gaussian", "binomial", "poisson", "Gamma"),
-                   offset=NULL)
+FLXMRglm <- function(formula=.~.,
+                     family=c("gaussian", "binomial", "poisson", "Gamma"),
+                     offset=NULL)
 {
     family <- match.arg(family)
-
     glmrefit <- function(x, y, w)
         glm.fit(x, y, weights=w, offset=offset,
                 family=get(family, mode="function")())
                 
-    z <- new("FLXglmmodel", weighted=TRUE, formula=formula,
-             name=paste("FLXglm", family, sep=":"),
+    z <- new("FLXMRglm", weighted=TRUE, formula=formula,
+             name=paste("FLXMRglm", family, sep=":"),
              family=family, refit=glmrefit)
     
     if(family=="gaussian"){
-
-        z@fit <- function(x, y, w){
-            fit <- lm.wfit(x, y, w=w, offset=offset)
-            sigma <- sqrt(sum(fit$weights * fit$residuals^2 /
-                              mean(fit$weights))/ (nrow(x)-fit$rank))
-            fit = fit[c("coefficients")]
-
-            predict <- function(x, ...) {
-                dotarg = list(...)
-                if("offset" %in% names(dotarg)) offset <- dotarg$offset
-                p <- x%*%coef(fit)
-                if (!is.null(offset)) p <-  p + offset
-                p
-            }
-
-            logLik <- function(x, y)
-                dnorm(y, mean=predict(x), sd=sigma, log=TRUE)
-            
-            new("FLXcomponent",
-                parameters=list(coef=coef(fit), sigma=sigma),
-                logLik=logLik,
-                predict=predict,
-                df=ncol(x)+1)
+      z@defineComponent <- expression({
+        predict <- function(x, ...) {
+          dotarg = list(...)
+          if("offset" %in% names(dotarg)) offset <- dotarg$offset
+          p <- x%*%coef
+          if (!is.null(offset)) p <-  p + offset
+          p
         }
+
+        logLik <- function(x, y)
+          dnorm(y, mean=predict(x), sd=sigma, log=TRUE)
+
+        new("FLXcomponent",
+            parameters=list(coef=coef, sigma=sigma),
+            logLik=logLik, predict=predict,
+            df=df)
+      })
+
+      z@fit <- function(x, y, w){
+        fit <- lm.wfit(x, y, w=w, offset=offset)
+        sigma <- sqrt(sum(fit$weights * fit$residuals^2 /
+                          mean(fit$weights))/ (nrow(x)-fit$rank))
+        fit = fit[c("coefficients")]
+        coef <- coef(fit)
+        df <- ncol(x)+1
+        eval(z@defineComponent)
+      }
     }
     else if(family=="binomial"){
-        z@fit <- function(x, y, w){
-            fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset)
-            fit = fit[c("coefficients","family")]
-
-            predict <- function(x, ...) {
-                dotarg = list(...)
-                if("offset" %in% names(dotarg)) offset <- dotarg$offset
-                p <- x%*%coef(fit)
-                if (!is.null(offset)) p <- p + offset
-                fit$family$linkinv(p)
-            }
-
-            logLik <- function(x, y){
-                dbinom(y[,1], size=rowSums(y), prob=predict(x), log=TRUE)
-            }
-            
-            new("FLXcomponent",
-                parameters=list(coef=coef(fit)),
-                logLik=logLik,
-                predict=predict,
-                df=ncol(x))
+      z@preproc.y <- function(x){
+        if (ncol(x) != 2)
+          stop("for the binomial family, y must be a 2 column matrix\n",
+               "where col 1 is no. successes and col 2 is no. failures")
+        x
+      }
+      
+      z@defineComponent <- expression({
+        predict <- function(x, ...) {
+          dotarg = list(...)
+          if("offset" %in% names(dotarg)) offset <- dotarg$offset
+          p <- x%*%coef
+          if (!is.null(offset)) p <- p + offset
+          get(family, mode = "function")()$linkinv(p)
         }
+        logLik <- function(x, y)
+          dbinom(y[,1], size=rowSums(y), prob=predict(x), log=TRUE)
+
+        new("FLXcomponent",
+            parameters=list(coef=coef),
+            logLik=logLik, predict=predict,
+            df=df)
+      })
+
+      z@fit <- function(x, y, w){
+        fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset)
+        fit = fit[c("coefficients","family")]
+        coef <- coef(fit)
+        df <- ncol(x)
+        eval(z@defineComponent)
+      }
     }
     else if(family=="poisson"){
-        z@fit <- function(x, y, w){
-            fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset)
-            fit = fit[c("coefficients","family")]
-            rm(w)
-            
-            predict <- function(x, ...) {
-                dotarg = list(...)
-                if("offset" %in% names(dotarg)) offset <- dotarg$offset
-                p <- x%*%coef(fit)
-                if (!is.null(offset)) p <- p + offset
-                fit$family$linkinv(p)
-            }
-
-            logLik <- function(x, y){
-                dpois(y, lambda=predict(x), log=TRUE)
-            }
-
-            new("FLXcomponent",
-                parameters=list(coef=coef(fit)),
-                logLik=logLik,
-                predict=predict,
-                df=ncol(x))
+      z@defineComponent <- expression({
+        predict <- function(x, ...) {
+          dotarg = list(...)
+          if("offset" %in% names(dotarg)) offset <- dotarg$offset
+          p <- x%*%coef
+          if (!is.null(offset)) p <- p + offset
+          get(family, mode = "function")()$linkinv(p)
         }
+        logLik <- function(x, y)
+          dpois(y, lambda=predict(x), log=TRUE)
+        
+        new("FLXcomponent",
+            parameters=list(coef=coef),
+            logLik=logLik, predict=predict,
+            df=df)
+      })
+          
+      z@fit <- function(x, y, w){
+        fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset)
+        fit = fit[c("coefficients","family")]
+        rm(w)
+        coef <- coef(fit)
+        df <- ncol(x)
+        eval(z@defineComponent)
+      }
     }
     else if(family=="Gamma"){
-        z@fit <- function(x, y, w){
-            fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset)
-            shape <- sum(fit$prior.weights)/fit$deviance
-            fit = fit[c("coefficients","family")]
-            rm(w)
-
-            predict <- function(x, ...) {
-                dotarg = list(...)
-                if("offset" %in% names(dotarg)) offset <- dotarg$offset
-                p <- x%*%coef(fit)
-                if (!is.null(offset)) p <- p + offset
-                fit$family$linkinv(p)
-            }
-
-            logLik <- function(x, y){
-                p = fit$family$linkinv(x%*%coef(fit))
-                dgamma(y, shape = shape, scale=p/shape, log=TRUE)
-            }
-            new("FLXcomponent", predict=predict,
-                parameters=list(coef=coef(fit), shape=shape),
-                logLik=logLik, df=ncol(x)+1)
+      z@defineComponent <- expression({
+        predict <- function(x, ...) {
+          dotarg = list(...)
+          if("offset" %in% names(dotarg)) offset <- dotarg$offset
+          p <- x%*%coef
+          if (!is.null(offset)) p <- p + offset
+          get(family, mode = "function")()$linkinv(p)
         }
+        logLik <- function(x, y)
+          dgamma(y, shape = shape, scale=predict(x)/shape, log=TRUE)
+        
+        new("FLXcomponent", 
+            parameters = list(coef, shape = shape),
+            predict = predict, logLik = logLik,
+            df = df)
+      })
+
+      z@fit <- function(x, y, w){
+        fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset)
+        shape <- sum(fit$prior.weights)/fit$deviance
+        fit = fit[c("coefficients","family")]
+        coef <- coef(fit)
+        df <- ncol(x)+1
+        eval(z@defineComponent)
+      }
     }
     else stop(paste("Unknown family", family))
     z
@@ -127,157 +138,31 @@ FLXglm <- function(formula=.~.,
 
 ###**********************************************************
 
-setClass("FLXrefit",
-         representation(model="list",
-                        call="call"))
-
-setClass("FLXrefitglm",
-         representation(fitted="list"))
-
-setGeneric("refit", function(object, ...) standardGeneric("refit"))
-
-
-setMethod("refit", signature(object="flexmix"),
-function(object, model=1, ...)
+FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
 {
-    z = new("FLXrefit",
-            call=sys.call(-1))
-
-    z@model <- refit(object@model[[model]],
-                     weights=object@posterior$scaled)
-
-    names(z@model) <- paste("Comp", 1:object@k, sep=".")
-    z
-})
-
-setMethod("refit", signature(object="FLXglmmodel"),
-function(object, weights, ...)
-{
-  z <- list()
-  for (k in 1:ncol(weights)) {
-    z[[k]] = new("FLXrefitglm")
-
-    z[[k]]@fitted =
-        object@refit(object@x,
-                     object@y,
-                     weights[,k])
-  }
-  z
-})
-
-
-setMethod("show", signature(object="FLXrefit"),
-function(object)
-{
-    cat("\nCall:", deparse(object@call,0.75*getOption("width")),
-        sep="\n")
-    cat("\nNumber of components:", length(object@model), "\n\n")
-})
-
-setMethod("summary", signature(object="FLXrefitglm"),
-function(object)
-{
-    printCoefmat(coef(summary.glm(object@fitted)), signif.stars=FALSE)
-})
-
-setMethod("summary", signature(object="FLXrefit"),
-function(object)
-{
-    cat("\nCall:", deparse(object@call,0.75*getOption("width")),
-        sep="\n")
-    cat("\n")
-    
-    k = length(object@model)
-    for(n in 1:k){
-        cat("Component", n, ":\n")
-        summary(object@model[[n]])
-        cat(ifelse(k==n, "\n\n", "\n-------------\n"))
-    }
-})
-
-###**********************************************************
-
-setGeneric("fitted")
-
-setMethod("fitted", signature(object="flexmix"),
-function(object, drop=TRUE, ...)
-{
-    x<- list()
-    for(m in 1:length(object@model)) {
-      comp <- lapply(object@components, "[[", m)
-      x[[m]] <- fitted(object@model[[m]], comp, ...)
-    }
-    z <- list()
-    for (k in 1:object@k) {
-      z[[k]] <- do.call("cbind", lapply(x, "[[", k))
-    }
-    names(z) <- paste("Comp", 1:object@k, sep=".")
-    if(drop && all(lapply(z, ncol)==1)){
-        z <- sapply(z, unlist)
-    }
-    z
-})
-
-setMethod("fitted", signature(object="FLXmodel"),
-function(object, components, ...) {
-  lapply(components, function(z) z@predict(object@x))
-})
-
-setMethod("fitted", signature(object="FLXrefitglm"),
-function(object, ...)
-{
-    object@fitted$fitted.values
-})
-        
-setMethod("fitted", signature(object="FLXrefit"),
-function(object, ...)
-{
-    sapply(object@model, fitted)
-})
-
-setMethod("predict", signature(object="FLXglmmodel"), function(object, newdata, components, ...) {
-  mt1 <- terms(object@fullformula)
-  mf <- model.frame(delete.response(mt1), data=newdata)
-  mt <- attr(mf, "terms")
-  attr(mt, "intercept") <- attr(mt1, "intercept")
-  x <- model.matrix(mt, data=mf)
-  
-  z <- list()
-  for(k in 1:length(components)){
-    z[[k]] <- components[[k]]@predict(x, ...)
-  }
-  z
-})
-                           
-###**********************************************************
-
-FLXmclust <- function(formula=.~., diagonal=TRUE)
-{
-    z <- new("FLXmodel", weighted=TRUE, formula=formula,
-             name="model-based Gaussian clustering")
+    z <- new("FLXMC", weighted=TRUE, formula=formula,
+             dist = "mvnorm", name="model-based Gaussian clustering")
 
     require(mvtnorm)
-
+    z@defineComponent <- expression({
+      logLik <- function(x, y)
+        dmvnorm(y, mean=center, sigma=cov, log=TRUE)
+    
+      predict <-  function(x, ...)
+        matrix(center, nrow=nrow(x), ncol=length(center),
+               byrow=TRUE)
+      new("FLXcomponent", parameters=list(center = center, cov = cov),
+          df=df, logLik=logLik, predict=predict)
+    })
+    
     z@fit <- function(x, y, w){
-        
-        para <- cov.wt(y, wt=w)[c("center","cov")]
-        df <- (3*ncol(y) + ncol(y)^2)/2
-        if(diagonal){
-            para$cov <- diag(diag(para$cov))
-            df <- 2*ncol(y)
-        }
-        
-        predict <- function(x, ...){
-            matrix(para$center, nrow=nrow(x), ncol=length(para$center),
-                   byrow=TRUE)
-        }
-        
-        logLik <- function(x, y){
-            dmvnorm(y, mean=para$center, sigma=para$cov, log=TRUE)
-        }
-            
-        new("FLXcomponent", parameters=para, df=df,
-            logLik=logLik, predict=predict)
+      para <- cov.wt(y, wt=w)[c("center","cov")]
+      df <- (3*ncol(y) + ncol(y)^2)/2
+      if(diagonal){
+        para$cov <- diag(diag(para$cov))
+        df <- 2*ncol(y)
+      }
+      with(para, eval(z@defineComponent))
     }
     z
 }
@@ -285,10 +170,15 @@ FLXmclust <- function(formula=.~., diagonal=TRUE)
 
 ###**********************************************************
 
-FLXbclust <- function(formula=.~.)
+FLXMCmvbinary <- function(formula=.~., truncated = FALSE) {
+  if (truncated) return(MCmvbinary_truncated())
+  else return(MCmvbinary())
+}
+
+MCmvbinary <- function(formula=.~.)
 {
-    z <- new("FLXmodel", weighted=TRUE, formula=formula,
-             name="model-based binary clustering")
+    z <- new("FLXMC", weighted=TRUE, formula=formula,
+             dist = "mvbinary", name="model-based binary clustering")
 
     ## make sure that y is binary
     z@preproc.y <- function(x){
@@ -297,25 +187,26 @@ FLXbclust <- function(formula=.~.)
         storage.mode(x) <- "integer"
         x
     }
-    
-    z@fit <- function(x, y, w){
+    z@defineComponent <- expression({
+      predict <- function(x, ...){
+        matrix(center, nrow=nrow(x), ncol=length(center),
+               byrow=TRUE)
+      }
         
-        m <- colSums(w*y)/sum(w)
-        df <- ncol(y)
-        
-        predict <- function(x, ...){
-            matrix(m, nrow=nrow(x), ncol=length(m),
-                   byrow=TRUE)
-        }
-        
-        logLik <- function(x, y){
-            p <- matrix(m, nrow=nrow(x), ncol=length(m),
-                        byrow=TRUE)
-            rowSums(log(y*p+(1-y)*(1-p)))
-        }
+      logLik <- function(x, y){
+        p <- matrix(center, nrow=nrow(x), ncol=length(center),
+                    byrow=TRUE)
+        rowSums(log(y*p+(1-y)*(1-p)))
+      }
             
-        new("FLXcomponent", parameters=list(center=m), df=df,
-            logLik=logLik, predict=predict)
+      new("FLXcomponent", parameters=list(center=center), df=df,
+          logLik=logLik, predict=predict)
+    })
+
+    z@fit <- function(x, y, w){
+      center <- colSums(w*y)/sum(w)
+      df <- ncol(y)
+      eval(z@defineComponent)
     }
     
     z
@@ -323,3 +214,43 @@ FLXbclust <- function(formula=.~.)
 
 
 ###**********************************************************
+
+binary_truncated <- function(y, w, maxit = 200, epsilon = .Machine$double.eps) {
+  r_k <- colSums(y*w)/sum(w)
+  r_0 <- 0
+  llh.old <- -Inf
+  for (i in 1:maxit) {
+    p <- r_k/(1+r_0)
+    llh <- sum((r_k*log(p))[r_k > 0])+ sum(((1 - r_k + r_0) * log(1-p))[(1-r_k+r_0) > 0])
+    if (abs(llh - llh.old)/(abs(llh) + 0.1) < epsilon) break    
+    llh.old <- llh
+    prod_p <- prod(1-p)
+    r_0 <- prod_p/(1-prod_p)
+  }
+  p
+}
+
+MCmvbinary_truncated <- function(formula=.~.)
+{
+    z <- MCmvbinary(formula=formula)
+    z@defineComponent <- expression({
+      predict <- function(x, ...) {
+        matrix(center, nrow = nrow(x), ncol = length(center), 
+               byrow = TRUE)
+      }
+      logLik <- function(x, y) {
+        p <- matrix(center, nrow = nrow(x), ncol = length(center), 
+                    byrow = TRUE)
+        rowSums(log(y * p + (1 - y) * (1 - p))) - log(1 - prod(1-center))
+      }
+      new("FLXcomponent", parameters = list(center = center), df = df, 
+          logLik = logLik, predict = predict)
+    })
+    z@fit <- function(x, y, w){
+      center <- binary_truncated(y, w)
+      df <- ncol(y)
+      eval(z@defineComponent)
+    }
+    
+    z
+}

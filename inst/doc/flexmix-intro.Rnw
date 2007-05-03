@@ -1,30 +1,47 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: flexmix-intro.Rnw 3193 2007-01-04 10:35:17Z gruen $
 %
-\documentclass{jss}
+\documentclass[JSS]{jss-old}
 
-\title{FlexMix: A General Framework for Finite Mixture
-  Models and Latent Class Regression in \proglang{R}}
-\Plaintitle{FlexMix: A General Framework for Finite Mixture
-  Models and Latent Class Regression in R}
+\title{FlexMix: A General Framework for Finite Mixture Models and
+  Latent Class Regression in \proglang{R}\thanks{This article was
+    originally published in \emph{Journal of Statistical Software},
+    October 2004, Volume 11, Issue 8. It has been modified to reflect
+    the changes made to the package. Please use the version published
+    in JSS for citation.}}
+
+\subtitle{\pkg{flexmix} version
+  \Sexpr{packageDescription("flexmix",fields="Version")}\\\today}
+
+\Plaintitle{FlexMix: A General Framework for Finite Mixture Models and
+  Latent Class Regression in R} 
 \Shorttitle{FlexMix: Finite Mixture Models in \proglang{R}}
 
-\author{Friedrich Leisch\\Technische Universit{\"a}t Wien}
+\author{Friedrich Leisch\\Ludwig-Maximilians-Universit{\"a}t M{\"u}nchen} 
 \Plainauthor{Friedrich Leisch}
 
 \Address{
   Friedrich Leisch\\
-  Institut f\"ur Statistik \& Wahrscheinlichkeitstheorie\\
-  Technische Universit\"at Wien\\
-  Wiedner Hauptstra{\ss}e 8-10/1071\\
-  1040 Wien, Austria\\
-  E-mail: \email{Friedrich.Leisch@tuwien.ac.at}\\
-  URL: \url{http://www.ci.tuwien.ac.at/~leisch/}
+  Institut f\"ur Statistik\\
+  Ludwig-Maximilians-Universit\"at M\"unchen\\
+  Ludwigstra{\ss }e 33\\
+  D-80539 M\"unchen, Germany\\
+  E-mail: \email{Friedrich.Leisch@stat.uni-muenchen.de}\\
+  URL: \url{http://www.stat.uni-muenchen.de/~leisch/}
 }
 
+\usepackage[utf8]{inputenc}
 \usepackage{listings}
 \newcommand{\R}{\proglang{R}}
+
+<<echo=false,results=hide>>=
+set.seed(1504)
+options(width=65)
+ps.options(family="Times")
+library("flexmix")
+data("NPreg")
+@
 
 \Abstract{
   FlexMix implements a general framework for fitting
@@ -54,6 +71,7 @@
 \Submitdate{2004-04-19}
 \Acceptdate{2004-10-18}
 
+%%\usepackage{Sweave} %% already provided by jss.cls
 %%\VignetteIndexEntry{FlexMix: A General Framework for Finite Mixture Models and Latent Class Regression in R}}
 %%\VignetteDepends{flexmix}
 %%\VignetteKeywords{R, finite mixture models, model based clustering, latent class regression}
@@ -119,12 +137,12 @@ Section~\ref{sec:extending-flexmix} shows how to extend FlexMix by
 writing new drivers using the well-known model-based clustering
 procedure as an example.
 
-All computations and graphics in this paper have been done with
-\pkg{flexmix} version 1.0-0 and \R{} version 2.0.0 using Sweave
-\citep{e1071-papers:Leisch:2002}. The newest release version of
-\pkg{flexmix} is always available from the Comprehensive R Archive
-Network at \url{http://cran.R-project.org}, an up-to-date version of
-this paper is contained as a package vignette.
+% All computations and graphics in this paper have been done with
+% \pkg{flexmix} version 1.0-0 and \R{} version 2.0.0 using Sweave
+% \citep{e1071-papers:Leisch:2002}. The newest release version of
+% \pkg{flexmix} is always available from the Comprehensive R Archive
+% Network at \url{http://cran.R-project.org}, an up-to-date version of
+% this paper is contained as a package vignette.
 
 \section{Latent class regression}
 \label{sec:latent-class-regr}
@@ -289,21 +307,13 @@ and categorical predictor variables, see
 \cite{e1071-papers:Grun+Leisch:2004} for a discussion and how
 bootstrapping can be used to assess identifiability of mixture models.
 
-
+\pagebreak[4]
 \section{Using FlexMix}
 \label{sec:using-flexmix}
 
 \SweaveOpts{width=12,height=8,eps=FALSE}
 
-<<echo=false,results=hide>>=
-set.seed(1504)
-options(width=65)
-ps.options(family="Times")
-library(flexmix)
-data(NPreg)
-@
-
-The standard M-step \texttt{FLXglm()} of FlexMix is an interface to
+The standard M-step \texttt{FLXMRglm()} of FlexMix is an interface to
 R's generalized linear modelling facilities (the \texttt{glm()}
 function).  As a simple example we use artificial data with two latent
 classes of size \Sexpr{nrow(NPreg)/2} each:
@@ -318,8 +328,8 @@ $\pi_1=\pi_2=0.5$, see the left panel of Figure~\ref{fig:npreg}.
 
 We can fit this model in \R{} using the commands
 <<>>= 
-library(flexmix)
-data(NPreg)
+library("flexmix")
+data("NPreg")
 m1 = flexmix(yn~x+I(x^2), data=NPreg, k=2)
 m1
 @
@@ -335,7 +345,7 @@ for component~2. The paramter estimates of both components are close
 to the true values. A cross-tabulation of true classes and cluster
 memberships can be obtained by
 <<>>=
-table(NPreg$class, m1@cluster)
+table(NPreg$class, cluster(m1))
 @ 
 The summary method
 <<>>=
@@ -376,8 +386,8 @@ emphasized.
 
 \begin{figure}[htbp]
   \centering
-<<fig=true, echo=false, results=hide>>=
-plot(m1)
+<<fig=true, echo=false, results=hide, height=5, width=10>>=
+print(plot(m1))
 @ 
 \caption{The plot method for \texttt{"flexmix"} objects, here obtained
   by \texttt{plot(m1)}, shows rootograms of the posterior class
@@ -420,16 +430,20 @@ and given $x$ the response $y$ in group $k$ has a Poisson distribution
 with mean $e^{\mu_k}$, see the right panel of Figure~\ref{fig:npreg}.
 The model can be estimated using
 
+<<echo=false,results=hide>>=
+options(width=55)
+@ 
 <<>>=
-m2 = flexmix(yp~x, data = NPreg, k = 2, 
-                  model = FLXglm(family = "poisson"))
+m2 = flexmix(yp~x, data = NPreg, k = 2, model = FLXMRglm(family = "poisson"))
 summary(m2)
 @ 
-
+<<echo=false,results=hide>>=
+options(width=65)
+@ 
 \begin{figure}[htbp]
   \centering
-<<fig=true, echo=false, results=hide>>=
-plot(m2)
+<<fig=true, echo=false, results=hide, height=5, width=10>>=
+print(plot(m2))
 @ 
   \caption{\texttt{plot(m2)}}
   \label{fig:root2}
@@ -468,14 +482,14 @@ Gaussian and Poisson responses of data \texttt{NPreg} simultaneously,
 we use the model specification
 \begin{Sinput}
 > m3 = flexmix(~x, data=NPreg, k=2,
-+              model=list(FLXglm(yn~.+I(x^2)), 
-+                         FLXglm(yp~., family="poisson")))  
++              model=list(FLXMRglm(yn~.+I(x^2)), 
++                         FLXMRglm(yp~., family="poisson")))  
 \end{Sinput}
 
 <<echo=false>>=
 m3 = flexmix(~x, data=NPreg, k=2,
-                   model=list(FLXglm(yn~.+I(x^2)), 
-                              FLXglm(yp~., family="poisson")))
+                   model=list(FLXMRglm(yn~.+I(x^2)), 
+                              FLXMRglm(yp~., family="poisson")))
 @
 Note that now three model formulas are involved: An overall formula as
 first argument to function \texttt{flexmix()} and one formula per
@@ -490,8 +504,8 @@ well-separated.
 
 \begin{figure}[htbp]
   \centering
-<<fig=true, echo=false, results=hide>>=
-plot(m3)
+<<fig=true, echo=false, results=hide, height=5, width=10>>=
+print(plot(m3))
 @ 
   \caption{\texttt{plot(m3)}}
   \label{fig:root3}
@@ -573,15 +587,15 @@ be run repeatedly using different starting values. The function
 \texttt{stepFlexmix()} can be used to repeatedly fit models, e.g.,
 <<>>=
 m7 = stepFlexmix(yp~x+I(x^2), data = NPreg,
-  control=list(verbose=0), K=1:5, nrep=5)
+  control=list(verbose=0), k=1:5, nrep=5)
 
 @ 
-runs \texttt{flexmix()} 5 times for $K=1,2,\ldots,5$ components,
+runs \texttt{flexmix()} 5 times for $k=1,2,\ldots,5$ components,
 totalling in 25 runs. It returns a list with the best solution found
 for each number of components, each list element is simply an object
 of class \texttt{"flexmix"}. To find the best model we can use
 <<>>=
-sapply(m7, BIC)
+getModel(m7, "BIC")
 @ 
 and choose the number of components minimizing the BIC.
 
@@ -597,11 +611,13 @@ models. FlexMix was written using S4 classes and methods
 \citep{flb:Chambers:1998} as implemented in \R{} package
 \pkg{methods}. 
 
-The central classes for writing M-steps are \texttt{"FLXmodel"} and
-\texttt{"FLXcomponent"}. Class \texttt{"FLXmodel"} specifies how the
+The central classes for writing M-steps are \texttt{"FLXM"} and
+\texttt{"FLXcomponent"}. Class \texttt{"FLXM"} specifies how the
 model is fitted using the following slots:
 \begin{description}
  \item[fit:] A \texttt{function(x,y,w)} returning an object of class
+  \texttt{"FLXcomponent"}.
+\item[defineComponent:] Expression constructing the object of class
   \texttt{"FLXcomponent"}.
  \item[weighted:] Logical, specifies if the model may be fitted using
   weighted likelihoods. If \texttt{FALSE}, only hard and random
@@ -612,7 +628,7 @@ model is fitted using the following slots:
  \item[name:] A character string describing the model, this is only
   used for print output. 
 \end{description}
-The remaining slots of class \texttt{"FLXmodel"} are used internally
+The remaining slots of class \texttt{"FLXM"} are used internally
 by FlexMix to hold data, etc. and omitted here, because they are not
 needed to write an M-step driver. The most important slot doing all
 the work is \texttt{fit} holding a function performing the maximum
@@ -628,7 +644,7 @@ which holds a fitted component using the slots:
   number of estimated parameters.
  \item[parameters:] An optional list containing model parameters.
 \end{description}
-In a nutshell class \texttt{"FLXmodel"} describes an \emph{unfitted}
+In a nutshell class \texttt{"FLXM"} describes an \emph{unfitted}
 model, whereas class \texttt{"FLXcomponent"} holds a \emph{fitted}
 model.
 
@@ -650,15 +666,17 @@ model.
 
 Figure~\ref{fig:mymclust.R} shows an example driver for model-based
 clustering. We use function \texttt{dmvnorm()} from package
-\pkg{mvtnorm} for calculation of multivariate Gaussian densities.
-In line~5 we create a new \texttt{"FLXmodel"} object named \texttt{retval},
-which is also the return value of the driver.  All drivers should take
-a formula as their first argument, this formula is directly passed on to
-\texttt{retval}. In most cases authors of new FlexMix drivers need not
-worry about formula parsing etc., this is done by \texttt{flexmix}
-itself. In addition we have to declare whether the driver can do
-weighted ML estimation (\texttt{weighted=TRUE}) and give a name to our
-model.
+\pkg{mvtnorm} for calculation of multivariate Gaussian densities.  In
+line~5 we create a new \texttt{"FLXMC"} object named \texttt{retval},
+which is also the return value of the driver.  Class \texttt{"FLXMC"}
+extends \texttt{"FLXM"} and is used for model-based clustering. It
+contains an additional slot with the name of the distribution used.
+All drivers should take a formula as their first argument, this
+formula is directly passed on to \texttt{retval}. In most cases
+authors of new FlexMix drivers need not worry about formula parsing
+etc., this is done by \texttt{flexmix} itself. In addition we have to
+declare whether the driver can do weighted ML estimation
+(\texttt{weighted=TRUE}) and give a name to our model.
 
 The remainder of the driver creates a \texttt{fit()} function, which
 takes regressors \texttt{x}, response \texttt{y} and weights
@@ -675,11 +693,11 @@ to be diagonal or a full matrix. For \texttt{diagonal=TRUE} we use
 only the main diagonal of the covariance matrix (line~14) and the
 number of parameters is reduced to $2D$.
 
-In addition to parameter estimates, \texttt{flexmix()} needs a function
-calculating the log-likelihood of given data $x$ and $y$, which in our
-example is the log-density of a multivariate Gaussian. In addition we
-have to provide a function predicting $y$ given $x$, in our example
-simply the mean of the Gaussian. Finally we create a new
+In addition to parameter estimates, \texttt{flexmix()} needs a
+function calculating the log-likelihood of given data $x$ and $y$,
+which in our example is the log-density of a multivariate Gaussian. In
+addition we have to provide a function predicting $y$ given $x$, in
+our example simply the mean of the Gaussian. Finally we create a new
 \texttt{"FLXcomponent"} as return value of function \texttt{fit()}.
 
 Note that our internal functions \texttt{fit()}, \texttt{logLik()} and
@@ -713,12 +731,12 @@ model details from the FlexMix main engine.
 \SweaveOpts{width=12,height=6,eps=FALSE}
 
 <<echo=false,results=hide>>=
-library(flexmix)
+library("flexmix")
 set.seed(1504)
 options(width=60)
 ps.options(family="Times")
-require(ellipse)
-require(mvtnorm)
+require("ellipse")
+require("mvtnorm")
 source("mymclust.R")
 @
 
@@ -726,7 +744,7 @@ As a simple example we use the four 2-dimensional Gaussian clusters
 from data set \texttt{Nclus}. Fitting a wrong model with diagonal
 covariance matrix is done by
 <<>>=
-data(Nclus)
+data("Nclus")
 m1 = flexmix(Nclus~1, k=4, model=mymclust())
 summary(m1)
 @
@@ -755,7 +773,7 @@ plotEll(m2, Nclus)
   \label{fig:ell}
 \end{figure}
 
-
+\pagebreak[4]
 \section{Summary and outlook}
 \label{sec:summary}
 
@@ -791,7 +809,8 @@ point process for background noise.
 
 This research was supported by the Austrian Science Foundation (FWF)
 under grant SFB\#010 (`Adaptive Information Systems and Modeling in
-Economics and Management Science').
+Economics and Management Science'). Bettina Gr\"un has modified the
+original version to include and reflect the changes of the package.
 
 \bibliography{fls,fla,flb,flm,e1071-theses,e1071-papers}
 

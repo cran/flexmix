@@ -1,17 +1,14 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: KLdiv.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: KLdiv.Rd 3122 2006-11-05 15:10:25Z leisch $
 %
 \name{KLdiv}
-\alias{KLdiv}
-\alias{KLdiv-methods}
 \alias{KLdiv,matrix-method}
 \alias{KLdiv,flexmix-method}
 \title{Kullback-Leibler Divergence}
 \description{
   Estimate the Kullback-Leibler divergence of several distributions.}
 \usage{
-KLdiv(object, ...)
 \S4method{KLdiv}{matrix}(object, eps=1e-4, ...)
 }
 \arguments{

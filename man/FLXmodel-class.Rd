@@ -1,21 +1,23 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXmodel-class.Rd 1943 2005-12-21 10:36:16Z leisch $
+%  $Id: FLXmodel-class.Rd 3181 2006-12-18 10:43:28Z gruen $
 %
-\name{FLXmodel-class}
+\name{FLXM-class}
 \docType{class}
-\alias{FLXmodel-class}
-\alias{show,FLXmodel-method}
-\title{Class "FLXmodel"}
+\alias{FLXM-class}
+\alias{FLXMC-class}
+\alias{FLXMR-class}
+\alias{show,FLXM-method}
+\title{Class "FLXM"}
 \description{FlexMix model specification.}
 \section{Objects from the Class}{
-  Objects can be created by calls of the form \code{new("FLXmodel", ...)},
-  typically inside driver functions like \code{\link{FLXglm}} or
-  \code{\link{FLXmclust}}. 
+  Objects can be created by calls of the form \code{new("FLXM", ...)},
+  typically inside driver functions like \code{\link{FLXMRglm}} or
+  \code{\link{FLXMCmvnorm}}. 
 }
 \section{Slots}{
   \describe{
-    \item{\code{fit}:}{Function returning an \code{FLXmodel} object.}
+    \item{\code{fit}:}{Function returning an \code{FLXM} object.}
     \item{\code{weighted}:}{Logical indicating whether \code{fit} can do
     weighted likelihood maximization.}
     \item{\code{name}:}{Character string used in print methods.}

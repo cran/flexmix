@@ -1,9 +1,7 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: kldiv.R 1664 2005-06-13 06:11:03Z leisch $
+#  $Id: kldiv.R 1972 2006-01-10 16:05:03Z gruen $
 #
-
-setGeneric("KLdiv", function(object, ...) standardGeneric("KLdiv"))
 
 setMethod("KLdiv", "matrix",
 function(object, eps=1e-4, ...)

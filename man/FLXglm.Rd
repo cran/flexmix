@@ -1,8 +1,9 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXglm.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: FLXglm.Rd 3193 2007-01-04 10:35:17Z gruen $
 %
-\name{FLXglm}
+\name{FLXMRglm}
+\alias{FLXMRglm}
 \alias{FLXglm}
 \title{FlexMix Interface to Generalized Linear Models}
 \description{
@@ -10,7 +11,7 @@
   family of models.
 }
 \usage{
-FLXglm(formula = . ~ .,
+FLXMRglm(formula = . ~ .,
        family = c("gaussian", "binomial", "poisson", "Gamma"),
        offset = NULL)
 }
@@ -29,7 +30,7 @@ FLXglm(formula = . ~ .,
   See \code{\link{flexmix}} for examples.
 }
 \value{
-  Returns an object of class \code{FLXmodel}.
+  Returns an object of class \code{FLXMRglm}.
 }
 \author{Friedrich Leisch}
 \references{

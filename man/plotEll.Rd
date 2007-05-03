@@ -4,10 +4,10 @@
 %
 \name{plotEll}
 \alias{plotEll}
-\title{Plot Confidence Ellipses for FLXmclust Results}
+\title{Plot Confidence Ellipses for FLXMCmvnorm Results}
 \description{
   Plot confidence ellipses for mixtures of Gaussians fitted using
-  \code{\link{FLXmclust}}.
+  \code{\link{FLXMCmvnorm}}.
 }
 \usage{
 plotEll(object, data, which=1:2, project=NULL, points=TRUE,
@@ -16,7 +16,7 @@ plotEll(object, data, which=1:2, project=NULL, points=TRUE,
 }
 \arguments{
   \item{object}{An object of class \code{flexmix} with a fitted
-    \code{FLXmclust} model.}
+    \code{FLXMCmvnorm} model.}
   \item{data}{The data that were clustered.}
   \item{which}{Index numbers of dimensions of (projected) input space
     to plot.}
@@ -29,6 +29,6 @@ plotEll(object, data, which=1:2, project=NULL, points=TRUE,
   \item{pch, col, \dots}{Graphical parameters.}
 }
 \author{Friedrich Leisch}
-\seealso{\code{\link{FLXmclust}}}
+\seealso{\code{\link{FLXMCmvnorm}}}
 \keyword{cluster}
 

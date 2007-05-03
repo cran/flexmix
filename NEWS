@@ -1,3 +1,57 @@
+Changes in flexmix version 2.0-0
+
+  o Model driver for zero-inflated component specific models.
+
+  o Latent class analysis for binary multivariate data is now
+    possible to estimate for truncated data where the number of 
+    observations with pattern only zeros is missing.
+
+  o new argument newdata for cluster()
+
+  o new unique() method for "stepFlexmix" objects
+
+
+Changes in flexmix version 1.9-0
+
+  o New class definitions for component specific models and
+    concomitant variable models.
+
+  o fitted() and predict() now have an aggregate argument in order to
+    be able to determine the aggregated values over all components.
+
+  o The package has now a vignette presenting several applications of
+    finite mixtures of regression models with varying and fixed effects 
+    on artificial and real data which can be a accessed using the
+    command vignette("regression-examples").
+
+  o The vignette "flexmix-intro" was adapted to reflect the changes
+    made in the package.
+
+  o stepFlexmix() now returns an object of class stepFlexmix which has
+    a print and plot method. In addition getModel() can be used to
+    select an appropriate model.
+
+  o flexmix() now has a weights argument for multiple identical
+    observations.
+
+  o New model drivers for latent class analysis with Bernoulli and
+    Poisson distributed multivariate observations.
+
+  o Variants of the EM algorithm have been modified to correspond to
+    CEM and SEM. These names can now also be used for specifying the
+    classify slot of the FLXcontrol object.
+
+
+Changes in flexmix version 1.8-1
+
+  o The package can now fit concomitant variable models.
+
+  o New M-step driver for regression models with varying and fixed
+    effects.
+    
+  o ICL information criterion
+
+
 Changes in flexmix version 1.1-2
 
   o Fixed a bug that made the log-likelihood infinity for observations
@@ -8,9 +62,9 @@ Changes in flexmix version 1.1-2
   o posterior() now has a newdata argument.
 
   o New demo driver for model-based clustering of binary data.
-
+ 
   o Adapted to changes in summary.glm() of R version 2.3.0.
-  
+
 
 Changes in flexmix version 1.1-1
 

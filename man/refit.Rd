@@ -1,15 +1,22 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: refit.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: refit.Rd 3221 2007-01-22 14:27:40Z gruen $
 %
 \name{refit}
-\alias{refit}
-\alias{refit-methods}
 \alias{refit,flexmix-method}
-\alias{refit,FLXglmmodel-method}
-\alias{show,FLXrefit-method}
-\alias{summary,FLXrefit-method}
-\alias{summary,FLXrefitglm-method}
+\alias{refit,FLXM-method}
+\alias{refit,FLXMRglm-method}
+\alias{plot,FLXR,missing-method}
+\alias{show,FLXR-method}
+\alias{show,FLXR-method}
+\alias{show,FLXRM-method}
+\alias{show,FLXRMRglm-method}
+\alias{show,Coefmat-method}
+\alias{summary,FLXR-method}
+\alias{summary,FLXRM-method}
+\alias{summary,FLXRMRglm-method}
+\alias{FLXRM-class}
+\alias{FLXRP-class}
 \title{Refit a Fitted Model}
 \description{
   Refits an estimated flexmix model to obtain additional information
@@ -25,8 +32,8 @@
   \item{\dots}{currently not used}
 }
 \details{
-  Currently there is only a \code{refit} method for \code{FLXglm}
-  models, which in combination with the \code{summary} method can be
+  The \code{refit} method for \code{FLXMRglm} models in
+  combination with the \code{summary} method can be
   used to obtain the usual tests for significance of coefficients. Note
   that the tests are valid only if \code{flexmix} returned the maximum
   likelihood estimator of the parameters.
@@ -39,7 +46,7 @@
   Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
 }
 \examples{
-data(NPreg)
+data("NPreg")
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
 ex1r <- refit(ex1)
 

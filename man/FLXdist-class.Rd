@@ -1,33 +1,44 @@
 %
 %  Copyright (C) 2005 Bettina Gruen
-%  $Id: FLXdist-class.Rd 1679 2005-06-28 14:29:41Z gruen $
+%  $Id: FLXdist-class.Rd 3113 2006-10-30 12:40:39Z gruen $
 %
 \name{FLXdist-class}
 \docType{class}
 \alias{FLXdist-class}
 \alias{predict,FLXdist-method}
-\alias{predict,FLXglmmodel-method}
+\alias{predict,FLXM-method}
+\alias{predict,FLXMRglm-method}
 \alias{parameters}
 \alias{parameters,FLXdist-method}
+\alias{prior}
+\alias{prior,FLXdist-method}
 \title{Class "FLXdist"}
 \description{
   Objects of class \code{FLXdist} represent unfitted finite mixture
   models. 
 }
 \usage{
-\S4method{parameters}{FLXdist}(object, component=1, model=1)
-\S4method{predict}{FLXdist}(object, newdata=list())
+\S4method{parameters}{FLXdist}(object, component=NULL, model=NULL, simplify=TRUE, drop=TRUE)
+\S4method{predict}{FLXdist}(object, newdata=list(), aggregate=FALSE)
 }
 \arguments{
   \item{object}{An object of class "FLXdist".}
-  \item{component}{Number of component.}
-  \item{model}{Number of model.}
+  \item{component}{Number of component(s), if \code{NULL} all components
+    are returned.}
+  \item{model}{Number of model(s), if \code{NULL} all models are
+    returned.}
+  \item{simplify}{logical, if \code{TRUE} the returned values are
+    simplified to a vector or matrix if possible.}
+  \item{drop}{logical, if \code{TRUE} the function tries to simplify the
+    return object by omitting lists of length one.}
   \item{newdata}{Dataframe containing new data.}
+  \item{aggregate}{logical, if \code{TRUE} then the predicted values for
+    each model aggregated over the components are returned.}
 }
 
 \section{Slots}{
   \describe{
-    \item{model}{List of \code{FLXmodel} objects.}
+    \item{model}{List of \code{FLXM} objects.}
     \item{prior}{Numeric vector with prior probabilities of clusters.}
     \item{components}{List describing the components using 
       \code{FLXcomponent} objects.}
@@ -43,6 +54,8 @@
   \describe{
     \item{\code{parameters}:}{The parameters for each model and component,
       return value depends on the model.}
+    \item{\code{prior}:}{Numeric vector of prior class probabilities/components weights}
+
   }
 }
 

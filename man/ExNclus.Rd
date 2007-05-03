@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: ExNclus.Rd 1777 2005-08-18 09:19:27Z leisch $
+%  $Id: ExNclus.Rd 3221 2007-01-22 14:27:40Z gruen $
 %
 \name{ExNclus}
 \alias{ExNclus}
@@ -14,7 +14,7 @@
 }
 \usage{
 ExNclus(n)
-data(Nclus)
+data("Nclus")
 }
 \arguments{
   \item{n}{Number of observations in the two small latent classes.}
@@ -25,7 +25,7 @@ data(Nclus)
   simplicity of examples only.
 }
 \examples{
-data(Nclus)
+data("Nclus")
 require("MASS")
 eqscplot(Nclus, col=rep(1:4, c(100, 100, 150, 200)))
 }

@@ -1,11 +1,7 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: infocrit.R 1664 2005-06-13 06:11:03Z leisch $
+#  $Id: infocrit.R 2609 2006-05-15 11:32:16Z gruen $
 #
-
-setGeneric("logLik")
-setGeneric("AIC")
-setGeneric("BIC")
 
 setMethod("logLik", signature(object="flexmix"),
 function(object, ...){
@@ -24,4 +20,15 @@ function(object, ..., k=2){
 setMethod("BIC", signature(object="flexmix"),
 function(object, ...){
     -2 * object@logLik + object@df * log(nrow(object@posterior$scaled))
+})
+
+setMethod("ICL", signature(object="flexmix"),
+function(object, ...){
+    -2 * clogLik(object) + object@df * log(nrow(object@posterior$scaled))
+})
+
+setMethod("clogLik", signature(object="flexmix"),
+function(object, ...){
+    n <- nrow(object@posterior$unscaled)
+    sum(log(object@posterior$unscaled[1:n + (cluster(object) - 1)*n]))
 })

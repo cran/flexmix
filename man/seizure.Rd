@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: seizure.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: seizure.Rd 3221 2007-01-22 14:27:40Z gruen $
 %
 \name{seizure}
 \alias{seizure}
@@ -13,7 +13,7 @@
   where the first 27 days are a baseline period without treatment, the
   remaining 113 days are the treatment period.
 }
-\usage{data(seizure)}
+\usage{data("seizure")}
 \format{
   A data frame with 140 observations on the following 4 variables.
   \describe{
@@ -35,7 +35,7 @@
   ISBN 3-7908-1554-3.
 }
 \examples{
-data(seizure)
+data("seizure")
 plot(Seizures/Hours~Day, col=as.integer(Treatment),
      pch=as.integer(Treatment), data=seizure)
 abline(v=27.5, lty=2, col="grey")
@@ -50,7 +50,7 @@ set.seed(123)
 
 seizMix <- flexmix(Seizures~Treatment*log(Day),
                    data=seizure, k=2,
-                   model=FLXglm(family="poisson", offset=log(seizure$Hours)))
+                   model=FLXMRglm(family="poisson", offset=log(seizure$Hours)))
 
 summary(seizMix)
 summary(refit(seizMix))

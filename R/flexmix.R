@@ -1,364 +1,252 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 1943 2005-12-21 10:36:16Z leisch $
+#  $Id: flexmix.R 3364 2007-03-08 01:28:57Z leisch $
 #
 
-setClass("FLXcontrol",
-         representation(iter.max="numeric",
-                        minprior="numeric",
-                        tolerance="numeric",
-                        verbose="numeric",
-                        classify="character",
-                        nrep="numeric"),
-         prototype(iter.max=200,
-                   minprior=0.05,
-                   tolerance=10e-7,
-                   verbose=0,
-                   classify="auto",
-                   nrep=1))
 
-setAs("list", "FLXcontrol",
-function(from, to){
-    z = list2object(from, to)
-    z@classify = match.arg(z@classify,
-                           c("auto", "weighted", "hard", "random"))
-    z
-})
-
-setAs("NULL", "FLXcontrol",
-function(from, to){
-    new(to)
-})
-
-
-###**********************************************************
-
-setClass("FLXmodel",
-         representation(fit="function",
-                        weighted="logical",
-                        name="character",
-                        formula="formula",
-                        fullformula="formula",
-                        x="matrix",
-                        y="matrix",
-                        preproc.x="function",
-                        preproc.y="function"),
-         prototype(formula=.~.,
-                   fullformula=.~.,
-                   preproc.x = function(x) x,
-                   preproc.y = function(x) x))
-
-setMethod("show", "FLXmodel",
-function(object){
-    cat("FlexMix model of type", object@name,"\n\nformula: ")
-    print(object@formula)
-    cat("Weighted likelihood possible:", object@weighted,"\n\n")
-    if(nrow(object@x)>0){
-        cat("Regressors:\n")
-        print(summary(object@x))
-    }
-    if(nrow(object@y)>0){
-        cat("Response:\n")
-        print(summary(object@y))
-    }
-    cat("\n")
-})
-
-setClass("FLXcomponent",
-         representation(df="numeric",
-                        logLik="function",
-                        parameters="list",
-                        predict="function"))
-
-setMethod("show", "FLXcomponent",
-function(object){
-    if(length(object@parameters)>0)
-        print(object@parameters)
-})
-    
-
-
-###**********************************************************
-
-setClass("FLXdist",
-         representation(model="ANY",
-                        prior="ANY",
-                        components="list",
-                        formula="formula",
-                        call="call",
-                        k="integer"),
-         validity=function(object) {
-           (object@k == length(object@prior))
-         },
-         prototype(formula=.~.))
-
-setClass("flexmix",
-         representation(posterior="ANY",
-                        iter="numeric",
-                        cluster="integer",
-                        logLik="numeric",
-                        df="numeric",
-                        control="FLXcontrol",
-                        group="factor",
-                        size="integer",
-                        converged="logical"),
-         prototype(group=(factor(integer(0))),
-                   formula=.~.),
-         contains="FLXdist")
-
-setMethod("show", "flexmix",
-function(object){
-    cat("\nCall:", deparse(object@call,0.75*getOption("width")),
-        sep="\n")
-    cat("\nCluster sizes:\n")
-#    print(as.table(TAB))
-    print(object@size)
-    cat("\n")
-    if(!object@converged) cat("no ")
-    cat("convergence after", object@iter, "iterations\n")
-})
-
-
-###**********************************************************
-
-setClass("summary.flexmix",
-         representation(call="call",
-                        AIC="numeric",
-                        BIC="numeric",
-                        logLik="logLik",
-                        comptab="ANY"))
-
-setGeneric("summary")
-
-setMethod("summary", "flexmix",
-function(object, eps=1e-4, ...){    
-    z <- new("summary.flexmix",
-             call = object@call,
-             AIC = AIC(object),
-             BIC = BIC(object),
-             logLik = logLik(object))
-
-    TAB <- data.frame(prior=object@prior,
-                      size=object@size)
-    rownames(TAB) <- paste("Comp.", 1:nrow(TAB), sep="")
-    TAB[["post>0"]] <- colSums(object@posterior$scaled > eps)
-    TAB[["ratio"]] <- TAB[["size"]]/TAB[["post>0"]]
-    
-    z@comptab = TAB
-    z
-    
-})
-
-setMethod("show", "summary.flexmix",
-function(object){
-    cat("\nCall:", deparse(object@call,0.75*getOption("width")),
-        sep="\n")
-    cat("\n")
-    print(object@comptab, digits=3)
-    cat("\n")
-    print(object@logLik)
-    cat("AIC:", object@AIC, "  BIC:", object@BIC, "\n")
-    cat("\n")    
-})
-
-
-###**********************************************************
-
-
-setGeneric("flexmix",
-           function(formula, data=list(), k=NULL, cluster=NULL,
-                    model=NULL, control=NULL)
-           standardGeneric("flexmix"))
-
-
+## The following two methods only fill in and rearrange the model argument
 setMethod("flexmix",
           signature(formula = "formula", model="missing"),
 function(formula, data=list(), k=NULL, cluster=NULL,
-         model=NULL, control=NULL)
+         model=NULL, concomitant=NULL, control=NULL, weights=NULL)
 {
     mycall = match.call()
     z <- flexmix(formula=formula, data=data, k=k, cluster=cluster,
-                 model=list(FLXglm()), control=control)
+                 model=list(FLXMRglm()), concomitant=concomitant,
+                 control=control, weights = weights)
     z@call <- mycall
     z
 })
 
+setMethod("flexmix",
+          signature(formula = "formula", model="FLXM"),
+function(formula, data=list(), k=NULL, cluster=NULL, 
+         model=NULL, concomitant=NULL, control=NULL, weights=NULL)
+{
+  mycall = match.call()
+  z <- flexmix(formula=formula, data=data, k=k, cluster=cluster, 
+               model=list(model), concomitant=concomitant,
+               control=control, weights=weights)
+  z@call <- mycall
+  z
+})
 
+
+## This is the real thing
 setMethod("flexmix",
           signature(formula = "formula", model="list"),
 function(formula, data=list(), k=NULL, cluster=NULL,
-         model=NULL, control=NULL)
+         model=NULL, concomitant=NULL, control=NULL, weights=NULL)
 {
     mycall = match.call()
     control = as(control, "FLXcontrol")
-    if(is(model, "FLXmodel")) model = list(model)
-
-    groups <- .group(formula, data)
-    model <- lapply(model, .model, groups$formula, data)
-    postunscaled <- initPosteriors(k, cluster, nrow(model[[1]]@x))
+    if (!is(concomitant, "FLXP")) concomitant <- FLXPconstant()
     
-    z = FLXfit(model=model, control=control, 
-      postunscaled=postunscaled, group=groups$group)
+    groups <- .FLXgetGrouping(formula, data)
+    model <- lapply(model, FLXcheckComponent, k, cluster)
+    k <- unique(unlist(sapply(model, FLXgetK, k)))
+    if (length(k) > 1) stop("number of clusters not specified correctly")
+    
+    model <- lapply(model, FLXgetModelmatrix, data, groups$formula)
+    
+    groups$groupfirst <-
+        if (length(groups$group)) groupFirst(groups$group)
+        else rep(TRUE, FLXgetObs(model[[1]]))
+    
+    concomitant <- FLXgetModelmatrix(concomitant, data = data,
+                                     groups = groups)
+    
+    if (is(weights, "formula"))
+        weights <- model.frame(weights, data = data, na.action = NULL)[,1]
+    
+    postunscaled <- initPosteriors(k, cluster, FLXgetObs(model[[1]]))
+    
+    z <- FLXfit(model=model, concomitant=concomitant, control=control,
+                postunscaled=postunscaled, groups=groups, weights = weights)
+    
     z@formula = formula
     z@call = mycall
-    z
-})
-
-setMethod("flexmix",
-          signature(formula = "formula", model="FLXmodel"),
-function(formula, data=list(), k=NULL, cluster=NULL,
-         model=NULL, control=NULL)
-{
-    mycall = match.call()
-    z <- flexmix(formula=formula, data=data, k=k, cluster=cluster,
-                 model=list(model), control=control)
-    z@call <- mycall
+    z@k0 = as.integer(k)
     z
 })
 
 ###**********************************************************
-setGeneric("FLXfit", function(model, control, postunscaled=NULL, group) standardGeneric("FLXfit"))
 
-setMethod("FLXfit", signature(model="list"),
-function(model, control, postunscaled=NULL, group)
-{
-    N = nrow(postunscaled)
-    k = ncol(postunscaled)
-    
-    control <- allweighted(model, control)
-    if(control@verbose>0)
-      cat("Classification:", control@classify, "\n")
-    
-    if(length(group)>0){
-        groupfirst <- groupFirst(group)
-        postunscaled <- groupPosteriors(postunscaled, group)
-    }
-    else{
-        groupfirst <- rep(TRUE, N)
-    }
+setMethod("FLXgetK", signature(model = "FLXM"), function(model, k, ...) k)
+setMethod("FLXgetObs", signature(model = "FLXM"), function(model) nrow(model@x))
+setMethod("FLXcheckComponent", signature(model = "FLXM"), function(model, ...) model)
+setMethod("FLXremoveComponent", signature(model = "FLXM"), function(model, ...) model)
 
-    postscaled <- postunscaled/rowSums(postunscaled)    
-    prior <- colMeans(postscaled[groupfirst,,drop=FALSE])
-
-    llh <- -Inf
-    converged <- FALSE
-        
-    components <- list()
-    for(K in 1:k) components[[K]] <- list()
-
-    for(iter in 1:control@iter.max){
-        postunscaled <- matrix(0, nrow=N, ncol=k)
-
-        if(control@classify != "weighted")
-            ok = .FLXgetOK(postscaled, control)
-        
-        for(m in 1:k){
-            for(n in 1:length(model)){
-                
-                if(control@classify == "weighted"){
-                    components[[m]][[n]] <-
-                        model[[n]]@fit(model[[n]]@x, model[[n]]@y,
-                                        postscaled[,m])
-                }
-                else{
-                    components[[m]][[n]] <-
-                        model[[n]]@fit(model[[n]]@x, model[[n]]@y,
-                                        ok[,m])
-                }
-                postunscaled[,m] <- postunscaled[,m] +
-                    components[[m]][[n]]@logLik(model[[n]]@x,
-                                                  model[[n]]@y)
-            }
-        }
-
-        if(length(group)>0)
-            postunscaled <- groupPosteriors(postunscaled, group)
-
-        postunscaled <- exp(postunscaled)
-        ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
-        ## kleine postunscaled-werte hat, ist exp(-postunscaled)
-        ## numerisch Null, und damit postscaled Inf
-        postunscaled[postunscaled<.Machine$double.eps] <- .Machine$double.eps
-        ##</FIXME>
-        
-        for(m in 1:k)
-            postunscaled[,m] <- prior[m] * postunscaled[,m]
-
-        postscaled <- postunscaled/rowSums(postunscaled)
-
-        prior <- colMeans(postscaled[groupfirst,,drop=FALSE])
-        
-        llh.old <- llh
-        llh <- sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE])))
-        if(is.na(llh))
-            stop(paste(formatC(iter, width=4),
-                       "Log-likelihood:", llh))
-        if(abs(llh-llh.old)/(abs(llh)+0.1) < control@tolerance){
-            if(control@verbose>0){
-                printIter(iter, llh)
-                cat("converged\n")
-            }
-            converged <- TRUE
-            break
-        }
-        if(control@verbose && (iter%%control@verbose==0))
-            printIter(iter, llh)
-        if(any(prior < control@minprior)){
-            nok <- which(prior < control@minprior)
-            if(control@verbose>0)
-                cat("*** Removing",length(nok), "component(s) ***\n")
-            prior <- prior[-nok]
-            prior <- prior/sum(prior)
-            postscaled <- postscaled[,-nok,drop=FALSE]
-            components <- components[-nok]
-            k <- length(prior)
-        }
-    }
-
-    df <- k-1   # for the prior probabilities
-    for(m in 1:k){
-        df <- df+sum(sapply(components[[m]],
-                            function(x) x@df))
-    }
-
-    names(components) <- paste("Comp", 1:k, sep=".")
-    cluster <- max.col(postscaled)
-    size <-  tabulate(cluster, nbins=k)
-    names(size) <- 1:k
-    
-    retval <- new("flexmix", model=model, prior=prior,
-                  posterior=list(scaled=postscaled,
-                                 unscaled=postunscaled),
-                  iter=iter, cluster=cluster, size = size,
-                  logLik=llh, components=components,
-                  control=control, df=df, group=group, k=as(k, "integer"),
-                  converged=converged)
-                     
-    retval
+setMethod("FLXmstep", signature(model = "FLXM"), function(model, weights, ...) {
+  apply(weights, 2, function(w) model@fit(model@x, model@y, w))
 })
 
-.FLXgetOK = function(p, control){
+setMethod("FLXdeterminePostunscaled", signature(model = "FLXM"), function(model, components, ...) {
+  sapply(components, function(x) x@logLik(model@x, model@y))
+})
 
+###**********************************************************
+setMethod("FLXfit", signature(model="list"),
+function(model, concomitant, control, postunscaled=NULL, groups, weights)
+{
+  ### initialize
+  k <- ncol(postunscaled)
+  N <- nrow(postunscaled)
+  control <- allweighted(model, control, weights)
+  if(control@verbose>0)
+    cat("Classification:", control@classify, "\n")
+  if (control@classify=="random") iter.rm <- 0
+  group <- groups$group
+  groupfirst <- groups$groupfirst
+  if(length(group)>0) postunscaled <- groupPosteriors(postunscaled, group)
+  postscaled <- postunscaled/rowSums(postunscaled)
+  
+  llh <- -Inf
+  if (control@classify=="random") llh.max <- -Inf
+  converged <- FALSE   
+  ### EM
+  for(iter in 1:control@iter.max) {
+      ### M-Step
+      postscaled = .FLXgetOK(postscaled, control, weights)
+      prior <- if (is.null(weights))
+        ungroupPriors(concomitant@fit(concomitant@x, postscaled[groupfirst,,drop=FALSE]),
+                      group, groupfirst)
+      else ungroupPriors(concomitant@fit(concomitant@x, (postscaled/weights)[groupfirst,,drop=FALSE], weights[groupfirst]),
+                         group, groupfirst)
+      # Check min.prior
+      nok <- which(colSums(prior)/sum(prior) < control@minprior)
+      if(length(nok)) {
+        if(control@verbose>0)
+          cat("*** Removing",length(nok), "component(s) ***\n")
+        prior <- prior[,-nok,drop=FALSE]
+        prior <- prior/sum(prior)
+        postscaled <- postscaled[,-nok,drop=FALSE]
+        postscaled[rowSums(postscaled) == 0,] <- 1
+        postscaled <- postscaled/rowSums(postscaled)
+        k <- ncol(prior)
+        if (k == 0) stop("all components removed")
+        if (control@classify=="random") {
+          llh.max <- -Inf
+          iter.rm <- iter
+        }
+        model <- lapply(model, FLXremoveComponent, nok)
+      }
+      components <- lapply(model, FLXmstep, postscaled)
+      postunscaled <- matrix(0, nrow = N, ncol = k)
+      for (n in 1:length(model)) 
+        postunscaled <- postunscaled + FLXdeterminePostunscaled(model[[n]], components[[n]])
+      if(length(group)>0)
+        postunscaled <- groupPosteriors(postunscaled, group)
+      ### E-Step     
+      postunscaled <- exp(postunscaled)
+      for(m in 1:k)
+        postunscaled[,m] <- prior[,m] * postunscaled[,m]
+      ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
+      ## eine postunscaled-werte hat, ist exp(-postunscaled)
+      ## numerisch Null, und damit postscaled NaN
+      ## log(rowSums(postunscaled)) ist -Inf
+      ##</FIXME>
+      postscaled <- postunscaled/rowSums(postunscaled)
+      if (any(is.nan(postscaled))) {
+        index <- which(as.logical(rowSums(is.nan(postscaled))))
+        postscaled[index,] <- rep(prior, each=length(index))
+        postunscaled[index,] <- .Machine$double.xmin
+      }
+      ### check convergence
+      llh.old <- llh
+      llh <- if (is.null(weights)) sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE])))
+             else sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))*weights[groupfirst])
+      if(is.na(llh) | is.infinite(llh))
+        stop(paste(formatC(iter, width=4),
+                   "Log-likelihood:", llh))
+      if (abs(llh-llh.old)/(abs(llh)+0.1) < control@tolerance){
+        if(control@verbose>0){
+          printIter(iter, llh)
+          cat("converged\n")
+        }
+        converged <- TRUE
+        break
+      }
+      if (control@classify=="random") {
+        if (llh.max < llh) {
+          components.max <- components
+          prior.max <- prior
+          postscaled.max <- postscaled
+          postunscaled.max <- postunscaled
+          llh.max <- llh
+        }
+      }
+      if(control@verbose && (iter%%control@verbose==0))
+        printIter(iter, llh)
+    }
+
+  ### Construct return object
+  if (control@classify=="random") {
+    components <- components.max
+    prior <- prior.max
+    postscaled <- postscaled.max
+    postunscaled <- postunscaled.max
+    llh <- llh.max
+    iter <- control@iter.max - iter.rm
+  }
+
+  components <- lapply(1:k, function(i) lapply(components, function(x) x[[i]]))
+  names(components) <- paste("Comp", 1:k, sep=".") 
+  cluster <- max.col(postscaled)
+  size <-  if (is.null(weights)) tabulate(cluster, nbins=k) else tabulate(rep(cluster, weights), nbins=k)
+  names(size) <- 1:k
+  concomitant <- fillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE])
+  df <- concomitant@df(concomitant@x, k) + sum(sapply(components, sapply, slot, "df"))
+
+  retval <- new("flexmix", model=model, prior=colMeans(prior),
+                posterior=list(scaled=postscaled,
+                  unscaled=postunscaled),
+                weights = weights,
+                iter=iter, cluster=cluster, size = size,
+                logLik=llh, components=components,
+                concomitant=concomitant,
+                control=control, df=df, group=group, k=as(k, "integer"),
+                converged=converged)
+  retval
+})
+
+###**********************************************************
+.FLXgetOK = function(p, control, weights){
     n = ncol(p)
     N = 1:n
-    if(control@classify=="weighted")
-        return(matrix(TRUE, nrow=nrow(p), ncol=n))
-    else{
-        z = matrix(FALSE,  nrow=nrow(p), ncol=n)
-
-        if(control@classify=="hard")
+    if (is.null(weights)) {
+      if (control@classify == "weighted")
+        return(p)
+      else {
+        z = matrix(FALSE, nrow = nrow(p), ncol = n)
+        if(control@classify %in% c("CEM", "hard")) 
             m = max.col(p)
-        else if(control@classify=="random")
-            m = apply(p, 1, function(x){sample(N, size=1, prob=x)})
-        else
-            stop("Unknown classification method")
-
+        else if(control@classify %in% c("SEM", "random")) 
+            m = apply(p, 1, function(x) sample(N, size = 1, prob = x))
+        else stop("Unknown classification method")
         z[cbind(1:nrow(p), m)] = TRUE
+      }
+    }else {
+      if(control@classify=="weighted")
+        z <- p * weights
+      else{
+        z = matrix(FALSE,  nrow=nrow(p), ncol=n)       
+        if(control@classify %in% c("CEM", "hard")) {
+          m = max.col(p)
+          z[cbind(1:nrow(p), m)] = TRUE
+          z <- z * weights
+        }
+        else if(control@classify %in% c("SEM", "random")) 
+          z = t(sapply(1:nrow(p), function(i) table(factor(sample(N, size=weights[i], prob=p[i,], replace=TRUE), N))))
+        else stop("Unknown classification method")
+      }
     }
-    z   
+    z
 }    
 
-.group <- function(formula, data) {
+###**********************************************************
+
+.FLXgetGrouping <- function(formula, data) {
   group = factor(integer(0))
   lf = length(formula)
   formula1 = formula
@@ -370,10 +258,8 @@ function(model, control, postunscaled=NULL, group)
   return(list(group=group, formula=formula1))
 }
 
-setGeneric(".model", function(model, formula, data, rhs=TRUE) standardGeneric(".model"))
-
-setMethod(".model", signature(model="FLXmodel"),
-function(model, formula, data, rhs=TRUE)
+setMethod("FLXgetModelmatrix", signature(model="FLXM"),
+function(model, data, formula, lhs=TRUE, ...)
 {
   if(is.null(model@formula))
     model@formula = formula
@@ -384,14 +270,15 @@ function(model, formula, data, rhs=TRUE)
   model@fullformula = update(terms(formula, data=data), model@formula)
   ## </FIXME>
   
-  if (rhs) {
-    mf <- model.frame(model@fullformula, data=data)
+  if (lhs) {
+    mf <- model.frame(model@fullformula, data=data, na.action = NULL)
     model@x = model.matrix(attr(mf, "terms"), data=mf)
     model@y = as.matrix(model.response(mf))
+    model@y <- model@preproc.y(model@y)
   }
   else {
     mt1 <- terms(model@fullformula, data=data)
-    mf <- model.frame(delete.response(mt1), data=data)
+    mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
     mt <- attr(mf, "terms")
     ## <FIXME>: warum war das da???
     ## attr(mt, "intercept") <- attr(mt1, "intercept")
@@ -399,7 +286,6 @@ function(model, formula, data, rhs=TRUE)
     model@x <- model.matrix(mt, data=mf)
   }
   model@x <- model@preproc.x(model@x)
-  model@y <- model@preproc.y(model@y)
   model
 })
 
@@ -435,7 +321,16 @@ groupPosteriors <- function(x, group)
     x
 }
 
-allweighted <- function(model, control) {
+ungroupPriors <- function(x, group, groupfirst) {
+  if (!length(group)) group <- 1:length(groupfirst)
+  if (nrow(x) > 1) {
+    x <- x[order(as.integer(group[groupfirst])),,drop=FALSE]
+    x <- x[as.integer(group),,drop=FALSE]
+  }
+  x
+}
+
+allweighted <- function(model, control, weights) {
   allweighted = all(sapply(model, function(x) x@weighted))
   if(allweighted){
     if(control@classify=="auto")
@@ -444,6 +339,8 @@ allweighted <- function(model, control) {
   else{
     if(control@classify %in% c("auto", "weighted"))
       control@classify="hard"
+    if(!is.null(weights))
+      stop("it is not possible to specify weights for models without weighted ML estimation")
   }
   control
 }
@@ -473,40 +370,57 @@ initPosteriors <- function(k, cluster, N) {
   postunscaled
 }
 
-
 ###**********************************************************
 
-
-setGeneric("predict")
-
 setMethod("predict", signature(object="FLXdist"),
-function(object, newdata=list(), ...){
+function(object, newdata=list(), aggregate=FALSE, ...){
+    if (missing(newdata)) return(fitted(object, aggregate=aggregate, drop=FALSE))
     x = list()
     for(m in 1:length(object@model)) {
       comp <- lapply(object@components, "[[", m)
       x[[m]] <- predict(object@model[[m]], newdata, comp, ...)
     }
-    z <- list()
-    for (k in 1:object@k) {
-      z[[k]] <- do.call("cbind", lapply(x, "[[", k))
+    if (aggregate) {
+      z <- lapply(x, function(z) do.call("cbind", z) %*% object@prior)
     }
-    names(z) <- paste("Comp", 1:object@k, sep=".")
+    else {
+      z <- list()
+      for (k in 1:object@k) {
+        z[[k]] <- do.call("cbind", lapply(x, "[[", k))
+      }
+      names(z) <- paste("Comp", 1:object@k, sep=".")
+    }
     z
 })
 
 ###**********************************************************
 
-setGeneric("parameters",
-           function(object, ...) standardGeneric("parameters"))
-
 setMethod("parameters", signature(object="FLXdist"),
-function(object, component=1, model=1)
+function(object, component=NULL, model=NULL, simplify=TRUE, drop=TRUE)
 {
-    object@components[[component]][[model]]@parameters
-})
+    if (is.null(component)) component <- 1:object@k
+    if (is.null(model)) model <- 1:length(object@model)
     
-setGeneric("posterior",
-           function(object, newdata, ...) standardGeneric("posterior"))
+    if (simplify) {
+      parameters <- sapply(model, function(m) sapply(object@components[component], function(x) unlist(x[[m]]@parameters), simplify=TRUE),
+                           simplify = FALSE)
+    }
+    else {
+      parameters <- sapply(model, function(m) sapply(object@components[component], function(x) x[[m]]@parameters, simplify=FALSE),
+                           simplify = FALSE)
+    }
+    if (drop) {
+      if (length(component) == 1 && !simplify) parameters <- lapply(parameters, "[[", 1)
+      if (length(model) == 1) parameters <- parameters[[1]]
+    }
+    return(parameters)
+})
+
+setMethod("prior", signature(object="FLXdist"),
+function(object)
+{
+  object@prior
+})
 
 setMethod("posterior", signature(object="flexmix", newdata="missing"),
 function(object)
@@ -514,92 +428,68 @@ function(object)
     object@posterior$scaled
 })
 
-setMethod("posterior", signature(object="FLXdist", newdata="data.frame"),
+setMethod("posterior", signature(object="FLXdist", newdata="listOrdata.frame"),
           function(object, newdata, unscaled=FALSE,...) {
-            postunscaled <- matrix(0, nrow = nrow(newdata), ncol = object@k)
-            for (m in 1:length(object@model)) {
-              comp <- lapply(object@components, "[[", m)
-              postunscaled <- postunscaled + posterior(object@model[[m]], newdata, comp, 
-                                                      ...)
+            comp <- lapply(object@components, "[[", 1)
+            postunscaled <- posterior(object@model[[1]], newdata, comp, ...)
+            if (length(object@model) > 1) {
+              for (m in 2:length(object@model)) {
+                comp <- lapply(object@components, "[[", m)
+                postunscaled <- postunscaled + posterior(object@model[[m]], newdata, comp, 
+                                                         ...)
+              }
             }
-            if("group" %in% slotNames(object) && length(object@group)>0)
-              postunscaled <- groupPosteriors(postunscaled, object@group)
+            groups <- .FLXgetGrouping(object@formula, newdata)
+            if(length(groups$group)>0)
+              postunscaled <- groupPosteriors(postunscaled, groups$group)
             for(m in 1:object@k)
               postunscaled[,m] <- object@prior[m] * exp(postunscaled[,m])
             if (unscaled) return(postunscaled)
             else return(postunscaled/rowSums(postunscaled))
 })            
 
-setMethod("posterior", signature(object="FLXmodel", newdata="data.frame"),
-          function(object, newdata, components, ...) {
-            mf <- model.frame(terms(object@fullformula, data=newdata), data = newdata)
+setMethod("posterior", signature(object="FLXM", newdata="listOrdata.frame"),
+function(object, newdata, components, ...) {
+            mf <- model.frame(terms(object@fullformula, data=newdata),
+                              data = newdata, na.action = NULL)
             x <- model.matrix(attr(mf, "terms"), data = mf)
             y <- as.matrix(model.response(mf))
-            sapply(components, function(z) z@logLik(x, y))
+            matrix(sapply(components, function(z) z@logLik(x, y)),
+                   nrow = nrow(y))
 })
     
-setGeneric("cluster",
-           function(object, ...) standardGeneric("cluster"))
-
-setMethod("cluster", signature(object="flexmix"),
+setMethod("cluster", signature(object="flexmix", newdata="missing"),
 function(object)
 {
     object@cluster
 })
     
+setMethod("cluster", signature(object="flexmix", newdata="ANY"),
+function(object, newdata, ...)
+{
+    max.col(posterior(object, newdata, ...))
+})
 
 ###**********************************************************
 
+setMethod("summary", "flexmix",
+function(object, eps=1e-4, ...){    
+    z <- new("summary.flexmix",
+             call = object@call,
+             AIC = AIC(object),
+             BIC = BIC(object),
+             logLik = logLik(object))
 
-
-stepFlexmix <- function(..., K=NULL, nrep=3,
-                        compare=c("logLik", "BIC", "AIC"), verbose=TRUE)
-{
-
-    compare <- match.arg(compare)
-    COMPFUN <- get(compare, mode="function")
-    MYCALL <- match.call()
+    TAB <- data.frame(prior=object@prior,
+                      size=object@size)
+    rownames(TAB) <- paste("Comp.", 1:nrow(TAB), sep="")
+    TAB[["post>0"]] <- colSums(object@posterior$scaled > eps)
+    TAB[["ratio"]] <- TAB[["size"]]/TAB[["post>0"]]
     
-    bestFlexmix <- function(...)
-    {
-        z = new("flexmix", logLik=-Inf)
-        for(m in 1:nrep){
-            if(verbose) cat(" *")
-            x = flexmix(...)
-            if(compare=="logLik"){
-                if(logLik(x) > logLik(z))
-                    z = x
-            }
-            else{
-                if(COMPFUN(x) < COMPFUN(z))
-                    z = x
-            }
-        }
-        z
-    }
-
-    if(is.null(K)){
-        z = bestFlexmix(...)
-        z@call <- MYCALL
-        if(verbose) cat("\n")
-        return(z)
-    }
-    
-    K = as.integer(K)
-    if(length(K)==0)
-        return(list())
-    
-    z = list()
-    for(n in 1:length(K)){
-        if(verbose) cat(K[n], ":")
-        z[[as.character(K[n])]] = bestFlexmix(..., k=K[n])
-        z[[as.character(K[n])]]@call <- MYCALL
-        if(verbose) cat("\n")
-    }
-    if(length(K)==1)
-        return(z[[1]])
-    
+    z@comptab = TAB
     z
-}
+    
+})
 
-            
+###**********************************************************
+

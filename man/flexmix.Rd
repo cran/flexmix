@@ -1,12 +1,12 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix.Rd 1946 2006-01-03 16:17:03Z leisch $
+%  Copyright (C) 2004-2006 Friedrich Leisch
+%  $Id: flexmix.Rd 3221 2007-01-22 14:27:40Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
 \alias{flexmix,formula,ANY,ANY,ANY,missing-method}
 \alias{flexmix,formula,ANY,ANY,ANY,list-method}
-\alias{flexmix,formula,ANY,ANY,ANY,FLXmodel-method}
+\alias{flexmix,formula,ANY,ANY,ANY,FLXM-method}
 \alias{show,flexmix-method}
 \alias{summary,flexmix-method}
 \alias{show,summary.flexmix-method}
@@ -18,8 +18,8 @@
   the user can specify the M-step.
 }
 \usage{
-flexmix(formula, data = list(), k = NULL, cluster = NULL,
-        model=NULL, control = NULL)
+flexmix(formula, data = list(), k = NULL, cluster = NULL, 
+        model=NULL, concomitant=NULL, control = NULL, weights = NULL)
 \S4method{summary}{flexmix}(object, eps=1e-4, ...)
 }
 \arguments{
@@ -35,9 +35,13 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     assignments of observations at the start of the EM
     algorithm. Default is random assignment into \code{k}
     clusters.}
-  \item{model}{Object of \code{FLXmodel} of list of \code{FLXmodel}
+  \item{weights}{An optional vector of weights to be used in the fitting
+    process.  Should be 'NULL', a numeric vector or a formula.}
+  \item{model}{Object of \code{FLXM} of list of \code{FLXM}
     objects. Default is the object returned by calling
-    \code{\link{FLXglm}()}.}
+    \code{\link{FLXMRglm}()}.}
+  \item{concomitant}{Object of \code{FLXP}. Default is the
+    object by calling \code{\link{FLXPconstant}}.}
   \item{control}{Object of class \code{FLXcontrol} or a named list.}
   \item{object}{Object of class \code{flexmix}.}
   \item{eps}{Probabilities below this treshold are treated as zero in the
@@ -45,11 +49,11 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
   \item{\dots}{Currently not used.}
 }
 \details{
-  FlexMix models are described by objects of class \code{FLXmodel},
+  FlexMix models are described by objects of class \code{FLXM},
   which in turn are created by driver functions like
-  \code{\link{FLXglm}} or \code{\link{FLXmclust}}. Multivariate
+  \code{\link{FLXMRglm}} or \code{\link{FLXMCmvnorm}}. Multivariate
   responses with independent components can be specified using a
-  list of \code{FLXmodel} objects.
+  list of \code{FLXM} objects.
 
   The \code{summary} method lists for each component the prior
   probability, the number of observations assigned to the corresponding
@@ -70,7 +74,7 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
 \keyword{cluster}
 \examples{
 
-data(NPreg)
+data("NPreg")
 
 ## mixture of two linear regression models. Note that control parameters
 ## can be specified as named list and abbreviated if unique.
@@ -82,11 +86,11 @@ summary(ex1)
 plot(ex1)
 
 ## now we fit a model with one Gaussian response and one Poisson
-## response. Note that the formulas inside the call to FLXglm are
+## response. Note that the formulas inside the call to FLXMRglm are
 ## relative to the overall model formula.
 ex2 <- flexmix(yn~x, data=NPreg, k=2,
-               model=list(FLXglm(yn~.+I(x^2)), 
-                          FLXglm(yp~., family="poisson")))
+               model=list(FLXMRglm(yn~.+I(x^2)), 
+                          FLXMRglm(yp~., family="poisson")))
 plot(ex2)
 
 ex2
@@ -100,21 +104,21 @@ parameters(ex2, component=1, model=2)
 
 ## fitting a model only to the Poisson response is of course
 ## done like this
-ex3 <- flexmix(yp~x, data=NPreg, k=2, model=FLXglm(family="poisson"))
+ex3 <- flexmix(yp~x, data=NPreg, k=2, model=FLXMRglm(family="poisson"))
 
 ## if observations are grouped, i.e., we have several observations per
 ## individual, fitting is usually much faster:
-ex4 <- flexmix(yp~x|id1, data=NPreg, k=2, model=FLXglm(family="poisson"))
+ex4 <- flexmix(yp~x|id1, data=NPreg, k=2, model=FLXMRglm(family="poisson"))
 
 ## And now a binomial example. Mixtures of binomials are not generically
 ## identified, here the grouping variable is necessary:
 set.seed(1234)
 ex5 <- stepFlexmix(cbind(yb,1-yb)~x, data=NPreg, k=2,
-                   model=FLXglm(family="binomial"), nrep=5)
+                   model=FLXMRglm(family="binomial"), nrep=5)
 table(NPreg$class, cluster(ex5))
 
 ex6 <- stepFlexmix(cbind(yb,1-yb)~x|id2, data=NPreg, k=2,
-                   model=FLXglm(family="binomial"), nrep=5)
+                   model=FLXMRglm(family="binomial"), nrep=5)
 table(NPreg$class, cluster(ex6))
 
 }

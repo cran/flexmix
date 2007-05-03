@@ -1,83 +1,8 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: plot.R 1848 2005-10-06 11:21:12Z leisch $
+#  $Id: plot.R 3183 2006-12-18 12:37:24Z gruen $
 #
 
-setGeneric("plot")
-
-setMethod("plot", signature(x="flexmix", y="missing"),
-function(x, y, mark=NULL, markcol=NULL, col=NULL, 
-         eps=1e-4, root=TRUE, ylim=TRUE,
-         main=NULL, mfrow=NULL, ...){
-
-    k = length(x@prior)
-    opar = par(c("mfrow", "mar", "oma"))
-    on.exit(par(opar))
-
-    if(is.null(markcol)) markcol <- FullColors[5]
-    if(is.null(col)) col <- LightColors[4]
-
-    if(is.null(main)){
-        main = ifelse(root,
-                      "Rootogram of posterior probabilities",
-                      "Histogram of posterior probabilities")
-        main = paste(main, ">", eps)
-    }
-
-    if(is.null(mfrow)){
-        n = floor(sqrt(k))
-        mfrow=c(ceiling(k/n),n)
-    }
-    
-    par(mfrow=mfrow)
-    par(mar=c(3,3,1,1))
-    par(oma=c(0,0,3,0))
-
-    h = list()
-    h1 <- list()
-    for(n in 1:k){
-        z = x@posterior$scaled[,n]
-        ok = z>eps
-        h[[n]] = hist(z[ok], breaks=seq(0,1,length=log2(length(z[ok]))+1),
-                 plot=FALSE)
-        
-        if(!is.null(mark)){
-            h1[[n]] <- hist(z[ok & (x@cluster==mark)],
-                            breaks=h[[n]]$breaks,
-                            plot=FALSE)
-        }
-                        
-        
-        if(root){
-            h[[n]]$counts = sqrt(h[[n]]$counts)
-            if(!is.null(mark)){
-                h1[[n]]$counts = sqrt(h1[[n]]$counts)
-            }
-        }
-    }
-
-    if(is.logical(ylim)){
-        if(ylim)
-            ylim = c(0, maxcount = max(sapply(h, function(x) max(x$count))))
-        else
-            ylim = NULL
-    }
-
-    for(n in 1:k){
-        plot(h[[n]], xlab="", ylab="", ylim=ylim, main="", col=col, ...)
-        title(main=paste("Component", n), line=0)
-        if(!is.null(mark)){
-            lines(h1[[n]], col=markcol)
-        }
-
-    }
-    
-    title(main=main, outer=TRUE)
-    invisible(list(hists=h, marks=h1))
-})
-        
-    
-          
 ###**********************************************************
 
 plotEll <- function(object, data, which=1:2,
@@ -112,7 +37,7 @@ plotEll <- function(object, data, which=1:2,
         
     
     for(k in 1:length(object@components)){
-        p = parameters(object, k)
+        p = parameters(object, k, simplify=FALSE)
         if(!is.null(project)){
             p <- projCentCov(project, p)
         }
@@ -127,7 +52,7 @@ plotEll <- function(object, data, which=1:2,
     
     ## und nochmal fuer die zentren und nummern (damit die immer oben sind)
     for(k in 1:length(object@components)){
-        p = parameters(object, k)
+        p = parameters(object, k, simplify=FALSE)
         if(!is.null(project)){
             p <- projCentCov(project, p)
         }
