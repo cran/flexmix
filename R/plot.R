@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: plot.R 3183 2006-12-18 12:37:24Z gruen $
+#  $Id: plot.R 3681 2007-08-08 13:20:07Z gruen $
 #
 
 ###**********************************************************
@@ -86,8 +86,8 @@ projCentCov.prcomp <- function(object, p)
 
     cov <- p$cov
     if(length(object$scale)>1)
-        cov <- outer(object$scale, object$scale, "*") * cov
-    cov <- object$rotation %*% cov %*% t(object$rotation)
+        cov <- cov/outer(object$scale, object$scale, "*")
+    cov <- t(object$rotation) %*% cov %*% object$rotation
     
     list(center=cent, cov=cov)
 }

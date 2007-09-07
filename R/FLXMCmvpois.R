@@ -24,9 +24,8 @@ FLXMCmvpois <- function(formula=.~.)
         logLik=logLik, predict=predict)
   })
   z@fit <- function(x, y, w){
-    lambda <- colSums(w*y)/sum(w)
-    df <- 1
-    eval(z@defineComponent)
+    with(list(lambda = colSums(w*y)/sum(w), df = ncol(y)),
+         eval(z@defineComponent))
   }
   z 
 }

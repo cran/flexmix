@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2005 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 3364 2007-03-08 01:28:57Z leisch $
+#  $Id: flexmix.R 3691 2007-09-07 08:30:31Z gruen $
 #
 
 
@@ -56,8 +56,15 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     concomitant <- FLXgetModelmatrix(concomitant, data = data,
                                      groups = groups)
     
-    if (is(weights, "formula"))
-        weights <- model.frame(weights, data = data, na.action = NULL)[,1]
+    if (is(weights, "formula")) {
+      weights <- model.frame(weights, data = data, na.action = NULL)[,1]
+    }
+    ## check if the weights are integer
+    ## if non-integer weights are wanted modifications e.g.
+    ## for classify != weighted and
+    ## plot,flexmix,missing-method are needed
+    if (!is.null(weights) & !identical(weights, as.integer(weights)))
+      stop("only integer weights allowed")
     
     postunscaled <- initPosteriors(k, cluster, FLXgetObs(model[[1]]))
     
@@ -111,7 +118,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       prior <- if (is.null(weights))
         ungroupPriors(concomitant@fit(concomitant@x, postscaled[groupfirst,,drop=FALSE]),
                       group, groupfirst)
-      else ungroupPriors(concomitant@fit(concomitant@x, (postscaled/weights)[groupfirst,,drop=FALSE], weights[groupfirst]),
+      else ungroupPriors(concomitant@fit(concomitant@x, (postscaled/weights)[groupfirst & weights > 0,,drop=FALSE], weights[groupfirst & weights > 0]),
                          group, groupfirst)
       # Check min.prior
       nok <- which(colSums(prior)/sum(prior) < control@minprior)
@@ -121,8 +128,9 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
         prior <- prior[,-nok,drop=FALSE]
         prior <- prior/sum(prior)
         postscaled <- postscaled[,-nok,drop=FALSE]
-        postscaled[rowSums(postscaled) == 0,] <- 1
+        postscaled[rowSums(postscaled) == 0,] <- prior
         postscaled <- postscaled/rowSums(postscaled)
+        if (!is.null(weights)) postscaled <- postscaled * weights
         k <- ncol(prior)
         if (k == 0) stop("all components removed")
         if (control@classify=="random") {
@@ -195,9 +203,10 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   cluster <- max.col(postscaled)
   size <-  if (is.null(weights)) tabulate(cluster, nbins=k) else tabulate(rep(cluster, weights), nbins=k)
   names(size) <- 1:k
-  concomitant <- fillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE])
+  concomitant <- fillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights)
   df <- concomitant@df(concomitant@x, k) + sum(sapply(components, sapply, slot, "df"))
-
+  control@nrep <- 1
+  
   retval <- new("flexmix", model=model, prior=colMeans(prior),
                 posterior=list(scaled=postscaled,
                   unscaled=postunscaled),
@@ -272,20 +281,23 @@ function(model, data, formula, lhs=TRUE, ...)
   
   if (lhs) {
     mf <- model.frame(model@fullformula, data=data, na.action = NULL)
-    model@x = model.matrix(attr(mf, "terms"), data=mf)
-    model@y = as.matrix(model.response(mf))
+    model@terms <- attr(mf, "terms")
+    model@y <- as.matrix(model.response(mf))
     model@y <- model@preproc.y(model@y)
   }
   else {
     mt1 <- terms(model@fullformula, data=data)
     mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
-    mt <- attr(mf, "terms")
+    model@terms<- attr(mf, "terms")
     ## <FIXME>: warum war das da???
     ## attr(mt, "intercept") <- attr(mt1, "intercept")
     ## </FIXME>
-    model@x <- model.matrix(mt, data=mf)
   }
+  X <- model.matrix(model@terms, data=mf)
+  model@contrasts <- attr(X, "contrasts")
+  model@x <- X
   model@x <- model@preproc.x(model@x)
+  model@xlevels <- .getXlevels(model@terms, mf)
   model
 })
 
@@ -294,18 +306,7 @@ function(model, data, formula, lhs=TRUE, ...)
 ## post(un)scaled has N rows (with mutiple identical rows for each
 ## group). postscaled[groupfirst,] extracts posteriors of each
 ## group ordered as the appear in the data set.
-groupFirst <- function(x)
-{
-    x <- as.factor(x)
-    z <- rep(FALSE, length(x))
-    for(g in levels(x)){
-        gok <- x==g
-        if(any(gok)){
-            z[min(which(gok))] <- TRUE
-        }
-    }
-    z
-}
+groupFirst <- function(x) !duplicated(x)
 
 ## if we have a group variable, set the posterior to the product
 ## of all density values for that group (=sum in logarithm)
@@ -381,7 +382,8 @@ function(object, newdata=list(), aggregate=FALSE, ...){
       x[[m]] <- predict(object@model[[m]], newdata, comp, ...)
     }
     if (aggregate) {
-      z <- lapply(x, function(z) do.call("cbind", z) %*% object@prior)
+      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(1:object@k, function(K) z[[K]] * object@prior[K]), ncol = object@k)),
+                                        nrow = nrow(z[[1]])))
     }
     else {
       z <- list()
@@ -454,7 +456,7 @@ function(object, newdata, components, ...) {
                               data = newdata, na.action = NULL)
             x <- model.matrix(attr(mf, "terms"), data = mf)
             y <- as.matrix(model.response(mf))
-            matrix(sapply(components, function(z) z@logLik(x, y)),
+            matrix(sapply(components, function(z) z@logLik(x, y, ...)),
                    nrow = nrow(y))
 })
     

@@ -52,7 +52,6 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset)
             fit <- fit[c("coefficients","family")]
             k <- nrow(incidence)
-            components <- list()
             coefs <- coef(fit)
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
@@ -73,7 +72,8 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
             lapply(1:k,
                    function(K) with(list(coef=coefs[as.logical(incidence[K,])],
-                                         df = df[K]),
+                                         df = df[K],
+                                         shape = shape),
                                     eval(z@defineComponent)))
           }
     }
@@ -83,8 +83,8 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
 
 ###**********************************************************
 
-setMethod("refit", signature(object="FLXMRglmfix"),
-function(object, weights, ...)
+setMethod("refit", signature(object="FLXMRglmfix", newdata="missing"),
+function(object, newdata, weights, ...)
 {
     z <- new("FLXRMRglmfix", design=object@design)
     z@fitted <- object@refit(object@x,

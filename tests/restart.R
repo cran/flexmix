@@ -30,7 +30,7 @@ ex4a <- flexmix(yp ~ x | id1, data = NPreg, k = 1,
 ex4b <- flexmix(yp ~ x, data = NPreg, k = 1,
                  model = FLXMRglm(family = "poisson"))
 
-stopifnot(all.equal(logLik(ex4a),logLik(ex4b)))
+stopifnot(all.equal(logLik(ex4a)[1],logLik(ex4b)[1]))
 
 ###**********************************************************
 

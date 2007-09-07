@@ -1,3 +1,11 @@
+Changes in flexmix version 2.0-1
+
+  o Lapply() added which allows to apply a function to each component
+    of a finite mixture
+
+  o KLdiv() modified to allow for determination with a discrete and a
+    continuous version of the KL divergence
+
 Changes in flexmix version 2.0-0
 
   o Model driver for zero-inflated component specific models.

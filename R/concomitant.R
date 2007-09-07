@@ -65,13 +65,15 @@ checkGroup <- function(x, group) {
 
 ###**********************************************************
 
-setMethod("refit", signature(object="FLXP"), function(object, posterior, group, ...) {
+setMethod("refit", signature(object="FLXP", newdata="missing"),
+function(object, newdata, posterior, group, ...) {
   groupfirst <- if (length(group)) groupFirst(group) else rep(TRUE, nrow(posterior))
   new("FLXRP", fitted = object@refit(object@x, posterior[groupfirst,,drop=FALSE], ...))
 })
 
-setMethod("refit", signature(object="FLXPmultinom"), function(object, posterior, group, ...) {
-  z <- callNextMethod(object, posterior, group, ...)
+setMethod("refit", signature(object="FLXPmultinom", newdata="missing"),
+function(object, newdata, posterior, group, ...) {
+  z <- callNextMethod(object, newdata, posterior, group, ...)
   new("FLXRPmultinom", z)
 })
 

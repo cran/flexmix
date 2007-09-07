@@ -7,6 +7,7 @@ setClass("stepFlexmix",
          representation(models="list",
                         k="integer",
                         nrep="integer",
+                        logLiks="matrix",
                         call="call"))
 
 
@@ -20,20 +21,24 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     bestFlexmix <- function(...)
     {
         z = new("flexmix", logLik=-Inf)
+        logLiks = rep(NA, length = nrep)
         for(m in 1:nrep){
             if(verbose) cat(" *")
             x = try(flexmix(...))
             if (!is(x, "try-error")) {
+              logLiks[m] <- logLik(x)
               if(logLik(x) > logLik(z))
                 z = x
             }
         }
-        z
+        return(list(z = z, logLiks = logLiks))
     }
 
     z = list()
     if(is.null(k)){
-        z[[1]] = bestFlexmix(...)
+        RET = bestFlexmix(...)
+        z[[1]] <- RET$z
+        logLiks <- as.matrix(RET$logLiks)
         z[[1]]@call <- MYCALL
         z[[1]]@control@nrep <- nrep
         names(z) <- as.character(z[[1]]@k)
@@ -41,10 +46,13 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     }
     else{
         k = as.integer(k)
+        logLiks <- matrix(nrow = length(k), ncol = nrep)
         for(n in 1:length(k)){
             ns <- as.character(k[n])
             if(verbose) cat(k[n], ":")
-            z[[ns]] = bestFlexmix(..., k=k[n])
+            RET <- bestFlexmix(..., k=k[n])
+            z[[ns]] = RET$z
+            logLiks[n,] <- RET$logLiks
             MYCALL1[["k"]] <- as.numeric(k[n])
             z[[ns]]@call <- MYCALL1
             z[[ns]]@control@nrep <- nrep
@@ -63,6 +71,7 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
                         models=z,
                         k=as.integer(names(z)),
                         nrep=as.integer(nrep),
+                        logLiks=logLiks,
                         call=MYCALL))
         if(unique) z <- unique(z)
         return(z)
@@ -76,17 +85,21 @@ function(x, incomparables=FALSE)
 {
     z <- list()
     K <- sapply(x@models, function(x) x@k)
-
+    logLiks <- x@logLiks
+    
     for(k in sort(unique(K))){
         n <- which(k==K)
         if(length(n)>1){
             l <- sapply(x@models[n], logLik)
             z[as.character(k)] <- x@models[n][which.max(l)]
-        }
+            is.na(logLiks[n[-which.max(l)],]) <- TRUE
+          }
         else
             z[as.character(k)] <- x@models[n]
     }
-
+    logLiks <- na.omit(logLiks)
+    rownames(logLiks) <- names(z)
+    attr(logLiks, "na.action") <- NULL
     mycall <- x@call
     mycall["unique"] <- TRUE
     
@@ -94,11 +107,11 @@ function(x, incomparables=FALSE)
                models=z,
                k=as.integer(names(z)),
                nrep=x@nrep,
+               logLiks=logLiks,
                call=mycall))
 })
 
-
-                
+              
 
 ###**********************************************************
 

@@ -69,6 +69,7 @@ exportMethods(
               KLdiv,
               ICL,
               coerce,
+              Lapply,
               cluster,
               fitted,
               flexmix,

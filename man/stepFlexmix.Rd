@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: stepFlexmix.Rd 3364 2007-03-08 01:28:57Z leisch $
+%  $Id: stepFlexmix.Rd 3670 2007-07-24 16:02:28Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -80,7 +80,7 @@ data("Nclus")
 set.seed(511)
 
 ## try 5 times for k=4
-ex1 <- stepFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diag=FALSE), nrep=3)
+ex1 <- stepFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diag=FALSE), nrep=5)
 ex1
 
 ## now 3 times each for k=2:6, specify control parameter

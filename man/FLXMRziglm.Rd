@@ -1,7 +1,7 @@
 \name{FLXMRziglm}
 \alias{FLXMRziglm}
 \alias{FLXMRziglm-class}
-\alias{refit,FLXMRziglm-method}
+\alias{refit,FLXMRziglm,missing-method}
 \alias{FLXRMRziglm-class}
 \alias{summary,FLXRMRziglm-method}
 \title{FlexMix Interface to Zero Inflated Generalized Linear Models}

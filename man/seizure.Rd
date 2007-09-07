@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: seizure.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  $Id: seizure.Rd 3595 2007-06-29 16:08:37Z gruen $
 %
 \name{seizure}
 \alias{seizure}
@@ -29,7 +29,7 @@
   Biometrics 52, pages 381-400.
 }
 \references{
-  B. Grün and F. Leisch (2004): Bootstrapping finite mixture models.
+  B. Gruen and F. Leisch (2004): Bootstrapping finite mixture models.
   In J. Antoch, editor, Compstat 2004 - Proceedings in Computational
   Statistics, pages 1115-1122. Physika Verlag, Heidelberg, Germany,
   ISBN 3-7908-1554-3.

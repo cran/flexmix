@@ -38,13 +38,13 @@ setMethod("FLXmstep", signature(model = "FLXMRziglm"),
 
 setClass("FLXRMRziglm", contains = "FLXRM")
 
-setMethod("refit", signature(object="FLXMRziglm"),
-          function(object, weights, ...)
+setMethod("refit", signature(object="FLXMRziglm", newdata="missing"),
+          function(object, newdata, weights, ...)
 {
   coef <- c(-Inf, rep(0, ncol(object@x)-1))
   names(coef) <- colnames(object@x)
   comp.1 <- new("FLXRMRziglm",
                 fitted = list(coef))
-  c(list(comp.1), callNextMethod(object, weights[, -1, drop=FALSE]))
+  c(list(comp.1), callNextMethod(object, weights = weights[, -1, drop=FALSE]))
 })
 

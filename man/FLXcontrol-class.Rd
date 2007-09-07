@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXcontrol-class.Rd 1664 2005-06-13 06:11:03Z leisch $
+%  $Id: FLXcontrol-class.Rd 3692 2007-09-07 08:56:43Z gruen $
 %
 \name{FLXcontrol-class}
 \docType{class}
@@ -27,6 +27,8 @@
       no output is generated during model fitting.}
     \item{\code{classify}:}{Character string, one of \code{"auto"},
       \code{"weighted"}, \code{"hard"}, \code{"random"}.}
+    \item{\code{nrep}:}{Reports the number of random initializations
+      used to determine the mixture with \code{\link{stepFlexmix}()}.}
   }
   Run \code{new("FLXcontrol")} to see the default settings of all slots.
 }

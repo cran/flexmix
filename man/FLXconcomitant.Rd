@@ -8,8 +8,8 @@
 \alias{FLXPconstant-class}
 \alias{FLXPmultinom-class}
 \alias{show,FLXP-method}
-\alias{refit,FLXP-method}
-\alias{refit,FLXPmultinom-method}
+\alias{refit,FLXP,missing-method}
+\alias{refit,FLXPmultinom,missing-method}
 \alias{summary,FLXRP-method}
 \alias{summary,FLXRPmultinom-method}
 \title{Creates the concomitant variable model.}

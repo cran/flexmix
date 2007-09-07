@@ -105,6 +105,7 @@ function(x, alpha = 0.05, components, ...)
 setMethod("getCoefs", signature(x = "FLXRPmultinom"),
 function(x, alpha = 0.05, components, ...) {
   cm <- x@summary
+  names(cm) <- sapply(names(cm), function(x) strsplit(x, "Comp.")[[1]][2])
   cm <- cm[names(cm) %in% components]
   Comp <- lapply(names(cm), function(n) 
                  data.frame(Value = cm[[n]][,1],

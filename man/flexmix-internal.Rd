@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-internal.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  $Id: flexmix-internal.Rd 3595 2007-06-29 16:08:37Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -39,7 +39,6 @@
 \alias{FLXRMRglmfix-class}
 \alias{predict,FLXMRglmfix-method}
 \alias{fitted,FLXMRglmfix-method}
-\alias{refit,FLXMRglmfix-method}
 \alias{summary,FLXRMRglmfix-method}
 \alias{listOrdata.frame-class}
 \title{Internal FlexMix functions}
