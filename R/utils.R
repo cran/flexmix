@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: utils.R 1838 2005-09-29 19:23:09Z leisch $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: utils.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 list2object = function(from, to){
@@ -22,10 +22,10 @@ printIter = function(iter, logLik, label="Log-likelihood")
 ## library(colorspace)
 ## dput(x[c(1,3,5,7,2,4,6,8)])
 
-## x = hcl(seq(0, 360*7/8, length = 8), c=30)
+## x = hcl(seq(0, 360*7/8, length.out = 8), c=30)
 LightColors <- c("#F9C3CD", "#D0D4A8", "#9DDDD5", "#D1CCF5",
                  "#EDCAB2", "#AFDCB8", "#ACD7ED", "#EFC4E8")
     
-## x = hcl(seq(0, 360*7/8, length = 8), c=100, l=65)
+## x = hcl(seq(0, 360*7/8, length.out = 8), c=100, l=65)
 FullColors <- c("#FF648A", "#96A100", "#00BCA3", "#9885FF",
                 "#DC8400", "#00B430", "#00AEEF", "#F45BE1")

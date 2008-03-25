@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: whiskey.Rd 3914 2008-03-13 15:52:54Z gruen $
+%
 \name{whiskey}
 \alias{whiskey}
 \alias{whiskey_brands}
@@ -34,7 +38,6 @@
   Marketing/Micro-econometrics. R package version 2.0-8.
   http://gsbwww.uchicago.edu/fac/peter.rossi/research/bsm.html
 }
-
 \references{
   Edwards, Y. and G. Allenby (2003), "Multivariate Analysis of
   Multiple Response Data," \emph{JMR} 40, 321-334.

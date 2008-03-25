@@ -9,7 +9,7 @@ mymclust <- function (formula = .~., diagonal = TRUE)
             dmvnorm(y, mean = center, sigma = cov, log = TRUE)
           }
         predict <- function(x) {
-            matrix(center, nrow = nrow(y),
+            matrix(center, nrow = nrow(x),
                    ncol = length(center), byrow = TRUE)
         }
         new("FLXcomponent",

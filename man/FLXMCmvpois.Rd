@@ -1,12 +1,12 @@
 %
-%  Copyright (C) 2006 Bettina Gruen
-%  $Id: FLXMCmvpois.Rd 2705 2006-08-11 16:40:10Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXMCmvpois.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{FLXMCmvpois}
 \alias{FLXMCmvpois}
 \title{FlexMix Poisson Clustering Driver}
 \description{
-  This is a demo driver for \code{\link{flexmix}} implementing
+  This is a model driver for \code{\link{flexmix}} implementing
   model-based clustering of Poisson distributed data. 
 }
 \usage{
@@ -27,6 +27,6 @@ FLXMCmvpois(formula = . ~ .)
 \value{
   \code{FLXMCmvpois} returns an object of class \code{FLXMC}.
 }
-\author{Bettina Gruen}
+\author{Friedrich Leisch and Bettina Gruen}
 \seealso{\code{\link{flexmix}}}
 \keyword{cluster}

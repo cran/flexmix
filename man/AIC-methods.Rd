@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: AIC-methods.Rd 3122 2006-11-05 15:10:25Z leisch $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: AIC-methods.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{AIC-methods}
 \docType{methods}

@@ -1,15 +1,20 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXglmFix.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{FLXMRglmfix}
 \alias{FLXMRglmfix}
 \alias{FLXglmFix}
 \title{FlexMix Interface to Generalized Linear Models with fixed coefficients}
 \description{
   This implements a driver for FlexMix which interfaces the \code{glm}
-  family of models and where it is possible to specify fixed effects or
-  nested varying effects for the coefficients or to ensure that
-  in the Gaussian case the variance estimate is equal for all components. 
+  family of models and where it is possible to specify fixed (constant) or
+  nested varying coefficients or to ensure that in the Gaussian case the
+  variance estimate is equal for all components.
 }
 \usage{
-FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE, nested = NULL,
+FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE,
+       nested = NULL,
        family = c("gaussian", "binomial", "poisson", "Gamma"),
        offset = NULL)
 }
@@ -20,7 +25,7 @@ FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE, nested = NULL,
     \code{flexmix} model
     formula.}
   \item{fixed}{A formula which specifies the additional
-    regressors for the fixed effects.}
+    regressors for the fixed (constant) coefficients.}
   \item{varFix}{A logical indicating if the variance estimate for
     Gaussian components should be constrained to be equal for all
     components. It can be also a vector specifying the number of
@@ -35,7 +40,7 @@ FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE, nested = NULL,
 \value{
   Returns an object of class \code{FLXMRglmfix}.
 }
-\author{Bettina Gruen}
+\author{Friedrich Leisch and Bettina Gruen}
 \seealso{\code{FLXMRglm}}
 \examples{
 data("NPreg")

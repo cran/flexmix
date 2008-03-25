@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXnested-class.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{FLXnested-class}
 \docType{class}
 \alias{FLXnested-class}
@@ -16,10 +20,10 @@ Objects can be created by calls of the form \code{new("FLXnested",
 \section{Slots}{
   \describe{
     \item{\code{formula}:}{Object of class \code{"list"} containing the
-      formula for determining the model matrix for each nested effect.}
+      formula for determining the model matrix for each nested parameter.}
     \item{\code{k}:}{Object of class \code{"numeric"} specifying the
       number of components in each group.}
   }
 }
-\author{Bettina Gruen}
+\author{Friedrich Leisch and Bettina Gruen}
 \keyword{classes}

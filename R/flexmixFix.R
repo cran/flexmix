@@ -1,4 +1,7 @@
-###**********************************************************
+#
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmixFix.R 3913 2008-03-13 15:13:55Z gruen $
+#
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRglmfix"), function(model, k, cluster, ...) {
   if (sum(model@nestedformula@k)) {
@@ -96,7 +99,7 @@ modelMatrix <- function(random, fixed, nested, data=list(), lhs)
   mm.randomfixed <- model.matrix(terms(randomfixed, data=data), data=data)
   mm.fixed <- mm.randomfixed[,!colnames(mm.randomfixed) %in% colnames(mm.random), drop=FALSE]
   all <- mm.all <- mm.nested <- list()
-  for (l in 1:length(nested)) {
+  for (l in seq_along(nested)) {
     all[[l]] <- if (nested[[l]] == "~0") randomfixed
     else update(randomfixed, paste("~.+", deparse(nested[[l]][[length(nested[[l]])]])))
     mm.all[[l]] <- model.matrix(terms(all[[l]], data=data), data=data)
@@ -113,7 +116,7 @@ modelDesign <- function(mm.all, k) {
   nested <- matrix(0, nrow=sum(k@k), ncol=sum(sapply(mm.all$nested, ncol)))
   cumK <- c(0, cumsum(k@k))
   i <- 0
-  for (l in 1:length(mm.all$nested)) {
+  for (l in seq_along(mm.all$nested)) {
     if (ncol(mm.all$nested[[l]])) {
       nested[(cumK[l] + 1):cumK[l+1], i+1:ncol(mm.all$nested[[l]])] <- 1
       i <- i+ncol(mm.all$nested[[l]])

@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2006 Friedrich Leisch
-#  $Id: kcca.R 2925 2006-09-07 12:56:48Z leisch $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: stepFlexmix.R 3934 2008-03-26 08:36:26Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -21,7 +21,7 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     bestFlexmix <- function(...)
     {
         z = new("flexmix", logLik=-Inf)
-        logLiks = rep(NA, length = nrep)
+        logLiks = rep(NA, length.out = nrep)
         for(m in 1:nrep){
             if(verbose) cat(" *")
             x = try(flexmix(...))
@@ -81,7 +81,7 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
 ###**********************************************************
 
 setMethod("unique", "stepFlexmix",
-function(x, incomparables=FALSE)
+function(x, incomparables=FALSE, ...)
 {
     z <- list()
     K <- sapply(x@models, function(x) x@k)
@@ -141,15 +141,15 @@ function(object, ..., k = 2)
 })
 
 setMethod("BIC", "stepFlexmix",
-function(object)
+function(object, ...)
 {
-   sapply(object@models, function(x) BIC(x))
+   sapply(object@models, function(x) BIC(x, ...))
 })
 
 setMethod("ICL", "stepFlexmix",
-function(object)
+function(object, ...)
 {
-   sapply(object@models, function(x) ICL(x))
+   sapply(object@models, function(x) ICL(x, ...))
 })
 
 ###**********************************************************

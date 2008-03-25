@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-internal.Rd 3595 2007-06-29 16:08:37Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: flexmix-internal.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}

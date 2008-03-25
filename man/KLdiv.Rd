@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: KLdiv.Rd 3677 2007-07-31 09:14:36Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: KLdiv.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{KLdiv}
 \alias{KLdiv,matrix-method}
@@ -15,13 +15,13 @@
 \S4method{KLdiv}{flexmix}(object, method = c("continuous", "discrete"), ...)
 }
 \arguments{
-  \item{object}{see Methods section below}
-  \item{method}{the method to be used; "continuous" determines
+  \item{object}{See Methods section below.}
+  \item{method}{The method to be used; "continuous" determines
     the Kullback-Leibler divergence between the unweighted theoretical
     component distributions and the unweighted posterior probabilities
     at the observed points are used by "discrete".}
-  \item{eps}{probabilities below this threshold are replaced by this
-    threshold for numerical stability}
+  \item{eps}{Probabilities below this threshold are replaced by this
+    threshold for numerical stability.}
   \item{overlap}{Logical, do not determine the KL divergence for
     those pairs where for each point at least one of the densities has a
     value smaller than \code{eps}.}
@@ -40,7 +40,7 @@
   for distributions with densities \eqn{f()} and \eqn{g()}.
 }
 \value{
-  A matrix of of KL divergences where the rows correspond to using the
+  A matrix of KL divergences where the rows correspond to using the
   respective distribution as \eqn{f()} in the formula above.
 }
 \note{
@@ -49,7 +49,7 @@
   observation point for the modified densities.
 }
 \keyword{methods}
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \references{
   S. Kullback and R. A. Leibler. On information and sufficiency. The
   Annals of Mathematical Statistics 22(1), pages 79-86, 1951.
@@ -71,10 +71,10 @@ KLdiv(y)
 
 if (require("mlbench")) {
 set.seed(2606)
-x <-  mlbench.smiley()
-model1 <- flexmix(x$x~1, k=9, model=FLXmclust(diag=FALSE),
+x <-  mlbench.smiley()$x
+model1 <- flexmix(x~1, k=9, model=FLXmclust(diag=FALSE),
                   control = list(minprior=0))
-plotEll(model1, x$x)
+plotEll(model1, x)
 KLdiv(model1)
 }
 }

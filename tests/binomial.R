@@ -1,4 +1,4 @@
-library(flexmix)
+library("flexmix")
 
 set.seed(123)
 

@@ -1,22 +1,27 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: Lapply-methods.Rd 3934 2008-03-26 08:36:26Z gruen $
+%
 \name{Lapply-methods}
 \docType{methods}
 \title{Methods for Function Lapply}
-\alias{Lapply,FLXR-method}
-\alias{Lapply,FLXRM-method}
+\alias{Lapply,FLXRmstep-method}
 \description{Apply a function to each component of a finite mixture}
 \usage{
-\S4method{Lapply}{FLXR}(object, FUN, component = TRUE, ...)
+\S4method{Lapply}{FLXRmstep}(object, FUN, model = 1, component = TRUE, ...)
 }
 \arguments{
   \item{object}{S4 class object.}
   \item{FUN}{The function to be applied.}
+  \item{model}{The model (for a multivariate response) that shall be
+    used.}
   \item{component}{Index vector for selecting the components.}
   \item{\dots}{Optional arguments to 'FUN'.}
 }
 \section{Methods}{
   \describe{
-    \item{object = FLXR:}{Apply a function to each component of a
-      refitted \code{flexmix} object}
+    \item{object = FLXRmstep:}{Apply a function to each component of a
+      refitted \code{flexmix} object using method = \code{"mstep"}.}
   }  
 }
 \details{
@@ -31,11 +36,11 @@
   specified component of the refitted mixture model.
 }
 \keyword{methods}
-\author{Bettina Gruen}
+\author{Friedrich Leisch and Bettina Gruen}
 \examples{
 data("NPreg")
 ex2 <- flexmix(yn ~ x, data = NPreg, k = 2, model = list(FLXMRglm(yn ~ 
     . + I(x^2)), FLXMRglm(yp ~ ., family = "poisson")))
-ex2r <- refit(ex2)
+ex2r <- refit(ex2, method = "mstep")
 Lapply(ex2r, "vcov", 2)
 }

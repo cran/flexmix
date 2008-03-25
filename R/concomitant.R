@@ -1,3 +1,8 @@
+#
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: concomitant.R 3913 2008-03-13 15:13:55Z gruen $
+#
+
 FLXPmultinom <- function(formula=~1) {
   z <- new("FLXPmultinom", name="FLXPmultinom", formula=formula)
   multinom.fit <- function(x, y, w, ...) {
@@ -32,12 +37,8 @@ FLXPmultinom <- function(formula=~1) {
 FLXPconstant <- function() {
   new("FLXP", name="FLXPconstant", formula = ~1,
       fit = function(x, y, w, ...){
-        if (missing(w) || is.null(w)) return(matrix(colMeans(y), ncol=ncol(y)))
-        else return(matrix(colMeans(w*y)/mean(w), ncol=ncol(y)))
-      },
-      refit = function(x, y, w, ...) {
-        if (missing(w) || is.null(w)) return(colMeans(y))
-        else return(colMeans(w*y)/mean(w))
+        if (missing(w) || is.null(w)) return(matrix(colMeans(y), ncol=ncol(y), dimnames = list("prior", 1:ncol(y))))
+        else return(matrix(colMeans(w*y)/mean(w), ncol=ncol(y), dimnames = list("prior", 1:ncol(y))))
       })
 }
 
@@ -65,44 +66,25 @@ checkGroup <- function(x, group) {
 
 ###**********************************************************
 
-setMethod("refit", signature(object="FLXP", newdata="missing"),
+setMethod("refit_mstep", signature(object="FLXP", newdata="missing"),
+function(object, newdata, posterior, group, ...) NULL)
+
+setMethod("refit_mstep", signature(object="FLXPmultinom", newdata="missing"),
 function(object, newdata, posterior, group, ...) {
   groupfirst <- if (length(group)) groupFirst(group) else rep(TRUE, nrow(posterior))
-  new("FLXRP", fitted = object@refit(object@x, posterior[groupfirst,,drop=FALSE], ...))
-})
-
-setMethod("refit", signature(object="FLXPmultinom", newdata="missing"),
-function(object, newdata, posterior, group, ...) {
-  z <- callNextMethod(object, newdata, posterior, group, ...)
-  new("FLXRPmultinom", z)
-})
-
-setMethod("summary", signature(object="FLXRPmultinom"), function(object) {
-  z <- object
-  class(object@fitted) <- c("multinom", "nnet")
-  fitted.summary <- summary(object@fitted)
-  k <- nrow(coef(fitted.summary))+1
-  coefs <- lapply(2:k, function(n) {
-    coef.p <- fitted.summary$coefficients[n-1,,drop=FALSE]
-    s.err <- fitted.summary$standard.errors[n-1,,drop=FALSE]
-    tvalue <- coef.p/s.err
-    pvalue <- 2 * pnorm(-abs(tvalue))
-    coef.table <- t(rbind(coef.p, s.err, tvalue, pvalue))
-    dimnames(coef.table) <- list(colnames(coef.p), c("Estimate", "Std. Error", "z value", "Pr(>|z|)"))
-    new("Coefmat", coef.table)
-  })
-  names(coefs) <- paste("Comp", 2:k, sep=".")
-  z@summary <- coefs
-  z
+  object@refit(object@x, posterior[groupfirst,,drop=FALSE], ...)
 })
 
 ###**********************************************************
 
 
-fillConcomitant <- function(concomitant, ...) concomitant
+setMethod("FLXfillConcomitant", signature(concomitant="FLXP"), function(concomitant, posterior, weights) {
+  concomitant@coef <- concomitant@refit(concomitant@x, posterior, weights)
+  concomitant
+})
 
-setMethod("fillConcomitant", signature(concomitant="FLXPmultinom"), function(concomitant, posterior, weights) {
-  concomitant@coef <- rbind("1" = 0, getS3method("coef", "multinom")(concomitant@refit(concomitant@x, posterior, weights)))
+setMethod("FLXfillConcomitant", signature(concomitant="FLXPmultinom"), function(concomitant, posterior, weights) {
+  concomitant@coef <- cbind("1" = 0, t(getS3method("coef", "multinom")(concomitant@refit(concomitant@x, posterior, weights))))
   concomitant
 })
 

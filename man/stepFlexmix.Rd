@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: stepFlexmix.Rd 3670 2007-07-24 16:02:28Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: stepFlexmix.Rd 3934 2008-03-26 08:36:26Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -11,24 +11,25 @@
 \alias{unique,stepFlexmix-method}
 \title{Run FlexMix Repeatedly}
 \description{
-  Runs flexmix repeatedly for different numbers of components and return
-  the maximum likelihood solution for each.}
+  Runs flexmix repeatedly for different numbers of components and returns
+  the maximum likelihood solution for each.
 }
 \usage{
-stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE, unique=FALSE)
+stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
+            unique=FALSE)
 
 \S4method{plot}{stepFlexmix,missing}(x, y, what=c("AIC", "BIC", "ICL"),
   xlab=NULL, ylab=NULL, legend="topright", ...)
 
 \S4method{getModel}{stepFlexmix}(object, which="BIC")
 
-\S4method{unique}{stepFlexmix}(object, ...)
+\S4method{unique}{stepFlexmix}(x, incomparables = FALSE, ...)
 }
 \arguments{
-  \item{\dots}{passed to \code{\link{flexmix}} (or \code{\link{matplot}}
+  \item{\dots}{Passed to \code{\link{flexmix}} (or \code{\link{matplot}}
     in the \code{plot} method).}
   \item{k}{A vector of integers passed in turn to the \code{k} argument
-    of \code{\link{flexmix}}}
+    of \code{\link{flexmix}}.}
   \item{nrep}{For each value of \code{k} run \code{\link{flexmix}}
     \code{nrep} times and keep only the solution with maximum
     likelihood.}
@@ -40,8 +41,8 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE, unique=FALSE)
   \item{unique}{If \code{TRUE}, then \code{unique()} is called on the
     result, see below.}
 
-  \item{x, object}{an object of class \code{"stepFlexmix"}}
-  \item{y}{not used}
+  \item{x, object}{An object of class \code{"stepFlexmix"}.}
+  \item{y}{Not used.}
   \item{what}{Character vector naming information criteria to
     plot. Functions of the same name must exist, which take a
     \code{stepFlexmix} object as input and return a numeric vector like
@@ -52,6 +53,10 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE, unique=FALSE)
     \code{\link{legend}} for details.}
   \item{which}{Number of model to get. If character, interpreted as
     number of components or name of an information criterion.}
+
+  \item{incomparables}{A vector of values that cannot be compared. Currently,
+          'FALSE' is the only possible value, meaning that all values
+          can be compared.}
 }
 \value{
   An object of class \code{"stepFlexmix"} containing the best models
@@ -69,7 +74,7 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE, unique=FALSE)
   manually by calling \code{unique()} on objects of class
   \code{"stepFlexmix"}. 
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression kin R. Journal of Statistical

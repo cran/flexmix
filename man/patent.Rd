@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: patent.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{patent}
 \alias{patent}
 \docType{data}
@@ -34,6 +38,7 @@
 data("patent")
 patentMix <- stepFlexmix(Patents ~ lgRD, k=3,
                       model=FLXMRglm(family="poisson"),
+                      concomitant=FLXPmultinom(~RDS),
                       nrep=5, data=patent)
 plot(Patents ~ lgRD, data=patent,
      pch=as.character(cluster(patentMix)))

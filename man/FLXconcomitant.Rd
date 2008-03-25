@@ -1,17 +1,14 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXconcomitant.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{FLXP}
 \docType{class}
 \alias{FLXPconstant}
 \alias{FLXPmultinom}
 \alias{FLXconstant}
 \alias{FLXmultinom}
-\alias{FLXP-class}
-\alias{FLXPconstant-class}
-\alias{FLXPmultinom-class}
 \alias{show,FLXP-method}
-\alias{refit,FLXP,missing-method}
-\alias{refit,FLXPmultinom,missing-method}
-\alias{summary,FLXRP-method}
-\alias{summary,FLXRPmultinom-method}
 \title{Creates the concomitant variable model.}
 \description{
   Creator functions for the concomitant variable
@@ -35,5 +32,5 @@ FLXPmultinom(formula=~1)
   object of class \code{FLXPmultinom} which extends class
   \code{FLXP} directly and is used for method dispatching.
 }
-\author{Bettina Gruen}
+\author{Friedrich Leisch and Bettina Gruen}
 \keyword{models}

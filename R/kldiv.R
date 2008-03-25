@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: kldiv.R 3677 2007-07-31 09:14:36Z gruen $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: kldiv.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 setMethod("KLdiv", "matrix",
@@ -37,7 +37,7 @@ function(object, method = c("continuous", "discrete"), ...) {
   if (method == "discrete") z <- KLdiv(object@posterior$scaled, ...)
   else {
     z <- matrix(0, object@k, object@k)
-    for (i in 1:length(object@model)) {
+    for (i in seq_along(object@model)) {
       comp <- lapply(object@components, "[[", i)
       z <- z + KLdiv(object@model[[i]], comp)
     }

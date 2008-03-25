@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXcomponent-class.Rd 1777 2005-08-18 09:19:27Z leisch $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXcomponent-class.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{FLXcomponent-class}
 \docType{class}
@@ -20,5 +20,5 @@ Objects can be created by calls of the form \code{new("FLXcomponent", ...)}.
     \item{\code{predict}:}{Function predicting response for new data.}
   }
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \keyword{classes}

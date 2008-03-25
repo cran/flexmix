@@ -1,8 +1,8 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 3193 2007-01-04 10:35:17Z gruen $
+%  $Id: flexmix-intro.Rnw 3934 2008-03-26 08:36:26Z gruen $
 %
-\documentclass[JSS]{jss-old}
+\documentclass[JSS]{vignette}
 
 \title{FlexMix: A General Framework for Finite Mixture Models and
   Latent Class Regression in \proglang{R}\thanks{This article was
@@ -72,7 +72,7 @@ data("NPreg")
 \Acceptdate{2004-10-18}
 
 %%\usepackage{Sweave} %% already provided by jss.cls
-%%\VignetteIndexEntry{FlexMix: A General Framework for Finite Mixture Models and Latent Class Regression in R}}
+%%\VignetteIndexEntry{FlexMix: A General Framework for Finite Mixture Models and Latent Class Regression in R}
 %%\VignetteDepends{flexmix}
 %%\VignetteKeywords{R, finite mixture models, model based clustering, latent class regression}
 %%\VignettePackage{flexmix}
@@ -90,27 +90,27 @@ physics, economics and marketing.  On the one hand these models can be
 applied to data where observations originate from various groups and
 the group affiliations are not known, and on the other hand to provide
 approximations for multi-modal distributions
-\citep{flb:Everitt+Hand:1981,flb:Titterington+Smith+Makov:1985,flb:McLachlan+Peel:2000}.
+\citep{flexmix:Everitt+Hand:1981,flexmix:Titterington+Smith+Makov:1985,flexmix:McLachlan+Peel:2000}.
 
 In the 1990s finite mixture models have been extended by mixing
 standard linear regression models as well as generalized linear models
-\citep{flm:Wedel+DeSarbo:1995}. An important area of application of
-mixture models is market segmentation \citep{flb:Wedel+Kamakura:2001},
+\citep{flexmix:Wedel+DeSarbo:1995}. An important area of application of
+mixture models is market segmentation \citep{flexmix:Wedel+Kamakura:2001},
 where finite mixture models replace more traditional cluster analysis
 and cluster-wise regression techniques as state of the art.  Finite
 mixture models with a fixed number of components are usually estimated
 with the expectation-maximization (EM) algorithm within a maximum
-likelihood framework \citep{flm:Dempster+Laird+Rubin:1977} and with
-MCMC sampling \citep{flm:Diebolt+Robert:1994} within a Bayesian
+likelihood framework \citep{flexmix:Dempster+Laird+Rubin:1977} and with
+MCMC sampling \citep{flexmix:Diebolt+Robert:1994} within a Bayesian
 framework.
 
-The \R{} environment for statistical computing \citep{flm:r-core:2004}
+The \R{} environment for statistical computing \citep{flexmix:R-Core:2004}
 features several packages for finite mixture models, including
 \pkg{mclust} for mixtures of multivariate Gaussian distributions
-\citep{fla:Fraley+Raftery:2002,fla:Fraley+Raftery:2002a}, \pkg{fpc}
-for mixtures of linear regression models \citep{flm:Hennig:2000} and
+\citep{flexmix:Fraley+Raftery:2002,flexmix:Fraley+Raftery:2002a}, \pkg{fpc}
+for mixtures of linear regression models \citep{flexmix:Hennig:2000} and
 \pkg{mmlcr} for mixed-mode latent class regression
-\citep{flm:Buyske:2003}.
+\citep{flexmix:Buyske:2003}.
 
 There are three main reasons why we have chosen to write yet another
 software package for EM estimation of mixture models:
@@ -137,13 +137,6 @@ Section~\ref{sec:extending-flexmix} shows how to extend FlexMix by
 writing new drivers using the well-known model-based clustering
 procedure as an example.
 
-% All computations and graphics in this paper have been done with
-% \pkg{flexmix} version 1.0-0 and \R{} version 2.0.0 using Sweave
-% \citep{e1071-papers:Leisch:2002}. The newest release version of
-% \pkg{flexmix} is always available from the Comprehensive R Archive
-% Network at \url{http://cran.R-project.org}, an up-to-date version of
-% this paper is contained as a package vignette.
-
 \section{Latent class regression}
 \label{sec:latent-class-regr}
 
@@ -169,10 +162,10 @@ $\beta_k'x$ and variance $\sigma^2_k$, we have $\theta_k = (\beta_k',
 \sigma_k^2)'$ and Equation~(\ref{eq:1}) describes a mixture of
 standard linear regression models, also called \emph{latent class
   regression} or \emph{cluster-wise regression}
-\citep{flm:DeSarbo+Cron:1988}.  If $f$ is a member of the exponential
+\citep{flexmix:DeSarbo+Cron:1988}.  If $f$ is a member of the exponential
 family, we get a mixture of generalized linear models
-\citep{flm:Wedel+DeSarbo:1995}, known as \emph{GLIMMIX} models in the
-marketing literature \citep{flb:Wedel+Kamakura:2001}.  For
+\citep{flexmix:Wedel+DeSarbo:1995}, known as \emph{GLIMMIX} models in the
+marketing literature \citep{flexmix:Wedel+Kamakura:2001}.  For
 multivariate normal $f$ and $x\equiv1$ we get a mixture of Gaussians
 without a regression part, also known as \emph{model-based
   clustering}.
@@ -200,7 +193,7 @@ $\{(x_1,y_1),\ldots,(x_N,y_N)\}$ is given by
 \end{equation}
 and can usually not be maximized directly. The most popular method for
 maximum likelihood estimation of the parameter vector $\psi$ is the
-iterative EM algorithm \citep{flm:Dempster+Laird+Rubin:1977}: 
+iterative EM algorithm \citep{flexmix:Dempster+Laird+Rubin:1977}: 
 \begin{description}
  \item[Estimate] the posterior class probabilities for each observation
   \begin{displaymath}
@@ -248,7 +241,7 @@ Possible ways of assigning the data into the $K$ classes are
  \item \textbf{hard} \label{hard} assignment to the class with maximum
   posterior probability $p_{nk}$, the resulting procedure is called
   maximizing the \emph{classification likelihood} by
-  \cite{fla:Fraley+Raftery:2002}. Another idea is to do
+  \cite{flexmix:Fraley+Raftery:2002}. Another idea is to do
  \item \textbf{random} assignment to classes with probabilities
   $p_{nk}$, which is similar to the sampling techniques used in
   Bayesian estimation (although for the $z_n$ only).
@@ -291,9 +284,9 @@ problem:
   case is the class of mixtures of binomial and multinomial
   distributions which are only identifiable if the number of
   components is limited with respect to, e.g., the number of
-  observations per person. See \cite{flb:Everitt+Hand:1981},
-  \cite{flb:Titterington+Smith+Makov:1985},
-  \cite{e1071-theses:Grun:2002} and references therein for details.
+  observations per person. See \cite{flexmix:Everitt+Hand:1981},
+  \cite{flexmix:Titterington+Smith+Makov:1985},
+  \cite{flexmix:Grun:2002} and references therein for details.
 \end{description}
 
 FlexMix tries to avoid overfitting because of vanishing prior
@@ -304,7 +297,7 @@ Relabelling of components is in some cases more of a nuisance than a
 real problem (``component 2 of the first run may be component 3 in the
 second run''), more serious are interactions of component relabelling
 and categorical predictor variables, see
-\cite{e1071-papers:Grun+Leisch:2004} for a discussion and how
+\cite{flexmix:Grun+Leisch:2004} for a discussion and how
 bootstrapping can be used to assess identifiability of mixture models.
 
 \pagebreak[4]
@@ -376,9 +369,9 @@ plot(yp~x, col=class, pch=class, data=NPreg)
 
 Histograms or rootograms of the posterior class probabilities can be
 used to visually assess the cluster structure
-\citep{fla:Tantrum+Murua+Stuetzle:2003}, this is now the default plot
+\citep{flexmix:Tantrum+Murua+Stuetzle:2003}, this is now the default plot
 method for \texttt{"flexmix"} objects
-\citep{e1071-papers:Leisch:2004}. Rootograms are very similar to
+\citep{flexmix:Leisch:2004}. Rootograms are very similar to
 histograms, the only difference is that the height of the bars
 correspond to square roots of counts rather than the counts
 themselves, hence low counts are more visible and peaks less
@@ -608,7 +601,7 @@ and choose the number of components minimizing the BIC.
 One of the main design principles of FlexMix was extensibility, users
 can provide their own M-step for rapid prototyping of new mixture
 models. FlexMix was written using S4 classes and methods
-\citep{flb:Chambers:1998} as implemented in \R{} package
+\citep{flexmix:Chambers:1998} as implemented in \R{} package
 \pkg{methods}. 
 
 The central classes for writing M-steps are \texttt{"FLXM"} and
@@ -705,7 +698,7 @@ Note that our internal functions \texttt{fit()}, \texttt{logLik()} and
 arguments, but none of the model-specific parameters like means and
 covariances, although they use them of course. \R{} uses \emph{lexical
   scoping} rules for finding free variables
-\citep{fla:Gentleman+Ihaka:2000}, hence it searches for them first in
+\citep{flexmix:Gentleman+Ihaka:2000}, hence it searches for them first in
 the environment where a function is defined. E.g., the \texttt{fit()}
 function uses the variable \texttt{diagonal} in line~13, and finds it
 in the environment where the function itself was defined, which is the
@@ -798,7 +791,7 @@ models to test necessary identifiability conditions for those
 cases where results are available. We also want to implement
 newer variations of the classic EM algorithm, especially for faster
 convergence. Another plan is to have an interactive version of the
-rootograms using \texttt{iPlots} \citep{flm:Urbanek+Theus:2003} such
+rootograms using \texttt{iPlots} \citep{flexmix:Urbanek+Theus:2003} such
 that the user can explore the relations between mixture components,
 possibly linked to background variables. Other planned extensions
 include covariates for the prior probabilities and to allow to mix
@@ -812,7 +805,7 @@ under grant SFB\#010 (`Adaptive Information Systems and Modeling in
 Economics and Management Science'). Bettina Gr\"un has modified the
 original version to include and reflect the changes of the package.
 
-\bibliography{fls,fla,flb,flm,e1071-theses,e1071-papers}
+\bibliography{flexmix}
 
 \end{document}
 

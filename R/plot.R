@@ -1,43 +1,55 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: plot.R 3681 2007-08-08 13:20:07Z gruen $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: plot.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 ###**********************************************************
 
 plotEll <- function(object, data, which=1:2,
+                    model = 1, 
                     project=NULL, points=TRUE,
                     eqscale=TRUE, col=NULL,
                     number = TRUE, cex=1.5, numcol="black", 
                     pch=NULL, ...)
 {
-    if(is.null(col)) col <- rep(FullColors, length=object@k)
-    
-    if(!is.null(project)){
-        data <- predict(project, data)
-    }
+    if(is.null(col)) col <- rep(FullColors, length.out = object@k)
 
+    if (!is.list(data)) {
+      response <- data
+      data <- list()
+      data[[deparse(object@model[[model]]@fullformula[[2]])]] <- response
+    }
+    else {
+      mf <- model.frame(object@model[[model]]@fullformula, data=data, na.action = NULL)
+      response <- as.matrix(model.response(mf))
+      response <- object@model[[model]]@preproc.y(response)
+    }
+    clustering <- cluster(object, newdata = data)
+    
+    if(!is.null(project))
+      response <- predict(project, response)
+    
     type=ifelse(points, "p", "n")
 
     if(is.null(pch)){
-        pch <- (object@cluster %% 10)
+        pch <- (clustering %% 10)
         pch[pch==0] <- 10
     }
-    else if(length(pch)!=nrow(data)){
-        pch <- rep(pch, length=object@k)
-        pch <- pch[object@cluster]
+    else if(length(pch)!=nrow(response)){
+        pch <- rep(pch, length.out = object@k)
+        pch <- pch[clustering]
     }
-    
+
     if(eqscale)
-        MASS::eqscplot(data[,which], col=col[object@cluster],
+      plot(response[,which], asp = 1, col=col[clustering],
                        pch=pch, type=type, ...)
     else
-        plot(data[,which], col=col[object@cluster], ,
+        plot(response[,which], col=col[clustering], 
              pch=pch, type=type, ...)
         
     
-    for(k in 1:length(object@components)){
-        p = parameters(object, k, simplify=FALSE)
+    for(k in seq_along(object@components)){
+        p = parameters(object, k, model, simplify=FALSE)
         if(!is.null(project)){
             p <- projCentCov(project, p)
         }
@@ -51,8 +63,8 @@ plotEll <- function(object, data, which=1:2,
     }
     
     ## und nochmal fuer die zentren und nummern (damit die immer oben sind)
-    for(k in 1:length(object@components)){
-        p = parameters(object, k, simplify=FALSE)
+    for(k in seq_along(object@components)){
+        p = parameters(object, k, model, simplify=FALSE)
         if(!is.null(project)){
             p <- projCentCov(project, p)
         }

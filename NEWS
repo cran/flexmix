@@ -1,3 +1,12 @@
+Changes in flexmix version 2.0-2
+
+  o refit() now has a method argument. For method "optim" the
+    variance-covariance matrix is determined using optim() to maximize the
+    likelihood initialized in the solution found by the EM algorithm. 
+    Method "mstep" refits the component specific and concomitant models 
+    treating the posterior probabilities as given, i.e. performs an M-step 
+    of the EM algorithm.
+
 Changes in flexmix version 2.0-1
 
   o Lapply() added which allows to apply a function to each component

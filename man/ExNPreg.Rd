@@ -1,11 +1,10 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: ExNPreg.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: ExNPreg.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{ExNPreg}
 \alias{ExNPreg}
 \alias{NPreg}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Artificial Example for Normal, Poisson and Binomial Regression}
 \description{
   A simple artificial regression example with 2 latent classes, one
@@ -17,7 +16,6 @@
 ExNPreg(n)
 data("NPreg")
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{n}{Number of observations per latent class.}
 }

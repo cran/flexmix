@@ -1,3 +1,8 @@
+#
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: FLXMCmvpois.R 3913 2008-03-13 15:13:55Z gruen $
+#
+
 FLXMCmvpois <- function(formula=.~.)
 {
   z <- new("FLXMC", weighted=TRUE, formula=formula,

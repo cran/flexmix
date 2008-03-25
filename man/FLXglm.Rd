@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXglm.Rd 3193 2007-01-04 10:35:17Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXglm.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{FLXMRglm}
 \alias{FLXMRglm}
@@ -23,7 +23,7 @@ FLXMRglm(formula = . ~ .,
     formula.}
   \item{family}{A character string naming a \code{\link{glm}}
     family function.}
-  \item{offset}{this can be used to specify an \emph{a priori} known
+  \item{offset}{This can be used to specify an \emph{a priori} known
     component to be included in the linear predictor during fitting.}
 }
 \details{
@@ -32,7 +32,7 @@ FLXMRglm(formula = . ~ .,
 \value{
   Returns an object of class \code{FLXMRglm}.
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression in R. Journal of Statistical

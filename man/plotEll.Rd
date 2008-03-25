@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXmclust.Rd 1777 2005-08-18 09:19:27Z leisch $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: plotEll.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{plotEll}
 \alias{plotEll}
@@ -10,16 +10,18 @@
   \code{\link{FLXMCmvnorm}}.
 }
 \usage{
-plotEll(object, data, which=1:2, project=NULL, points=TRUE,
+plotEll(object, data, which=1:2, model=1, project=NULL, points=TRUE,
         eqscale=TRUE, col=NULL, number = TRUE, cex=1.5, numcol="black", 
         pch=NULL, ...)
 }
 \arguments{
   \item{object}{An object of class \code{flexmix} with a fitted
     \code{FLXMCmvnorm} model.}
-  \item{data}{The data that were clustered.}
+  \item{data}{The response variable in a data frame or as a matrix.}
   \item{which}{Index numbers of dimensions of (projected) input space
     to plot.}
+  \item{model}{The model (for a multivariate response) that shall be
+    plotted.}
   \item{project}{Projection object, currently only the result of
     \code{\link[stats]{prcomp}} is supported.}
   \item{points}{Logical, shall data points be plotted?}
@@ -28,7 +30,7 @@ plotEll(object, data, which=1:2, project=NULL, points=TRUE,
   \item{cex, numcol}{Size and color of number labels.}
   \item{pch, col, \dots}{Graphical parameters.}
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \seealso{\code{\link{FLXMCmvnorm}}}
 \keyword{cluster}
 

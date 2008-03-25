@@ -1,6 +1,6 @@
 
-R version 2.4.0 Patched (2006-11-03 r39777)
-Copyright (C) 2006 The R Foundation for Statistical Computing
+R version 2.6.2 (2008-02-08)
+Copyright (C) 2008 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -15,7 +15,8 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> library(flexmix)
+> library("flexmix")
+Loading required package: lattice
 Loading required package: modeltools
 Loading required package: stats4
 > 

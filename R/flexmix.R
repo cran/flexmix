@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 3691 2007-09-07 08:30:31Z gruen $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmix.R 3934 2008-03-26 08:36:26Z gruen $
 #
 
 
@@ -41,13 +41,13 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     mycall = match.call()
     control = as(control, "FLXcontrol")
     if (!is(concomitant, "FLXP")) concomitant <- FLXPconstant()
-    
+
     groups <- .FLXgetGrouping(formula, data)
     model <- lapply(model, FLXcheckComponent, k, cluster)
     k <- unique(unlist(sapply(model, FLXgetK, k)))
     if (length(k) > 1) stop("number of clusters not specified correctly")
     
-    model <- lapply(model, FLXgetModelmatrix, data, groups$formula)
+    model <- lapply(model, FLXgetModelmatrix, data, formula)
     
     groups$groupfirst <-
         if (length(groups$group)) groupFirst(groups$group)
@@ -66,7 +66,7 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     if (!is.null(weights) & !identical(weights, as.integer(weights)))
       stop("only integer weights allowed")
     
-    postunscaled <- initPosteriors(k, cluster, FLXgetObs(model[[1]]))
+    postunscaled <- initPosteriors(k, cluster, FLXgetObs(model[[1]]), groups)
     
     z <- FLXfit(model=model, concomitant=concomitant, control=control,
                 postunscaled=postunscaled, groups=groups, weights = weights)
@@ -89,7 +89,7 @@ setMethod("FLXmstep", signature(model = "FLXM"), function(model, weights, ...) {
 })
 
 setMethod("FLXdeterminePostunscaled", signature(model = "FLXM"), function(model, components, ...) {
-  sapply(components, function(x) x@logLik(model@x, model@y))
+  matrix(sapply(components, function(x) x@logLik(model@x, model@y)), nrow = nrow(model@y))
 })
 
 ###**********************************************************
@@ -110,7 +110,8 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   
   llh <- -Inf
   if (control@classify=="random") llh.max <- -Inf
-  converged <- FALSE   
+  converged <- FALSE
+  components <- NULL
   ### EM
   for(iter in 1:control@iter.max) {
       ### M-Step
@@ -139,9 +140,9 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
         }
         model <- lapply(model, FLXremoveComponent, nok)
       }
-      components <- lapply(model, FLXmstep, postscaled)
+      components <- lapply(1:length(model), function(i) FLXmstep(model[[i]], postscaled, components[[i]]))
       postunscaled <- matrix(0, nrow = N, ncol = k)
-      for (n in 1:length(model)) 
+      for (n in seq_along(model))
         postunscaled <- postunscaled + FLXdeterminePostunscaled(model[[n]], components[[n]])
       if(length(group)>0)
         postunscaled <- groupPosteriors(postunscaled, group)
@@ -150,14 +151,14 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       for(m in 1:k)
         postunscaled[,m] <- prior[,m] * postunscaled[,m]
       ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
-      ## eine postunscaled-werte hat, ist exp(-postunscaled)
+      ## kleine postunscaled-werte hat, ist exp(-postunscaled)
       ## numerisch Null, und damit postscaled NaN
       ## log(rowSums(postunscaled)) ist -Inf
       ##</FIXME>
       postscaled <- postunscaled/rowSums(postunscaled)
       if (any(is.nan(postscaled))) {
         index <- which(as.logical(rowSums(is.nan(postscaled))))
-        postscaled[index,] <- rep(prior, each=length(index))
+        postscaled[index,] <- if(nrow(prior)==1) rep(prior, each = length(index)) else prior[index,]
         postunscaled[index,] <- .Machine$double.xmin
       }
       ### check convergence
@@ -203,11 +204,11 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   cluster <- max.col(postscaled)
   size <-  if (is.null(weights)) tabulate(cluster, nbins=k) else tabulate(rep(cluster, weights), nbins=k)
   names(size) <- 1:k
-  concomitant <- fillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights)
+  concomitant <- FLXfillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights)
   df <- concomitant@df(concomitant@x, k) + sum(sapply(components, sapply, slot, "df"))
   control@nrep <- 1
   
-  retval <- new("flexmix", model=model, prior=colMeans(prior),
+  retval <- new("flexmix", model=model, prior=colMeans(postscaled),
                 posterior=list(scaled=postscaled,
                   unscaled=postunscaled),
                 weights = weights,
@@ -255,21 +256,46 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
 
 ###**********************************************************
 
-.FLXgetGrouping <- function(formula, data) {
-  group = factor(integer(0))
-  lf = length(formula)
-  formula1 = formula
-  if(length(formula[[lf]])>1 &&
-     deparse(formula[[lf]][[1]]) == "|"){
-    group = as.factor(eval(formula[[lf]][[3]], data))
-    formula1[[lf]] = formula[[lf]][[2]]
+RemoveGrouping <- function(formula) {
+  lf <- length(formula)
+  formula1 <- formula
+  if(length(formula[[lf]])>1) {
+    if (deparse(formula[[lf]][[1]]) == "|"){
+      formula1[[lf]] <- formula[[lf]][[2]]
+    }
+    else if (deparse(formula[[lf]][[1]]) == "("){
+      form <- formula[[lf]][[2]]
+      if (length(form) == 3 && form[[1]] == "|")
+        formula1[[lf]] <- form[[2]]
+    }
   }
+  formula1
+}
+
+.FLXgetGroupingVar <- function(x)
+{
+  lf <- length(x)
+  while (lf > 1) {
+    x <- x[[lf]]
+    lf <- length(x)
+  }
+  x
+}
+
+.FLXgetGrouping <- function(formula, data)
+{
+  group <- factor(integer(0))
+  formula1 <- RemoveGrouping(formula)
+  if (!isTRUE(all.equal(formula1, formula)))
+    group <- as.factor(eval(.FLXgetGroupingVar(formula), data))
   return(list(group=group, formula=formula1))
 }
 
 setMethod("FLXgetModelmatrix", signature(model="FLXM"),
 function(model, data, formula, lhs=TRUE, ...)
 {
+  formula <- RemoveGrouping(formula)
+  if (length(grep("\\|", deparse(model@formula)))) stop("no grouping variable allowed in the model")
   if(is.null(model@formula))
     model@formula = formula
   
@@ -346,7 +372,7 @@ allweighted <- function(model, control, weights) {
   control
 }
 
-initPosteriors <- function(k, cluster, N) {
+initPosteriors <- function(k, cluster, N, groups) {
   if(is(cluster, "matrix")){
     postunscaled <- cluster
     if (!is.null(k)) if (k != ncol(postunscaled)) stop("specified k does not match the number of columns of cluster")
@@ -356,7 +382,8 @@ initPosteriors <- function(k, cluster, N) {
       if(is.null(k))
         stop("either k or cluster must be specified")
       else
-        cluster <- sample(1:k, size=N, replace=TRUE)
+        cluster <- ungroupPriors(as.matrix(sample(1:k, size = sum(groups$groupfirst), replace=TRUE)),
+                                           groups$group, groups$groupfirst)
     }
     else{
       cluster <- as(cluster, "integer")
@@ -387,7 +414,7 @@ function(object, newdata=list(), aggregate=FALSE, ...){
     }
     else {
       z <- list()
-      for (k in 1:object@k) {
+      for (k in seq_len(object@k)) {
         z[[k]] <- do.call("cbind", lapply(x, "[[", k))
       }
       names(z) <- paste("Comp", 1:object@k, sep=".")
@@ -425,9 +452,10 @@ function(object)
 })
 
 setMethod("posterior", signature(object="flexmix", newdata="missing"),
-function(object)
+function(object, newdata, unscaled = FALSE, ...)
 {
-    object@posterior$scaled
+  if (unscaled) return(object@posterior$unscaled)
+  else return(object@posterior$scaled)
 })
 
 setMethod("posterior", signature(object="FLXdist", newdata="listOrdata.frame"),
@@ -452,21 +480,17 @@ setMethod("posterior", signature(object="FLXdist", newdata="listOrdata.frame"),
 
 setMethod("posterior", signature(object="FLXM", newdata="listOrdata.frame"),
 function(object, newdata, components, ...) {
-            mf <- model.frame(terms(object@fullformula, data=newdata),
-                              data = newdata, na.action = NULL)
-            x <- model.matrix(attr(mf, "terms"), data = mf)
-            y <- as.matrix(model.response(mf))
-            matrix(sapply(components, function(z) z@logLik(x, y, ...)),
-                   nrow = nrow(y))
+  object <- FLXgetModelmatrix(object, newdata, object@fullformula, lhs = TRUE)
+  FLXdeterminePostunscaled(object, components, ...)
 })
     
 setMethod("cluster", signature(object="flexmix", newdata="missing"),
-function(object)
+function(object, newdata, ...)
 {
     object@cluster
 })
     
-setMethod("cluster", signature(object="flexmix", newdata="ANY"),
+setMethod("cluster", signature(object="FLXdist", newdata="ANY"),
 function(object, newdata, ...)
 {
     max.col(posterior(object, newdata, ...))

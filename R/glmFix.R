@@ -1,6 +1,11 @@
+#
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: glmFix.R 3913 2008-03-13 15:13:55Z gruen $
+#
+
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
-                      family=c("gaussian", "binomial", "poisson", "Gamma"),
-                      offset=NULL)
+                        family=c("gaussian", "binomial", "poisson", "Gamma"),
+                        offset=NULL)
 {
       family <- match.arg(family)
       nested <- as(nested, "FLXnested")
@@ -17,7 +22,7 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             n <- nrow(x)/k
             sigma <- vector(length=k)
             cumVar <- cumsum(c(0, variance))
-            for (i in 1:length(variance)) {
+            for (i in seq_along(variance)) {
               ind <- cumVar[i]*n + 1:(n*variance[i])
               sigma[cumVar[i] + 1:variance[i]] <- sqrt(sum(fit$weights[ind] * fit$residuals[ind]^2 /
                                                            mean(fit$weights[ind]))/ (length(ind) - sum(incidence[i,])))
@@ -91,18 +96,8 @@ function(object, newdata, weights, ...)
                              object@y,
                              as.vector(weights))
     z <- rep(list(z), nrow(object@design))
-    for (k in 1:nrow(object@design)) z[[k]]@design <- object@design[k,, drop=FALSE]
+    for (k in seq_len(nrow(object@design))) z[[k]]@design <- object@design[k,, drop=FALSE]
     z
-})
-
-setMethod("summary", signature(object="FLXRMRglmfix"),
-function(object) {
-  z <- object
-  coefs <- coef(summary.glm(object@fitted))
-  rownames(coefs) <- colnames(object@design)
-  coefs <- coefs[as.logical(object@design),,drop=FALSE]
-  z@summary <- new("Coefmat", coefs)
-  z
 })
 
 ###**********************************************************
@@ -118,16 +113,7 @@ function(object, components, ...)
     }
     z
 })
-
-setMethod("fitted", signature(object="FLXRMRglm"),
-function(object, ...)
-{
-  fitted <- matrix(object@fitted$fitted.values, ncol = nrow(object@design))
-  
-})
-        
-
-                
+               
 ###**********************************************************
 
 setMethod("predict", signature(object="FLXMRglmfix"),
@@ -137,7 +123,7 @@ function(object, newdata, components, ...)
   k <- sum(object@nestedformula@k)
   N <- nrow(model@x)/k
   z <- list()
-  for (m in 1:k) {
+  for (m in seq_len(k)) {
     z[[m]] <- components[[m]]@predict(model@x[model@segment[,m], as.logical(model@design[m,]), drop=FALSE], ...)
   }
   z
@@ -147,6 +133,8 @@ function(object, newdata, components, ...)
 
 setMethod("FLXgetModelmatrix", signature(model="FLXMRglmfix"), function(model, data, formula, lhs=TRUE, ...)
 {
+    formula <- RemoveGrouping(formula)
+  if (length(grep("\\|", deparse(model@formula)))) stop("no grouping variable allowed in the model")
     if(is.null(model@formula))
       model@formula <- formula
     model@fullformula <- update.formula(formula, model@formula)
@@ -164,7 +152,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRglmfix"), function(model, d
                      kronecker(diag(sum(k@k)), mm.all$random))
     N <- nrow(model@x)/sum(k@k)
     model@segment <- matrix(FALSE, ncol = sum(k@k), nrow = nrow(model@x))
-    for (m in 1:sum(k@k)) model@segment[(m - 1) * N + 1:N, m] <- TRUE
+    for (m in seq_len(sum(k@k))) model@segment[(m - 1) * N + 1:N, m] <- TRUE
     if (lhs) {
       y <- mm.all$response
       rownames(y) <- NULL

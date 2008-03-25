@@ -1,8 +1,8 @@
 Package: flexmix
-Version: 2.0-1
-Date: 2007-09-07
+Version: 2.0-2
+Date: 2008-03-25
 Author: Friedrich Leisch and Bettina Gruen
-Maintainer: Friedrich Leisch <Friedrich.Leisch@R-project.org>
+Maintainer: Bettina Gruen <Bettina.Gruen@wu-wien.ac.at>
 Title: Flexible Mixture Modeling
 Depends: lattice, modeltools (>= 0.2-13)
 Imports: methods, stats, stats4
@@ -14,6 +14,6 @@ Description: FlexMix implements a general framework for finite
   implement mixtures of standard linear models, generalized linear
   models and model-based clustering. 
 License: GPL-2
-URL: http://www.statistik.lmu.de/~leisch/FlexMix
+URL: http://www.aasc.or.at/mixtures
 LazyLoad: yes
-Packaged: Tue Sep 11 14:28:58 2007; leisch
+Packaged: Wed Mar 26 10:29:05 2008; gruen

@@ -1,13 +1,13 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXbclust.Rd 3249 2007-01-26 08:45:42Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXbclust.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{FLXMCmvbinary}
 \alias{FLXMCmvbinary}
 \alias{FLXbclust}
 \title{FlexMix Binary Clustering Driver}
 \description{
-  This is a demo driver for \code{\link{flexmix}} implementing
+  This is a model driver for \code{\link{flexmix}} implementing
   model-based clustering of binary data. 
 }
 \usage{
@@ -25,13 +25,13 @@ FLXMCmvbinary(formula = . ~ ., truncated = FALSE)
     optimized using an EM-algorithm.}
 }
 \details{
-  This is mostly meant as a demo for FlexMix driver programming, but can
-  be used to cluster binary data. The only parameter is the column-wise
-  mean of the data, which equals the probability of observing a 1.
+  This model driver can be used to cluster binary data. The only
+  parameter is the column-wise mean of the data, which equals the
+  probability of observing a 1.
 }
 \value{
   \code{FLXMCmvbinary} returns an object of class \code{FLXMC}.
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \seealso{\code{\link{flexmix}}}
 \keyword{cluster}

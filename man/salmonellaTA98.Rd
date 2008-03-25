@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: salmonellaTA98.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{salmonellaTA98}
 \alias{salmonellaTA98}
 \title{Salmonella reverse mutagenicity assay}
@@ -9,10 +13,10 @@
 \format{
   This data frame contains the following columns:
   \describe{
-    \item{x}{dose levels of quinoline}
-    \item{y}{numbers of revertant colonies of TA98 Salmonella observed on
+    \item{x}{Dose levels of quinoline.}
+    \item{y}{ Numbers of revertant colonies of TA98 Salmonella observed on
       each of three replicate plates testes at each of six dose levels of
-      quinolinediameter 4.5 feet of the ground, inches}
+      quinolinediameter 4.5 feet of the ground, inches.}
   }
 }
 

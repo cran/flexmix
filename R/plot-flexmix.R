@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Bettina Gruen
-#  $Id: plot.R 2669 2006-07-10 13:57:41Z gruen $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: plot-flexmix.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 determine_y <- function(h, root) {
@@ -116,5 +116,17 @@ function(x, y, mark=NULL, markcol=NULL, col=NULL,
     }
     else hh <- histogram(~ posterior | component, data = z, main = main, ylab = ylab, xlab = xlab, groups = cluster, 
                          ylim = ylim, panel = panel, prepanel = prepanel, as.table = as.table, endpoints = endpoints, ...)
+    if (root) {
+      hh$yscale.components <- function (lim, packet.number = 0, packet.list = NULL, right = TRUE, ...) 
+        {
+          comps <- lattice:::calculateAxisComponents(lim, packet.list = packet.list, 
+                                                     packet.number = packet.number, ...)
+          comps$at <- sqrt(seq(min(comps$at)^2, max(comps$at)^2, length.out = length(comps$at)))
+          comps$labels <- format(comps$at^2, trim = TRUE)
+          list(num.limit = comps$num.limit, left = list(ticks = list(at = comps$at, 
+                                                          tck = 1), labels = list(at = comps$at, labels = comps$labels, 
+                                                                      cex = 1, check.overlap = comps$check.overlap)), right = right)
+        }
+    }
     hh
   })

@@ -1,4 +1,4 @@
-\documentclass{jss-old}
+\documentclass{vignette}
 \usepackage{amsfonts,bm,amsmath,amssymb}
 
 %%\usepackage{Sweave} %% already provided by jss.cls
@@ -15,7 +15,7 @@ library("flexmix")
 @ 
 \subtitle{\pkg{flexmix} version \Sexpr{packageDescription("flexmix", fields="Version")}\\\today}
 \author{Bettina Gr{\"u}n\\
-  Technische Universit{\"a}t Wien \And
+  Wirtschaftsuniversit{\"a}t Wien \And
   Friedrich Leisch\\
   Ludwig-Maximilians-Universit{\"a}t M{\"u}nchen} 
 
@@ -23,11 +23,11 @@ library("flexmix")
 
 \Address{
   Bettina Gr\"un\\
-  Institut f\"ur Statistik und Wahrscheinlichkeitstheorie\\
-  Technische Universit\"at Wien\\
-  Wiedner Hauptstra{\ss}e 8-10/1071\\
-  1040 Wien, Austria\\
-  E-mail: \email{Bettina.Gruen@tuwien.ac.at}
+  Department f\"ur Statistik und Mathematik\\
+  Wirtschaftsuniversit\"at Wien\\
+  Augasse 2--6\\
+  1090 Wien, Austria\\
+  E-mail: \email{Bettina.Gruen@wu-wien.ac.at}
 
   Friedrich Leisch\\
   Institut f\"ur Statistik\\
@@ -65,7 +65,7 @@ library("flexmix")
 <<start, echo=false, results=hide>>=
 options(width=70)
 set.seed(1802)
-library(lattice)
+library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)
 lattice.options(default.theme=ltheme)
 @ 
@@ -78,14 +78,14 @@ easy extensibility and rapid prototyping. In addition, the main focus
 of the available functionality is on fitting finite mixtures of
 regression models, as other packages in \proglang{R} exist which have
 specialized functionality for model-based clustering, such as
-e.g.~\pkg{mclust} \citep{mixtures:Fraley+Raftery:2002a} for finite
+e.g.~\pkg{mclust} \citep{flexmix:Fraley+Raftery:2002a} for finite
 mixtures of Gaussian distributions.
 
-\cite{mixtures:Leisch:2004} gives a general introduction into the
+\cite{flexmix:Leisch:2004a} gives a general introduction into the
 package outlining the main implementational principles and
 illustrating the use of the package. The paper is also contained as a
 vignette in the package. An example for fitting mixtures of Gaussian
-regression models is given in \cite{mixtures:Gruen+Leisch:2006}. This
+regression models is given in \cite{flexmix:Gruen+Leisch:2006}. This
 paper focuses on examples of finite mixtures of binomial logit and
 Poisson regression models.  Several datasets which have been
 previously used in the literature to demonstrate the use of finite
@@ -166,7 +166,7 @@ regression models.
 
 The function for maximum likelihood (ML) estimation with the
 Expectation-Maximization (EM) algorithm is \code{flexmix()} which is
-described in detail in \cite{mixtures:Leisch:2004}. It takes as
+described in detail in \cite{flexmix:Leisch:2004a}. It takes as
 arguments a specification of the component specific model and of the
 concomitant variable model.  The component specific model with
 varying, nested and fixed effects can be specified with the M-step
@@ -209,7 +209,7 @@ $\bm{\alpha}_1 \equiv \bm{0}$. This model can be fitted in
 \pkg{flexmix} with \code{FLXPmultinom()} which takes as argument
 \code{formula} the formula specification of the multinomial logit
 part. For fitting the function \code{nnet()} is used from package
-\pkg{MASS} \citep{mixtures:Venables+Ripley:2002} with the independent
+\pkg{MASS} \citep{flexmix:Venables+Ripley:2002} with the independent
 variables specified by the formula argument and the dependent
 variables are given by the a-posteriori probability estimates.
 %%-------------------------------------------------------------------------
@@ -223,7 +223,7 @@ regression models.
 %%-------------------------------------------------------------------------
 \subsection{Finite mixtures of Gaussian regressions}
 This artificial dataset with 200 observations is given in
-\cite{mixtures:Gruen+Leisch:2006}.  The data is generated from a
+\cite{flexmix:Gruen+Leisch:2006}.  The data is generated from a
 mixture of Gaussian regression models with three components. There is
 an intercept with varying effects, an independent variable $x1$, which
 is a categorical variable with two levels, with nested effects and
@@ -247,8 +247,8 @@ step a component specific model with only varying effects is
 specified. Then the fitting function \code{flexmix()} is called
 repeatedly using \code{stepFlexmix()}.
 <<NregFix>>=
-library(flexmix)
-data(NregFix)
+library("flexmix")
+data("NregFix")
 Model <- FLXMRglm(~ x2 + x1)
 fittedModel <- stepFlexmix(y ~ 1, model = Model, nrep=5, k = 3,
                            data = NregFix, concomitant = FLXPmultinom(~ w))             
@@ -304,10 +304,10 @@ coefficients last.
 \subsection{Finite mixtures of binomial logit regressions}
 %%-------------------------------------------------------------------------
 \subsubsection{Beta blockers}
-The dataset is analyzed in \cite{mixtures:Aitkin:1999,
-  mixtures:Aitkin:1999a} using a finite mixture of binomial regression
+The dataset is analyzed in \cite{flexmix:Aitkin:1999,
+  flexmix:Aitkin:1999a} using a finite mixture of binomial regression
 models. Furthermore, it is described in
-\cite{mixtures:McLachlan+Peel:2000} on page 165. The dataset is from a
+\cite{flexmix:McLachlan+Peel:2000} on page 165. The dataset is from a
 22-center clinical trial of beta-blockers for reducing mortality after
 myocardial infarction. A two-level model is assumed to represent the
 data, where centers are at the upper level and patients at the lower
@@ -323,7 +323,7 @@ First, the center classification is ignored and a binomial logit
 regression model with treatment as covariate is fitted using
 \code{glm}, i.e.~$S=1$:
 <<beta-glm>>=
-data(betablocker)
+data("betablocker")
 betaGlm <- glm(cbind(Deaths, Total - Deaths) ~ Treatment, family = "binomial", data = betablocker)
 betaGlm
 @ 
@@ -348,7 +348,7 @@ betaMixFix
 \begin{figure}
   \centering
 <<beta-fig, fig=true, echo=false, results=hide, height = 5>>=
-library(grid)
+library("grid")
 betaMixFix_3 <- getModel(betaMixFix, "3")
 betablocker$Center <- with(betablocker, factor(Center, levels = Center[order((Deaths/Total)[1:22])]))
 clusters <- factor(cluster(betaMixFix_3), labels = paste("Cluster", 1:3))
@@ -426,7 +426,7 @@ fitted(betaMix)[c(1, 23),]
 @ 
 
 A further analysis of the model is possible with function
-\code{refit()} which returns the estimated coefficients together with
+\code{coef\_test()} which returns the estimated coefficients together with
 the standard deviations, z-values and corresponding p-values:
 <<refit>>=
 summary(refit(getModel(betaMixFix, "3")))
@@ -437,7 +437,7 @@ the varying effects.
 %%-----------------------------------------------------------------------
 \subsubsection{Mehta et al. trial}
 This dataset is similar to the beta blocker dataset and is also
-analyzed in \cite{mixtures:Aitkin:1999a}. The dataset is visualized in
+analyzed in \cite{flexmix:Aitkin:1999a}. The dataset is visualized in
 Figure~\ref{fig:mehta}. The observation for the control group in
 center 15 is slightly conspicuous and might classify as an outlier.
 
@@ -449,7 +449,7 @@ The model is given by:
 with $\bm{\beta}^s = (\beta^s_{\textrm{Intercept|Site}},
 \beta_{\textrm{Drug}})$. This model is fitted with:
 <<mehta-fix>>=
-data(Mehta)
+data("Mehta")
 mehtaMix <- stepFlexmix(cbind(Response, Total - Response)~1 | Site, 
 model=FLXMRglmfix(family="binomial", fixed=~Drug), 
                      control=list(minprior=0.04),nrep=5, k=3, data=Mehta)
@@ -512,7 +512,7 @@ summary(mehtaMix)
 %%-----------------------------------------------------------------------  
 \subsubsection{Tribolium}
 A finite mixture of binomial regressions is fitted to the Tribolium
-dataset given in \cite{mixtures:Wang+Puterman:1998}. The data was
+dataset given in \cite{flexmix:Wang+Puterman:1998}. The data was
 collected to investigate whether the adult Tribolium species Castaneum
 has developed an evolutionary advantage to recognize and avoid eggs of
 its own species while foraging, as beetles of the genus Tribolium are
@@ -535,14 +535,14 @@ Figure~\ref{fig:tribolium} and the model is given by:
 with $\bm{\beta}^s = (\beta^s_{\textrm{Intercept}},
 \bm{\beta}_{\textrm{Species}})$. This model is fitted with:
 <<tribolium>>=
-data(tribolium)
+data("tribolium")
 TribMix <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, k = 2:3,
 model = FLXMRglmfix(fixed = ~ Species, family = "binomial"),
 concomitant = FLXPmultinom(~ Replicate), data = tribolium)
 @ 
 
 The model which is selected as the best in
-\cite{mixtures:Wang+Puterman:1998} can be estimated with:
+\cite{flexmix:Wang+Puterman:1998} can be estimated with:
 <<wang-model>>=
 modelWang <- FLXMRglmfix(fixed = ~ I(Species == "Confusum"), family =
                        "binomial") 
@@ -565,11 +565,11 @@ print(dotplot(Remaining/Total ~ factor(Replicate) | clusters, groups  = Species,
 \caption{Relative number of remaining beetles for the number of
   replicate. The different panels are according to the cluster
   assignemnts based on the a-posteriori probabilities of the model
-  suggested in \cite{mixtures:Wang+Puterman:1998}.}
+  suggested in \cite{flexmix:Wang+Puterman:1998}.}
   \label{fig:tribolium}
 \end{figure}
 
-\cite{mixtures:Wang+Puterman:1998} also considered a model where they
+\cite{flexmix:Wang+Puterman:1998} also considered a model where they
 omit one conspicuous observation. This model can be estimated with:
 <<subset>>=
 TribMixWangSub <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, k = 2, 
@@ -579,7 +579,7 @@ TribMixWangSub <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, k = 2,
 
 %%-----------------------------------------------------------------------  
 \subsubsection{Trypanosome}
-The data is used in \cite{mixtures:Follmann+Lambert:1989}. It is from
+The data is used in \cite{flexmix:Follmann+Lambert:1989}. It is from
 a dosage-response analysis where the proportion of organisms belonging
 to different populations shall be assessed. It is assumed that
 organisms belonging to different populations are indistinguishable
@@ -591,7 +591,7 @@ total numbers of organisms present at each dose and the number showing
 the quantal response were both random variables. The data is
 illustrated in Figure~\ref{fig:trypanosome}.
 
-The model which is proposed in \cite{mixtures:Follmann+Lambert:1989}
+The model which is proposed in \cite{flexmix:Follmann+Lambert:1989}
 is given by:
 \begin{align*}
   H(\textrm{Dead} \,|\,\bm{\Theta}) &= \sum_{s = 1}^S \pi_s
@@ -601,7 +601,7 @@ where $\textrm{Dead} \in \{0,1\}$ and with $\bm{\beta}^s =
 (\beta^s_{\textrm{Intercept}}, \bm{\beta}_{\textrm{log(Dose)}})$. This
 model is fitted with:
 <<trypanosome>>=
-data(trypanosome)
+data("trypanosome")
 TrypMix <- stepFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, 
 nrep=5, data = trypanosome,
 model = FLXMRglmfix(family = "binomial", fixed = ~log(Dose)))
@@ -635,13 +635,13 @@ legend(4.7, 1, c("GLM", "Mixture model"), lty=c(2, 3), xjust=0, yjust=1)
 % %%-----------------------------------------------------------------------                         
 \subsubsection{Fabric faults}
 The dataset is analyzed using a finite mixture of Poisson regression
-models in \cite{mixtures:Aitkin:1996}. Furthermore, it is described in
-\cite{mixtures:McLachlan+Peel:2000} on page 155. It contains 32
+models in \cite{flexmix:Aitkin:1996}. Furthermore, it is described in
+\cite{flexmix:McLachlan+Peel:2000} on page 155. It contains 32
 observations on the number of faults in rolls of a textile fabric. A
 random intercept model is used where a fixed effect is assumed for the
 logarithm of length:
 <<fabric-fix>>=
-data(fabricfault)
+data("fabricfault")
 fabricMix <- stepFlexmix(Faults~1, model=FLXMRglmfix(family="poisson", fixed=~log(Length)), 
                          data=fabricfault, k=2, nrep=5)
 summary(fabricMix)
@@ -683,13 +683,13 @@ legend(190, 25, paste("Model", 1:2), lty=c(1, 2), xjust=0, yjust=1)
 
 %%-----------------------------------------------------------------------
 \subsubsection{Patent}                        
-The patent data given in \cite{mixtures:Wang+Cockburn+Puterman:1998}
+The patent data given in \cite{flexmix:Wang+Cockburn+Puterman:1998}
 consist of 70 observations on patent applications, R\&D spending and
 sales in millions of dollar from pharmaceutical and biomedical
 companies in 1976 taken from the National Bureau of Economic Research
 R\&D Masterfile. The observations are displayed in
 Figure~\ref{fig:patent}. The model which is chosen as the best
-in \cite{mixtures:Wang+Cockburn+Puterman:1998} is given by:
+in \cite{flexmix:Wang+Cockburn+Puterman:1998} is given by:
 \begin{align*}
   H(\textrm{Patents} \,|\, \textrm{lgRD}, \textrm{RDS}, \bm{\Theta}) &=
   \sum_{s = 1}^S \pi_s(\textrm{RDS}, \bm{\alpha}) \textrm{Poi} ( \textrm{Patents} \,|\, \lambda_s),
@@ -698,7 +698,7 @@ and $\bm{\beta}^s = (\beta^s_{\textrm{Intercept}}, \beta^s_{\textrm{lgRD}})$.
 
 The model is fitted with:
 <<patent, echo=true>>=
-data(patent)
+data("patent")
 ModelPat <- FLXMRglm(family = "poisson")
 FittedPat <- stepFlexmix(Patents ~ lgRD, k = 3, nrep=5, 
                          model = ModelPat, data = patent, 
@@ -746,7 +746,7 @@ plotP <- rbind(plotPatents, plotPatentsFixed)
 rds <- seq(0, 3, by = 0.02)
 x <- model.matrix(FittedPat@concomitant@formula, data = data.frame(RDS = rds))
 plotConc <- function(fitted) {
-  E <- exp(x%*%t(fitted@concomitant@coef))
+  E <- exp(x%*%fitted@concomitant@coef)
   data.frame(Probability = as.vector(E/rowSums(E)),
                          class = rep(1:3, each = nrow(x)),
                          RDS = rep(rds, 3))
@@ -771,7 +771,7 @@ print(xyplot(Probability ~ RDS | which, groups = class, data = plotC, type = "l"
 
 \caption{Patent data with the fitted values of the component specific
   models (left) and the concomitant variable model (right) for the
-  model in \citeauthor{mixtures:Wang+Cockburn+Puterman:1998} and with
+  model in \citeauthor{flexmix:Wang+Cockburn+Puterman:1998} and with
   fixed effects for $\log(\textrm{R\&D})$. The plotting symbol for
   each observation is determined by the component with the maximum
   a-posteriori probability.}
@@ -788,13 +788,13 @@ this model might seem more plausible. The fitted values for the
 constrained model are also given in Figure~\ref{fig:patent}.
 %%-----------------------------------------------------------------------
 \subsubsection{Seizure}  
-The data is used in \cite{mixtures:Wang+Puterman+Cockburn:1996} and is
+The data is used in \cite{flexmix:Wang+Puterman+Cockburn:1996} and is
 from a clinical trial where the effect of intravenous gamma-globulin
 on suppression of epileptic seizures is studied. There are daily
 observations for a period of 140 days on one patient, where the first
 27 days are a baseline period without treatment, the remaining 113
 days are the treatment period. The model proposed in
-\cite{mixtures:Wang+Puterman+Cockburn:1996} is given by:
+\cite{flexmix:Wang+Puterman+Cockburn:1996} is given by:
 \begin{align*}
   H(\textrm{Seizures} \,|\, (\textrm{Treatment}, \textrm{log(Day)},
   \textrm{log(Hours)}), \bm{\Theta}) &= \sum_{s = 1}^S \pi_s
@@ -805,7 +805,7 @@ where $\bm(\beta)^s = (\beta^s_{\textrm{Intercept}},
 \beta^s_{\textrm{Treatment:log(Day)}})$ and $\textrm{log(Hours)}$ is
 used as offset. This model is fitted with:
 <<seizure>>=
-data(seizure)
+data("seizure")
 seizMix <- stepFlexmix(Seizures ~ Treatment*log(Day),
                    data=seizure, k=2, nrep=5,
                    model=FLXMRglm(family="poisson", offset=log(seizure$Hours)))
@@ -862,7 +862,7 @@ legend(140, 7, paste("Model", c(1,3)), lty=c(1, 3), xjust=1, yjust=1)
 %%-----------------------------------------------------------------------
 \subsubsection{Ames salmonella assay data}                        
 The ames salomnella assay dataset was used in
-\cite{mixtures:Wang+Puterman+Cockburn:1996}. They propose a model
+\cite{flexmix:Wang+Puterman+Cockburn:1996}. They propose a model
 given by:
 \begin{align*}
   H(\textrm{y} \,|\, \textrm{x}, \bm{\Theta}) &= \sum_{s = 1}^S \pi_s
@@ -871,7 +871,7 @@ given by:
 where $\bm{\beta}^s = (\beta^s_{\textrm{Intercept}},
 \beta_{\textrm{x}}, \beta_{\textrm{log(x+10)}})$. The model is fitted with:
 <<salmonella>>=
-data(salmonellaTA98)
+data("salmonellaTA98")
 salmonMix <- stepFlexmix(y~1,
                          data=salmonellaTA98, 
                          model=FLXMRglmfix(family="poisson", 
@@ -920,5 +920,5 @@ This research was supported by the the Austrian Science Foundation
 (FWF) under grant P17382 and the Austrian Academy of Sciences
 ({\"O}AW) through a DOC-FFORTE scholarship for Bettina Gr{\"u}n.
 %%-----------------------------------------------------------------------  
-\bibliography{mixtures}
+\bibliography{flexmix}
 \end{document}

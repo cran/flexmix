@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: trypanosome.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{trypanosome}
 \alias{trypanosome}
 \docType{data}
@@ -39,6 +43,7 @@
 data("trypanosome")
 trypMix <- stepFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, 
 	               nrep=5, data = trypanosome,
-	               model = FLXMRglmfix(family = "binomial", fixed = ~log(Dose)))
+	               model = FLXMRglmfix(family = "binomial",
+                           fixed = ~log(Dose)))
 }
 \keyword{datasets}

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXcontrol-class.Rd 3692 2007-09-07 08:56:43Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXcontrol-class.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{FLXcontrol-class}
 \docType{class}
@@ -26,13 +26,14 @@
       log-likelihood is reported every \code{verbose} iterations. If 0,
       no output is generated during model fitting.}
     \item{\code{classify}:}{Character string, one of \code{"auto"},
-      \code{"weighted"}, \code{"hard"}, \code{"random"}.}
+      \code{"weighted"}, \code{"hard"} (or \code{"CEM"}),
+      \code{"random"} or (\code{"SEM"}).}
     \item{\code{nrep}:}{Reports the number of random initializations
-      used to determine the mixture with \code{\link{stepFlexmix}()}.}
+      used in \code{\link{stepFlexmix}()} to determine the mixture.}
   }
   Run \code{new("FLXcontrol")} to see the default settings of all slots.
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \keyword{classes}
 \examples{
 ## have a look at the defaults

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: seizure.Rd 3595 2007-06-29 16:08:37Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: seizure.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{seizure}
 \alias{seizure}
@@ -9,7 +9,7 @@
 \description{
   Data from a clinical trial where the effect of intravenous
   gamma-globulin on suppression of epileptic seizures is studied.
-  There are daily observations for a period of 140 days on one patient, 
+  Daily observations for a period of 140 days on one patient are given, 
   where the first 27 days are a baseline period without treatment, the
   remaining 113 days are the treatment period.
 }
@@ -17,10 +17,10 @@
 \format{
   A data frame with 140 observations on the following 4 variables.
   \describe{
-    \item{Seizures}{a numeric vector, daily counts of epileptic seizures}
-    \item{Hours}{a numeric vector, hours of daily parental observation}
-    \item{Treatment}{a factor with levels \code{No} and \code{Yes}}
-    \item{Day}{a numeric vector}
+    \item{Seizures}{A numeric vector, daily counts of epileptic seizures.}
+    \item{Hours}{A numeric vector, hours of daily parental observation.}
+    \item{Treatment}{A factor with levels \code{No} and \code{Yes}.}
+    \item{Day}{A numeric vector.}
   }
 }
 \source{

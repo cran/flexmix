@@ -1,3 +1,8 @@
+#
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: plot-refit.R 3913 2008-03-13 15:13:55Z gruen $
+#
+
 prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = TRUE, nlevels, origin = NULL, 
                                    ...) 
 {
@@ -49,89 +54,41 @@ panel.coef <- function(x, y, subscripts, groups, significant = NULL, horizontal 
   if (!missing(groups)) {
     if (horizontal) {
       z <- x + rep(c(-1,1), each = length(x)) * matrix(rep(groups[subscripts], 2), ncol = 2)
-      for (i in 1:length(x)) {
+      for (i in seq_along(x)) {
         panel.xyplot(z[i,], rep(y[i], 2), type = "l", col = col.sig[i], lwd = lwd)
       }
     }
     else {
       z <- y + rep(c(-1,1), each = length(y)) * matrix(rep(groups[subscripts], 2), ncol = 2)
-      for (i in 1:length(y)) {
+      for (i in seq_along(y)) {
         panel.xyplot(rep(x[i], 2), z[i,], type = "l", col = col.sig[i], lwd = lwd)
       }
     }
   }
 }
 
-setGeneric("getCoefs", function(x, ...) standardGeneric("getCoefs"))
-
-setMethod("getCoefs", signature(x = "list"),
-function(x, alpha = 0.05, components, ...) {
-  Comp <- list()
-  for (n in components) {
-    Comp[[n]] <- getCoefs(x[[n]], alpha)
-    Comp[[n]]$Component <- n
-  }
-  only <- names(which(table(unlist(sapply(Comp, names))) == length(components)))
-  do.call("rbind", lapply(Comp, "[", TRUE, only))
-})
-
-setMethod("getCoefs", signature(x = "FLXRMRglm"),
-function(x, alpha = 0.05, ...) {
-  cm <- x@summary
-  data.frame(Value = cm[,1],
-             SD = cm[,2] * qt(1-alpha/2, df=x@fitted$df.residual),
-             Variable = rownames(cm),
-             Significance = cm[,4] <= alpha)
-})
-
-setMethod("getCoefs", signature(x = "FLXRM"),
-function(x, alpha = 0.05, ...)
-{
-  cm <- x@summary
-  data.frame(Value = cm,
-             Variable = names(cm))
-})
-
-
-setMethod("getCoefs", signature(x = "FLXRP"),
-function(x, alpha = 0.05, components, ...)
-{
-  cm <- x@summary
-  data.frame(Value = cm[components],
-             Variable = "pi",
-             Component = components)
-})
-
-setMethod("getCoefs", signature(x = "FLXRPmultinom"),
-function(x, alpha = 0.05, components, ...) {
-  cm <- x@summary
-  names(cm) <- sapply(names(cm), function(x) strsplit(x, "Comp.")[[1]][2])
-  cm <- cm[names(cm) %in% components]
-  Comp <- lapply(names(cm), function(n) 
-                 data.frame(Value = cm[[n]][,1],
-                            SD = cm[[n]][,2] * qt(1-alpha/2, df=x@fitted$df.residual),
-                            Variable = rownames(cm[[n]]),
+getCoefs <- function(x, alpha = 0.05, components, ...) {
+  names(x) <- sapply(names(x), function(z) strsplit(z, "Comp.")[[1]][2])
+  x <- x[names(x) %in% components]
+  Comp <- lapply(names(x), function(n) 
+                 data.frame(Value = x[[n]][,1],
+                            SD = x[[n]][,2] * qnorm(1-alpha/2),
+                            Variable = rownames(x[[n]]),
                             Component = n,
-                            Significance = cm[[n]][,4] <= alpha))
+                            Significance = x[[n]][,4] <= alpha))
   do.call("rbind", Comp)
-})
+}
 
-setMethod("plot", signature(x="FLXR", y="missing"),
-function(x, y, bycluster=TRUE, alpha=0.05, components, labels=NULL,
-         scale = bycluster, xlab = NULL, ylab = NULL, ci = TRUE,
-         scales = list(), as.table = TRUE, horizontal = TRUE, ...)
+setMethod("plot", signature(x="FLXRoptim", y="missing"),
+function(x, y, model = 1, which = c("model", "concomitant"),
+         bycluster=TRUE, alpha=0.05, components, labels=NULL,
+         significance = FALSE, xlab = NULL, ylab = NULL,
+         ci = TRUE, scales = list(), as.table = TRUE, horizontal = TRUE, ...)
 {
+    which <- match.arg(which)
     if (missing(components)) components <- 1:x@k
-    plot.data <- getCoefs(summary(x)@refit, alpha, components)
+    plot.data <- if (which == "model") getCoefs(x@components[[model]], alpha, components) else getCoefs(x@concomitant, alpha, components)
     if (!is.null(labels)) plot.data$Variable <- factor(plot.data$Variable, labels = labels)
-    if (!"SD" %in% colnames(plot.data)) ci <- FALSE
-    if (scale) {
-      ord <- order(plot.data$Variable)
-      m <- with(plot.data, tapply(abs(Value), Variable, max))
-      if (ci) plot.data[,c("Value", "SD")] <- plot.data[,c("Value", "SD")]/m[plot.data$Variable]
-      else plot.data[,"Value"] <- plot.data[,"Value"]/m[plot.data$Variable]
-      if (horizontal) scales$x$draw <- FALSE else scales$y$draw <- FALSE
-    }
     plot.data$Component <- with(plot.data, factor(Component, sort(unique(Component)), labels = paste("Comp.", sort(unique(Component)))))
     if (bycluster) {
       formula <- if (horizontal) Variable ~ Value | Component else Value ~ Variable | Component
@@ -143,7 +100,7 @@ function(x, y, bycluster=TRUE, alpha=0.05, components, labels=NULL,
     }
     require(lattice)
     groups <- if (ci) plot.data$SD else NULL
-    significant <- if (ci) plot.data$Significance else NULL
+    significant <- if (significance) plot.data$Significance else NULL
     xyplot(formula, data = plot.data, xlab = xlab, ylab = ylab, origin = 0, horizontal = horizontal,
            scales = scales, as.table = as.table, significant = significant,
            groups = groups, prepanel = function(...) prepanel.default.coef(...),

@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: tribolium.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{tribolium}
 \alias{tribolium}
 \docType{data}
@@ -38,8 +42,8 @@
 }
 \examples{
 data("tribolium")
-tribMix <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ Species, k = 2, 
-                   nrep=5, data = tribolium,
+tribMix <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ Species, 
+                   k = 2, nrep=5, data = tribolium,
                    model = FLXMRglm(family = "binomial"))
 }
 \keyword{datasets}

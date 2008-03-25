@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: infocrit.R 3678 2007-08-03 14:55:05Z gruen $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: infocrit.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 setGeneric("nobs", function(object, ...) standardGeneric("nobs"))

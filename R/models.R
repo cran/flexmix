@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2006 Friedrich Leisch
-#  $Id: models.R 3595 2007-06-29 16:08:37Z gruen $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: models.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -21,7 +21,7 @@ FLXMRglm <- function(formula=.~.,
     }
                 
     z <- new("FLXMRglm", weighted=TRUE, formula=formula,
-             name=paste("FLXMRglm", family, sep=":"),
+             name=paste("FLXMRglm", family, sep=":"), offset = offset,
              family=family, refit=glmrefit)
     z@preproc.y <- function(x){
       if (ncol(x) > 1)
@@ -177,8 +177,8 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
 ###**********************************************************
 
 FLXMCmvbinary <- function(formula=.~., truncated = FALSE) {
-  if (truncated) return(MCmvbinary_truncated())
-  else return(MCmvbinary())
+  if (truncated) return(MCmvbinary_truncated(formula))
+  else return(MCmvbinary(formula))
 }
 
 MCmvbinary <- function(formula=.~.)
@@ -223,7 +223,7 @@ binary_truncated <- function(y, w, maxit = 200, epsilon = .Machine$double.eps) {
   r_k <- colSums(y*w)/sum(w)
   r_0 <- 0
   llh.old <- -Inf
-  for (i in 1:maxit) {
+  for (i in seq_len(maxit)) {
     p <- r_k/(1+r_0)
     llh <- sum((r_k*log(p))[r_k > 0])+ sum(((1 - r_k + r_0) * log(1-p))[(1-r_k+r_0) > 0])
     if (abs(llh - llh.old)/(abs(llh) + 0.1) < epsilon) break    

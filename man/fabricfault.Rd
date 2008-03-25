@@ -1,9 +1,13 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: fabricfault.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{fabricfault}
 \alias{fabricfault}
 \docType{data}
 \title{Fabric Faults}
 \description{
-  Number of Faults in rolls of a textile fabric.
+  Number of faults in rolls of a textile fabric.
 }
 \usage{data("fabricfault")}
 \format{

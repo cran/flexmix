@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: ICL.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{ICL}
 \alias{ICL,flexmix-method}
 \alias{ICL,stepFlexmix-method}
@@ -24,7 +28,7 @@
   Returns a numeric vector with the corresponding ICL value(s). 
 }
 \keyword{methods}
-\author{Bettina Gruen}
+\author{Friedrich Leisch and Bettina Gruen}
 \references{
   C. Biernacki, G. Celeux and G. Govaert. Assessing a mixture model
   for clustering with the integrated completed likelihood. IEEE

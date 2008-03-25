@@ -1,10 +1,9 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: fitted.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: fitted.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
-\name{fitted}
+\name{fitted-methods}
 \docType{methods}
-\alias{fitted-methods}
 \alias{fitted,flexmix-method}
 \alias{fitted,FLXM-method}
 \alias{fitted,FLXR-method}
@@ -27,7 +26,7 @@
   \item{\dots}{currently not used}
 }
 \keyword{methods}
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \examples{
 data("NPreg")
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)

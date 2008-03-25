@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2006 Friedrich Leisch
-%  $Id: flexmix.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: flexmix.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -19,7 +19,8 @@
 }
 \usage{
 flexmix(formula, data = list(), k = NULL, cluster = NULL, 
-        model=NULL, concomitant=NULL, control = NULL, weights = NULL)
+        model=NULL, concomitant=NULL, control = NULL,
+        weights = NULL)
 \S4method{summary}{flexmix}(object, eps=1e-4, ...)
 }
 \arguments{
@@ -37,11 +38,11 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     clusters.}
   \item{weights}{An optional vector of weights to be used in the fitting
     process.  Should be 'NULL', a numeric vector or a formula.}
-  \item{model}{Object of \code{FLXM} of list of \code{FLXM}
+  \item{model}{Object of class \code{FLXM} or list of \code{FLXM}
     objects. Default is the object returned by calling
     \code{\link{FLXMRglm}()}.}
-  \item{concomitant}{Object of \code{FLXP}. Default is the
-    object by calling \code{\link{FLXPconstant}}.}
+  \item{concomitant}{Object of class \code{FLXP}. Default is the
+    object returned by calling \code{\link{FLXPconstant}}.}
   \item{control}{Object of class \code{FLXcontrol} or a named list.}
   \item{object}{Object of class \code{flexmix}.}
   \item{eps}{Probabilities below this treshold are treated as zero in the
@@ -64,7 +65,8 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
 \value{
   Returns an object of class \code{flexmix}.
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
+\seealso{\code{\link[flexmix]{plot-methods}}}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression in R. Journal of Statistical
@@ -108,7 +110,8 @@ ex3 <- flexmix(yp~x, data=NPreg, k=2, model=FLXMRglm(family="poisson"))
 
 ## if observations are grouped, i.e., we have several observations per
 ## individual, fitting is usually much faster:
-ex4 <- flexmix(yp~x|id1, data=NPreg, k=2, model=FLXMRglm(family="poisson"))
+ex4 <- flexmix(yp~x|id1, data=NPreg, k=2,
+               model=FLXMRglm(family="poisson"))
 
 ## And now a binomial example. Mixtures of binomials are not generically
 ## identified, here the grouping variable is necessary:

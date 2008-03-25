@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: FLXmclust.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXmclust.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{FLXMCmvnorm}
 \alias{FLXMCmvnorm}
@@ -28,9 +28,9 @@ FLXMCmvnorm(formula = . ~ ., diagonal = TRUE)
   should also look at package \pkg{mclust} for real applications. 
 }
 \value{
-  \code{FLXMCmvnorm} returns an object of class \code{FLXM}.
+  \code{FLXMCmvnorm} returns an object of class \code{FLXMC}.
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression in R. Journal of Statistical

@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2005 Friedrich Leisch
-#  $Id: examples.R 1896 2005-10-31 12:37:07Z leisch $
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: examples.R 3913 2008-03-13 15:13:55Z gruen $
 #
 
 ExNPreg = function(n)

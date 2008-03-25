@@ -1,3 +1,8 @@
+#
+#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+#  $Id: classes.R 3913 2008-03-13 15:13:55Z gruen $
+#
+
 setClass("FLXcontrol",
          representation(iter.max="numeric",
                         minprior="numeric",
@@ -35,11 +40,11 @@ setClass("FLXM",
                         name="character",
                         formula="formula",
                         fullformula="formula",
-                        terms="ANY",
-                        contrasts="ANY",
-                        xlevels="ANY",
                         x="matrix",
                         y="matrix",
+                        terms="ANY",
+                        xlevels="ANY",
+                        contrasts="ANY",
                         preproc.x="function",
                         preproc.y="function",
                         "VIRTUAL"),
@@ -55,6 +60,7 @@ setClass("FLXMC",
 
 ## regression
 setClass("FLXMR",
+         representation(offset="ANY"),
          contains = "FLXM")
 
 setMethod("show", "FLXM",
@@ -95,11 +101,17 @@ setClass("FLXP",
                         x="matrix",
                         fit="function",
                         refit="function",
+                        coef="matrix",
                         df="function"),
          prototype(formula=~1, df = function(x, k, ...) (k-1)*ncol(x)))
 
+setMethod("initialize", signature(.Object="FLXP"), function(.Object, ...) {
+  .Object <- callNextMethod(.Object=.Object, ...)
+  if (is.null(formals(.Object@refit))) .Object@refit <- .Object@fit
+  .Object
+})
+
 setClass("FLXPmultinom",
-         representation(coef="matrix"),
          contains="FLXP")
 
 setMethod("show", "FLXP",
@@ -186,33 +198,46 @@ setClass("FLXMRglm",
 
 setClass("FLXR",
          representation(k="integer",
-                        refit="ANY",
-                        call="call"))
+                        components = "list",
+                        concomitant = "ANY",
+                        call="call",
+                        "VIRTUAL"))
 
-setMethod("show", signature(object="FLXR"), function(object) {
+setClass("FLXRoptim",
+         representation(coef="vector",
+                        vcov="matrix"),
+         contains="FLXR")
+
+setClass("FLXRmstep",
+         contains="FLXR")
+         
+setMethod("show", signature(object = "FLXR"),
+function(object) {
   cat("\nCall:", deparse(object@call,0.75*getOption("width")),
       sep="\n")
   cat("\nNumber of components:", object@k, "\n\n")
-  ## <fixme> for 2.5.0
-  if (!length(object@refit)) {
-    show(object@refit)
-  }
-  else if (is(object@refit, "list")) {
-    if (any(!sapply(object@refit, function(x) is.null(x@summary)))) show(object@refit)
-  }
-  else show(object@refit)
 })
 
-setClass("FLXRM",
-         representation(fitted="ANY",
-                        summary="ANY"))
-
-setMethod("show", signature(object="FLXRM"), function(object) {
-  if (!is.null(object@summary)) show(object@summary)
+setMethod("summary", signature(object = "FLXRoptim"),
+function(object, model = 1, which = c("model", "concomitant"), ...) {
+  which <- match.arg(which)
+  z <- if (which == "model") object@components[[model]] else object@concomitant
+  show(z)
+  invisible(object)
 })
 
-setClass("FLXRMRglm",
-         contains="FLXRM")
+setMethod("summary", signature(object = "FLXRmstep"),
+function(object, model = 1, which = c("model", "concomitant"), ...) {
+  which <- match.arg(which)
+  z <- if (which == "model") object@components[[model]] else object@concomitant
+  if (!is.null(z)) lapply(seq_along(z), function(k) {
+    cat(paste("$", names(z)[k], "\n", sep = ""))
+    printCoefmat(coef(summary(z[[k]])))
+    cat("\n")
+  })
+  invisible(object)
+})
+
 
 setClass("Coefmat",
          extends("matrix"))
@@ -264,20 +289,9 @@ setClass("FLXMRglmfix",
                         variance = "vector"),
          contains="FLXMRglm")
 
-setClass("FLXRMRglmfix",
-         representation(design = "matrix"),
-         contains = "FLXRMRglm")
-
-
-###**********************************************************
-
-setClass("FLXRP",
-         contains="FLXRM")
-
-setClass("FLXRPmultinom",
-         contains="FLXRP")
-
 ###**********************************************************
 
 setClassUnion("listOrdata.frame", c("list", "data.frame"))
+
+###**********************************************************
 

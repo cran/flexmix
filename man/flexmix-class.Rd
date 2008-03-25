@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2007 Friedrich Leisch
-%  $Id: flexmix-class.Rd 3364 2007-03-08 01:28:57Z leisch $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: flexmix-class.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{flexmix-class}
 \docType{class}
@@ -47,5 +47,5 @@
       observation.}
   }
 }
-\author{Friedrich Leisch}
+\author{Friedrich Leisch and Bettina Gruen}
 \keyword{classes}

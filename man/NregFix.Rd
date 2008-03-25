@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: NregFix.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  
 \name{NregFix}
 \alias{NregFix}
 \title{Artificial Example for Normal Regression}
@@ -12,11 +16,13 @@ data("NregFix")
 \format{
   A data frame with 200 observations on the following 5 variables.
   \describe{
-    \item{\code{x1}}{independent variable, numeric variable}
-    \item{\code{x2}}{independent variable, a factor with two levels \code{0} \code{1}}
-    \item{\code{w}}{concomitant variable, a factor with two levels \code{0} \code{1}}
-    \item{\code{y}}{dependent variable}
-    \item{\code{class}}{latent class memberships}
+    \item{\code{x1}}{Independent variable: numeric variable.}
+    \item{\code{x2}}{Independent variable: a factor with two levels:
+      \code{0} and \code{1}.}
+    \item{\code{w}}{Concomitant variable: a factor with two levels:
+      \code{0} and \code{1}.}
+    \item{\code{y}}{Dependent variable.}
+    \item{\code{class}}{Latent class memberships.}
   }
 }
 \examples{

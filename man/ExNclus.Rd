@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: ExNclus.Rd 3221 2007-01-22 14:27:40Z gruen $
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: ExNclus.Rd 3912 2008-03-13 15:10:24Z gruen $
 %
 \name{ExNclus}
 \alias{ExNclus}

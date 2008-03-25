@@ -1,3 +1,7 @@
+%
+%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  $Id: Mehta.Rd 3912 2008-03-13 15:10:24Z gruen $
+%
 \name{Mehta}
 \alias{Mehta}
 \docType{data}
