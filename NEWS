@@ -1,3 +1,11 @@
+Changes in flexmix version 2.1-0
+
+  o Renamed cluster() to clusters() to avoid conflict with cluster() 
+    from package survival
+
+  o Bug fixed in internal functions using S4 generics and methods.
+
+
 Changes in flexmix version 2.0-2
 
   o refit() now has a method argument. For method "optim" the
@@ -7,6 +15,7 @@ Changes in flexmix version 2.0-2
     treating the posterior probabilities as given, i.e. performs an M-step 
     of the EM algorithm.
 
+
 Changes in flexmix version 2.0-1
 
   o Lapply() added which allows to apply a function to each component
@@ -14,6 +23,7 @@ Changes in flexmix version 2.0-1
 
   o KLdiv() modified to allow for determination with a discrete and a
     continuous version of the KL divergence
+
 
 Changes in flexmix version 2.0-0
 

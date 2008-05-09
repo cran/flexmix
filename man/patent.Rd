@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: patent.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: patent.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{patent}
 \alias{patent}
@@ -41,7 +41,7 @@ patentMix <- stepFlexmix(Patents ~ lgRD, k=3,
                       concomitant=FLXPmultinom(~RDS),
                       nrep=5, data=patent)
 plot(Patents ~ lgRD, data=patent,
-     pch=as.character(cluster(patentMix)))
+     pch=as.character(clusters(patentMix)))
 ordering <- order(patent$lgRD)
 apply(fitted(patentMix), 2, function(y)
       lines(sort(patent$lgRD), y[ordering]))

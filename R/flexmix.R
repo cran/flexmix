@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 3934 2008-03-26 08:36:26Z gruen $
+#  $Id: flexmix.R 3937 2008-03-28 14:56:01Z leisch $
 #
 
 
@@ -484,13 +484,13 @@ function(object, newdata, components, ...) {
   FLXdeterminePostunscaled(object, components, ...)
 })
     
-setMethod("cluster", signature(object="flexmix", newdata="missing"),
+setMethod("clusters", signature(object="flexmix", newdata="missing"),
 function(object, newdata, ...)
 {
     object@cluster
 })
     
-setMethod("cluster", signature(object="FLXdist", newdata="ANY"),
+setMethod("clusters", signature(object="FLXdist", newdata="ANY"),
 function(object, newdata, ...)
 {
     max.col(posterior(object, newdata, ...))

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: plot.R 3937 2008-03-28 14:56:01Z leisch $
 #
 
 ###**********************************************************
@@ -24,7 +24,7 @@ plotEll <- function(object, data, which=1:2,
       response <- as.matrix(model.response(mf))
       response <- object@model[[model]]@preproc.y(response)
     }
-    clustering <- cluster(object, newdata = data)
+    clustering <- clusters(object, newdata = data)
     
     if(!is.null(project))
       response <- predict(project, response)

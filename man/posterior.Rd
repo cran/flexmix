@@ -1,10 +1,10 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: posterior.Rd 3934 2008-03-26 08:36:26Z gruen $
+%  $Id: posterior.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{posterior}
-\alias{cluster,flexmix,missing-method}
-\alias{cluster,FLXdist,ANY-method}
+\alias{clusters,flexmix,missing-method}
+\alias{clusters,FLXdist,ANY-method}
 \alias{posterior,flexmix,missing-method}
 \alias{posterior,FLXdist,listOrdata.frame-method}
 \title{Determine cluster membership and posterior probabilities}
@@ -13,8 +13,8 @@
 \usage{
 \S4method{posterior}{flexmix,missing}(object, newdata, unscaled = FALSE, ...)
 \S4method{posterior}{FLXdist,listOrdata.frame}(object, newdata, unscaled = FALSE, ...)
-\S4method{cluster}{flexmix,missing}(object, newdata, ...)
-\S4method{cluster}{FLXdist,ANY}(object, newdata, ...)
+\S4method{clusters}{flexmix,missing}(object, newdata, ...)
+\S4method{clusters}{FLXdist,ANY}(object, newdata, ...)
 }
 \arguments{
   \item{object}{An object of class "flexmix" or "FLXdist".}

@@ -12,8 +12,8 @@ ex2 <- flexmix(Nclus ~ 1, cluster=posterior(ex1), model = FLXMCmvnorm())
 stopifnot(all.equal(ex0@size, ex2@size))
 stopifnot(ex0@iter-1==ex2@iter)
 
-ex3a <- flexmix(Nclus ~ 1, cluster=cluster(ex1), model = FLXMCmvnorm())
-ex3b <- flexmix(Nclus ~ 1, cluster=cluster(ex1), model = FLXMCmvnorm())
+ex3a <- flexmix(Nclus ~ 1, cluster=clusters(ex1), model = FLXMCmvnorm())
+ex3b <- flexmix(Nclus ~ 1, cluster=clusters(ex1), model = FLXMCmvnorm())
 
 stopifnot(all.equal(ex3a, ex3b))
 

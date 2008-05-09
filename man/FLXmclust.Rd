@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmclust.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: FLXmclust.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{FLXMCmvnorm}
 \alias{FLXMCmvnorm}
@@ -65,9 +65,9 @@ p
 
 ## The following two should be the same
 max.col(p)
-cluster(ex2)[ok]
+clusters(ex2)[ok]
 
 \testonly{
-  stopifnot(all.equal(max.col(p), cluster(ex2)[ok]))
+  stopifnot(all.equal(max.col(p), clusters(ex2)[ok]))
 }
 }

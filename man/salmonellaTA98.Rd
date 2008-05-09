@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: salmonellaTA98.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: salmonellaTA98.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{salmonellaTA98}
 \alias{salmonellaTA98}
@@ -49,7 +49,7 @@ salmonMix <- stepFlexmix(y~1,
                          k=2, nrep=5)
 salmonMix.pr <- predict(salmonMix, newdata=salmonellaTA98)
 plot(y~x, data=salmonellaTA98, 
-     pch=as.character(cluster(salmonMix)), 
+     pch=as.character(clusters(salmonMix)), 
      ylim=range(c(salmonellaTA98$y, unlist(salmonMix.pr))))
 for (i in 1:2) lines(salmonellaTA98$x, salmonMix.pr[[i]], lty=i)
 }

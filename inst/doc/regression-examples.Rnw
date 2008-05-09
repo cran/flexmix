@@ -351,7 +351,7 @@ betaMixFix
 library("grid")
 betaMixFix_3 <- getModel(betaMixFix, "3")
 betablocker$Center <- with(betablocker, factor(Center, levels = Center[order((Deaths/Total)[1:22])]))
-clusters <- factor(cluster(betaMixFix_3), labels = paste("Cluster", 1:3))
+clusters <- factor(clusters(betaMixFix_3), labels = paste("Cluster", 1:3))
 print(dotplot(Deaths/Total ~ Center | clusters, groups  = Treatment, as.table = TRUE,
               data  = betablocker, xlab = "Center", layout = c(3, 1), scales = list(x = list(draw = FALSE)),
               key = simpleKey(levels(betablocker$Treatment), lines = TRUE, corner = c(1,0))))
@@ -412,7 +412,7 @@ parameters(betaMix)
 The cluster assignments using the maximum a-posteriori probabilities
 are obtained with:
 <<cluster>>=
-table(cluster(betaMix))
+table(clusters(betaMix))
 @ 
 
 The estimated probabilities for each component for the treated
@@ -466,7 +466,7 @@ component in Figure~\ref{fig:mehta}.
   \centering
 <<mehta-fig, fig=true, echo=false, results=hide, height = 5>>=
 Mehta$Site <- with(Mehta, factor(Site, levels = Site[order((Response/Total)[1:22])]))
-clusters <- factor(cluster(mehtaMix), labels = paste("Cluster", 1:3)) 
+clusters <- factor(clusters(mehtaMix), labels = paste("Cluster", 1:3)) 
 print(dotplot(Response/Total ~ Site | clusters, groups  = Drug,  layout = c(3,1),
               data  = Mehta, xlab = "Site", scales = list(x = list(draw = FALSE)),
               key = simpleKey(levels(Mehta$Drug), lines = TRUE, corner = c(1,0))))
@@ -556,7 +556,7 @@ summary(refit(TribMixWang))
 \begin{figure}
   \centering
 <<tribolium, fig=true, echo=false, results=hide, height = 4>>=
-clusters <- factor(cluster(TribMixWang), labels = paste("Cluster", 1:TribMixWang@k))
+clusters <- factor(clusters(TribMixWang), labels = paste("Cluster", 1:TribMixWang@k))
 print(dotplot(Remaining/Total ~ factor(Replicate) | clusters, groups  = Species, 
               data  = tribolium[rep(1:9, each = 3) + c(0:2)*9,], xlab = "Replicate",
               auto.key = list(corner = c(1,0))))
@@ -708,7 +708,7 @@ summary(FittedPat)
 The fitted values for the component specific models and the
 concomitant variable model are given in Figure~\ref{fig:patent}. The
 plotting symbol of the observations corresponds to the induced
-clustering given by \code{cluster(FittedPat)}.
+clustering given by \code{clusters(FittedPat)}.
 
 This model is modified to have fixed effects for the logarithmized
 R\&D spendings, i.e.~$\bm(\beta)^s = (\beta^s_{\textrm{Intercept}},
@@ -737,7 +737,7 @@ plotData <- function(fitted) {
   with(patent, data.frame(Patents = c(Patents, 
                             unlist(predict(fitted, newdata = newdata))),
                           lgRD = c(lgRD, rep(lgRDv, 3)),
-                          class = c(cluster(fitted), rep(1:3, each = nrow(newdata))),
+                          class = c(clusters(fitted), rep(1:3, each = nrow(newdata))),
                           type = rep(c("data", "fit"), c(nrow(patent), nrow(newdata)*3))))
 }
 plotPatents <- cbind(plotData(FittedPat), which = "Wang et al.")
@@ -884,7 +884,7 @@ salmonMix <- stepFlexmix(y~1,
 <<salmonella, fig=true, echo=false, results=hide>>=
 salmonMix.pr <- predict(salmonMix, newdata=salmonellaTA98)
 plot(y~x, data=salmonellaTA98, 
-     pch=as.character(cluster(salmonMix)), 
+     pch=as.character(clusters(salmonMix)), 
      xlab="Dose of quinoline", ylab="Number of revertant colonies of salmonella",
      ylim=range(c(salmonellaTA98$y, unlist(salmonMix.pr))))
 for (i in 1:2) lines(salmonellaTA98$x, salmonMix.pr[[i]], lty=i)

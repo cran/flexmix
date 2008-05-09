@@ -10,7 +10,7 @@ z[801:1000] <- rbinom(200, 3, prob=0.1)
 z <- cbind(z, 3-z)
 
 ex1 <- flexmix(z~1, k=2, model= FLXMRglm(family="binomial"))
-table(wahr=klassen, flexmix=cluster(ex1))
+table(wahr=klassen, flexmix=clusters(ex1))
 
 y <- runif(1000)
 z<-rep(0,1000)
@@ -19,6 +19,6 @@ z[801:1000] <- rbinom(200, 3, prob=1-y[801:1000])
 z <- cbind(z, 3-z)
 
 ex2 <- flexmix(z~y, k=2, model= FLXMRglm(family="binomial"))
-table(wahr=klassen, flexmix=cluster(ex2))
+table(wahr=klassen, flexmix=clusters(ex2))
 
 

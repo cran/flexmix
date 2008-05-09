@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-flexmix.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: plot-flexmix.R 3965 2008-04-16 06:22:47Z gruen $
 #
 
 determine_y <- function(h, root) {
@@ -30,7 +30,7 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
         y <- determine_y(h, root)
         if (!is.null(mark)) {
           h1 <- lattice:::hist.constructor(x[groups[subscripts] == mark], breaks = h$breaks, plot = FALSE, ...)
-          y1 <- h1$counts/y
+          y1 <- determine_y(h1, root)
         }
         nb <- length(breaks)
         if (length(y) != nb - 1) 

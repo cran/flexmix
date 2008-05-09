@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: refit.R 3969 2008-05-05 07:12:05Z gruen $
 #
 ###*********************************************************
 
@@ -63,7 +63,7 @@ function(object, model = TRUE, gradient, ...) {
   if (object@control@classify != "weighted") stop("Only for weighted ML estimation possible.")
   if (length(getParameters(object)) != object@df) stop("not implemented yet for restricted parameters.")
   if (missing(gradient)) gradient <- FLXgradlogLikfun(object)
-  fit <- optim(fn = logLikfun(object), par = getParameters(object), gr = gradient,
+  fit <- optim(fn = FLXlogLikfun(object), par = getParameters(object), gr = gradient,
                hessian = TRUE, method = "BFGS", control = list(fnscale = -1))
   list(coef = fit$par, vcov = -solve(as.matrix(fit$hessian)))
 })  
@@ -80,13 +80,14 @@ function(object) {
   }
 })
 
-logLikfun <- function(object, ...) function(parms) {
+setMethod("FLXlogLikfun", signature(object="flexmix"),
+function(object, ...) function(parms) {
   object <- FLXreplaceParameters(object, parms)
   groupfirst <- if (length(object@group) > 1) groupFirst(object@group) else rep(TRUE, FLXgetObs(object@model[[1]]))
   postunscaled <- getPriors(object@concomitant, object@group, groupfirst) * Likfun_comp(object)(parms)
   if (is.null(object@weights)) return(sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))))
   else return(sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))*object@weights[groupfirst]))
-}
+})
 
 setMethod("getPriors", signature(object="FLXP"),
 function(object, group, groupfirst) {

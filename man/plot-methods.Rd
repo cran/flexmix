@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: plot-methods.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: plot-methods.Rd 3935 2008-03-26 09:59:04Z gruen $
 %
 \name{plot-methods}
 \docType{methods}

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: infocrit.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: infocrit.R 3937 2008-03-28 14:56:01Z leisch $
 #
 
 setGeneric("nobs", function(object, ...) standardGeneric("nobs"))
@@ -45,5 +45,5 @@ function(object, ...){
     first <- if (length(object@group)) groupFirst(object@group) else TRUE
     post <- object@posterior$unscaled[first,,drop=FALSE]
     n <- nrow(post)
-    sum(log(post[1:n + (cluster(object)[first] - 1)*n]))
+    sum(log(post[1:n + (clusters(object)[first] - 1)*n]))
 })

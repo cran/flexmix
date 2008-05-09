@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 3934 2008-03-26 08:36:26Z gruen $
+%  $Id: flexmix-intro.Rnw 3937 2008-03-28 14:56:01Z leisch $
 %
 \documentclass[JSS]{vignette}
 
@@ -338,7 +338,7 @@ for component~2. The paramter estimates of both components are close
 to the true values. A cross-tabulation of true classes and cluster
 memberships can be obtained by
 <<>>=
-table(NPreg$class, cluster(m1))
+table(NPreg$class, clusters(m1))
 @ 
 The summary method
 <<>>=

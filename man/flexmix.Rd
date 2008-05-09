@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: flexmix.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -118,11 +118,11 @@ ex4 <- flexmix(yp~x|id1, data=NPreg, k=2,
 set.seed(1234)
 ex5 <- stepFlexmix(cbind(yb,1-yb)~x, data=NPreg, k=2,
                    model=FLXMRglm(family="binomial"), nrep=5)
-table(NPreg$class, cluster(ex5))
+table(NPreg$class, clusters(ex5))
 
 ex6 <- stepFlexmix(cbind(yb,1-yb)~x|id2, data=NPreg, k=2,
                    model=FLXMRglm(family="binomial"), nrep=5)
-table(NPreg$class, cluster(ex6))
+table(NPreg$class, clusters(ex6))
 
 }
 
