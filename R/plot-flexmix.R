@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-flexmix.R 3965 2008-04-16 06:22:47Z gruen $
+#  $Id: plot-flexmix.R 4144 2008-10-02 14:20:09Z gruen $
 #
 
 determine_y <- function(h, root) {
@@ -16,7 +16,7 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
 {
     x <- as.numeric(x)
     plot.polygon <- trellis.par.get("plot.polygon")
-    require(grid)
+    require("grid")
     grid.lines(x = c(0.05, 0.95), y = unit(c(0, 0), "native"), 
         gp = gpar(col = border, lty = lty, lwd = lwd, alpha = alpha),
                default.units = "npc")
@@ -102,7 +102,6 @@ function(x, y, mark=NULL, markcol=NULL, col=NULL,
                         1:x@k, paste("Comp.", 1:x@k)),
                       cluster = rep(rep(as.vector(x@cluster[groupfirst]), x@weights[groupfirst]), k))
 
-    require(lattice)
     panel <- function(x, subscripts, groups, ...)
       panel.rootogram(x, root = root, mark = mark, col = col, markcol = markcol,
                       subscripts = subscripts, groups = groups, ...)

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: classes.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: classes.R 4018 2008-07-14 08:41:17Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -240,7 +240,7 @@ function(object, model = 1, which = c("model", "concomitant"), ...) {
 
 
 setClass("Coefmat",
-         extends("matrix"))
+         contains = "matrix")
 
 setMethod("show", signature(object="Coefmat"), function(object) {
   printCoefmat(object, signif.stars = getOption("show.signif.stars"))

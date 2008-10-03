@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 3937 2008-03-28 14:56:01Z leisch $
+#  $Id: flexmix.R 4016 2008-07-14 07:25:39Z gruen $
 #
 
 
@@ -41,7 +41,7 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     mycall = match.call()
     control = as(control, "FLXcontrol")
     if (!is(concomitant, "FLXP")) concomitant <- FLXPconstant()
-
+    
     groups <- .FLXgetGrouping(formula, data)
     model <- lapply(model, FLXcheckComponent, k, cluster)
     k <- unique(unlist(sapply(model, FLXgetK, k)))
@@ -122,14 +122,18 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       else ungroupPriors(concomitant@fit(concomitant@x, (postscaled/weights)[groupfirst & weights > 0,,drop=FALSE], weights[groupfirst & weights > 0]),
                          group, groupfirst)
       # Check min.prior
-      nok <- which(colSums(prior)/sum(prior) < control@minprior)
+      nok <- if (nrow(prior) == 1) which(prior < control@minprior) else {
+               if (is.null(weights)) which(colMeans(prior[groupfirst,]) < control@minprior)
+               else which(colSums(prior[groupfirst,] * weights[groupfirst])/sum(weights[groupfirst]) < control@minprior)
+             }
       if(length(nok)) {
         if(control@verbose>0)
-          cat("*** Removing",length(nok), "component(s) ***\n")
+          cat("*** Removing", length(nok), "component(s) ***\n")
         prior <- prior[,-nok,drop=FALSE]
-        prior <- prior/sum(prior)
+        prior <- prior/rowSums(prior)
         postscaled <- postscaled[,-nok,drop=FALSE]
-        postscaled[rowSums(postscaled) == 0,] <- prior
+        postscaled[rowSums(postscaled) == 0,] <- if (nrow(prior) > 1) prior[rowSums(postscaled) == 0,]
+                                                 else prior[rep(1, sum(rowSums(postscaled) == 0)),]
         postscaled <- postscaled/rowSums(postscaled)
         if (!is.null(weights)) postscaled <- postscaled * weights
         k <- ncol(prior)
@@ -207,8 +211,10 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   concomitant <- FLXfillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights)
   df <- concomitant@df(concomitant@x, k) + sum(sapply(components, sapply, slot, "df"))
   control@nrep <- 1
-  
-  retval <- new("flexmix", model=model, prior=colMeans(postscaled),
+  prior <- if (is.null(weights)) colMeans(postscaled[groupfirst,,drop=FALSE])
+           else colSums(postscaled[groupfirst,,drop=FALSE] * weights[groupfirst])/sum(weights[groupfirst])
+
+  retval <- new("flexmix", model=model, prior=prior,
                 posterior=list(scaled=postscaled,
                   unscaled=postunscaled),
                 weights = weights,
@@ -286,7 +292,7 @@ RemoveGrouping <- function(formula) {
 {
   group <- factor(integer(0))
   formula1 <- RemoveGrouping(formula)
-  if (!isTRUE(all.equal(formula1, formula)))
+  if (!identical(formula1, formula))
     group <- as.factor(eval(.FLXgetGroupingVar(formula), data))
   return(list(group=group, formula=formula1))
 }
@@ -349,7 +355,7 @@ groupPosteriors <- function(x, group)
 }
 
 ungroupPriors <- function(x, group, groupfirst) {
-  if (!length(group)) group <- 1:length(groupfirst)
+  if (!length(group)) group <- seq_along(groupfirst)
   if (nrow(x) > 1) {
     x <- x[order(as.integer(group[groupfirst])),,drop=FALSE]
     x <- x[as.integer(group),,drop=FALSE]

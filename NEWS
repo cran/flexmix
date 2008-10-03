@@ -1,3 +1,20 @@
+Changes in flexmix version 2.2-0
+
+  o vignette describing Version 2 added
+
+  o isTRUE(all.equal()) replaced with identical().
+
+  o Bug fixed for prior in flexmix().
+
+  o New function relabel() to sort components (generic is in modeltools).
+
+  o New example data generator ExLinear().
+
+  o Fixed a bug in handling groups (gave an error for empty design matrices).
+
+  o Added new model FLXMRrobglm() for robust estimation of GLMs.
+
+
 Changes in flexmix version 2.1-0
 
   o Renamed cluster() to clusters() to avoid conflict with cluster() 

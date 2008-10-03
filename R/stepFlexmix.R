@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 3934 2008-03-26 08:36:26Z gruen $
+#  $Id: stepFlexmix.R 4016 2008-07-14 07:25:39Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -176,7 +176,6 @@ setMethod("plot", signature(x="stepFlexmix", y="missing"),
 function(x, y, what=c("AIC", "BIC", "ICL"), xlab=NULL, ylab=NULL,
          legend="topright", ...)
 {
-    #browser()
     X <- x@k
     Y <- NULL
     for(w in what){

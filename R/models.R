@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: models.R 4144 2008-10-02 14:20:09Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -148,7 +148,7 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
     z <- new("FLXMC", weighted=TRUE, formula=formula,
              dist = "mvnorm", name="model-based Gaussian clustering")
 
-    require(mvtnorm)
+    require("mvtnorm")
     z@defineComponent <- expression({
       logLik <- function(x, y)
         dmvnorm(y, mean=center, sigma=cov, log=TRUE)

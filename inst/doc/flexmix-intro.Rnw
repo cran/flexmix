@@ -1,18 +1,11 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 3937 2008-03-28 14:56:01Z leisch $
+%  $Id: flexmix-intro.Rnw 4144 2008-10-02 14:20:09Z gruen $
 %
-\documentclass[JSS]{vignette}
+\documentclass[nojss]{jss}
 
 \title{FlexMix: A General Framework for Finite Mixture Models and
-  Latent Class Regression in \proglang{R}\thanks{This article was
-    originally published in \emph{Journal of Statistical Software},
-    October 2004, Volume 11, Issue 8. It has been modified to reflect
-    the changes made to the package. Please use the version published
-    in JSS for citation.}}
-
-\subtitle{\pkg{flexmix} version
-  \Sexpr{packageDescription("flexmix",fields="Version")}\\\today}
+  Latent Class Regression in \proglang{R}}
 
 \Plaintitle{FlexMix: A General Framework for Finite Mixture Models and
   Latent Class Regression in R} 
@@ -37,13 +30,17 @@
 
 <<echo=false,results=hide>>=
 set.seed(1504)
-options(width=65)
+options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 ps.options(family="Times")
 library("flexmix")
 data("NPreg")
 @
 
-\Abstract{
+\Abstract{ 
+
+  This article was originally published as \cite{flexmix:Leisch:2004a}
+  in the \emph{Journal of Statistical Software}.
+  
   FlexMix implements a general framework for fitting
   discrete mixtures of regression models in the \R{} statistical
   computing environment: three variants of the EM algorithm can be
@@ -304,7 +301,7 @@ bootstrapping can be used to assess identifiability of mixture models.
 \section{Using FlexMix}
 \label{sec:using-flexmix}
 
-\SweaveOpts{width=12,height=8,eps=FALSE}
+\SweaveOpts{width=12,height=8,eps=FALSE,keep.source=TRUE}
 
 The standard M-step \texttt{FLXMRglm()} of FlexMix is an interface to
 R's generalized linear modelling facilities (the \texttt{glm()}
@@ -323,16 +320,16 @@ We can fit this model in \R{} using the commands
 <<>>= 
 library("flexmix")
 data("NPreg")
-m1 = flexmix(yn~x+I(x^2), data=NPreg, k=2)
+m1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2)
 m1
 @
 and get a first look at the estimated parameters of mixture component~1 by 
 <<>>=
-parameters(m1, component=1)
+parameters(m1, component = 1)
 @ 
 and
 <<>>=
-parameters(m1, component=2)
+parameters(m1, component = 2)
 @ 
 for component~2. The paramter estimates of both components are close
 to the true values. A cross-tabulation of true classes and cluster
@@ -401,7 +398,7 @@ Figure~\ref{fig:root1}.
 
 Tests for significance of regression coefficients can be obtained by
 <<>>=
-rm1 = refit(m1)
+rm1 <- refit(m1)
 summary(rm1)
 @
 Function \texttt{refit()} fits weighted generalized linear models to each
@@ -427,7 +424,8 @@ The model can be estimated using
 options(width=55)
 @ 
 <<>>=
-m2 = flexmix(yp~x, data = NPreg, k = 2, model = FLXMRglm(family = "poisson"))
+m2 <- flexmix(yp ~ x, data = NPreg, k = 2, 
+  model = FLXMRglm(family = "poisson"))
 summary(m2)
 @ 
 <<echo=false,results=hide>>=
@@ -480,9 +478,9 @@ we use the model specification
 \end{Sinput}
 
 <<echo=false>>=
-m3 = flexmix(~x, data=NPreg, k=2,
-                   model=list(FLXMRglm(yn~.+I(x^2)), 
-                              FLXMRglm(yp~., family="poisson")))
+m3 <- flexmix(~ x, data = NPreg, k = 2,
+  model=list(FLXMRglm(yn ~ . + I(x^2)), 
+    FLXMRglm(yp ~ ., family = "poisson")))
 @
 Note that now three model formulas are involved: An overall formula as
 first argument to function \texttt{flexmix()} and one formula per
@@ -528,7 +526,7 @@ that $\forall m: N_m=4$.  Column \texttt{id2} of the data frame
 encodes such a grouping and can easily be used in FlexMix:
 
 <<>>=
-m4 = flexmix(yn~x+I(x^2)|id2, data = NPreg, k = 2)
+m4 <- flexmix(yn ~ x + I(x^2) | id2, data = NPreg, k = 2)
 summary(m4)
 @ 
 Note that convergence of the EM algorithm is much faster with
@@ -546,8 +544,8 @@ assignment of observations to clusters (cf. page~\pageref{hard}) the
 call is
 
 <<>>=
-m5 = flexmix(yn~x+I(x^2), data = NPreg, k = 2,
-  control=list(iter.max=15, verbose=3, classify="hard"))
+m5 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2,
+  control = list(iter.max = 15, verbose = 3, classify = "hard"))
 @ 
 
 Another control parameter (\texttt{minprior}, see below for an
@@ -565,8 +563,8 @@ In real applications the number of components is unknown and has to be
 estimated.  Tuning the minimum prior parameter allows for 
 simplistic model selection, which works surprisingly well in some situations:
 <<>>=
-m6 = flexmix(yp~x+I(x^2), data = NPreg, k = 4,
-  control=list(minprior=0.2))
+m6 <- flexmix(yp ~ x + I(x^2), data = NPreg, k = 4,
+  control = list(minprior = 0.2))
 
 m6  
 @ 
@@ -579,8 +577,8 @@ converges only to the next local maximum of the likelihood, it should
 be run repeatedly using different starting values. The function
 \texttt{stepFlexmix()} can be used to repeatedly fit models, e.g.,
 <<>>=
-m7 = stepFlexmix(yp~x+I(x^2), data = NPreg,
-  control=list(verbose=0), k=1:5, nrep=5)
+m7 <- stepFlexmix(yp ~ x + I(x^2), data = NPreg,
+  control = list(verbose = 0), k = 1:5, nrep = 5)
 
 @ 
 runs \texttt{flexmix()} 5 times for $k=1,2,\ldots,5$ components,
@@ -738,7 +736,7 @@ from data set \texttt{Nclus}. Fitting a wrong model with diagonal
 covariance matrix is done by
 <<>>=
 data("Nclus")
-m1 = flexmix(Nclus~1, k=4, model=mymclust())
+m1 <- flexmix(Nclus ~ 1, k = 4, model = mymclust())
 summary(m1)
 @
 
@@ -751,7 +749,7 @@ left cluster has a much higher ratio of 0.85. Using the correct model
 with a full covariance matrix can be done by setting
 \texttt{diagonal=FALSE} in the call to our driver \texttt{mymclust()}:
 <<>>=
-m2 = flexmix(Nclus~1, k=4, model=mymclust(diagonal=FALSE))
+m2 <- flexmix(Nclus ~ 1, k = 4, model = mymclust(diagonal = FALSE))
 summary(m2)
 @
 
@@ -798,6 +796,17 @@ include covariates for the prior probabilities and to allow to mix
 different distributions for components, e.g., to include a Poisson
 point process for background noise.
 
+\section*{Computational details}
+<<echo=false,results=hide>>=
+SI <- sessionInfo()
+pkgs <- paste(sapply(c(SI$otherPkgs, SI$loadedOnly), function(x) 
+                     paste("\\\\pkg{", x$Package, "} ", 
+                           x$Version, sep = "")), collapse = ", ")
+@ 
+
+All computations and graphics in this paper have been done using
+\proglang{R} version \Sexpr{getRversion()} with the packages
+\Sexpr{pkgs}. 
 \section*{Acknowledgments}
 
 This research was supported by the Austrian Science Foundation (FWF)

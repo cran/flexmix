@@ -1,12 +1,12 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: concomitant.R 4144 2008-10-02 14:20:09Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {
   z <- new("FLXPmultinom", name="FLXPmultinom", formula=formula)
   multinom.fit <- function(x, y, w, ...) {
-    require(nnet)
+    require("nnet")
     r <- ncol(x)
     p <- ncol(y)
     if (p < 2) stop("Multinom requires at least two components.")
@@ -44,13 +44,22 @@ FLXPconstant <- function() {
 
 ###**********************************************************
 
-setMethod("FLXgetModelmatrix", signature(model="FLXP"), function(model, data, groups, lhs, ...) {
-  mt <- terms(model@formula, data=data)
-  mf <- model.frame(delete.response(mt), data=data, na.action = NULL)
-  X <- model.matrix(mt, data=mf)
-  if (!checkGroup(X, groups$group)) stop("model variables have to be constant for grouping variable")
-  model@x <- if (nrow(X)) X[groups$groupfirst,,drop=FALSE] else matrix(1, nrow=sum(groups$groupfirst))
-  model
+setMethod("FLXgetModelmatrix", signature(model="FLXP"),
+function(model, data, groups, lhs, ...)
+{
+    mt <- terms(model@formula, data=data)
+    mf <- model.frame(delete.response(mt), data=data, na.action = NULL)
+    X <- model.matrix(mt, data=mf)
+    if (nrow(X)){
+        if (!checkGroup(X, groups$group))
+            stop("model variables have to be constant for grouping variable")
+        model@x <- X[groups$groupfirst,,drop=FALSE]
+    }
+    else{
+        model@x <- matrix(1, nrow=sum(groups$groupfirst))
+    }
+  
+    model
 })
 
 checkGroup <- function(x, group) {

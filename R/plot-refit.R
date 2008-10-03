@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-refit.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: plot-refit.R 4144 2008-10-02 14:20:09Z gruen $
 #
 
 prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = TRUE, nlevels, origin = NULL, 
@@ -98,7 +98,6 @@ function(x, y, model = 1, which = c("model", "concomitant"),
       formula <- if (horizontal) Component ~ Value | Variable else Value ~ Component | Variable
       plot.data$Component <- with(plot.data, factor(Component, levels = rev(levels(Component))))
     }
-    require(lattice)
     groups <- if (ci) plot.data$SD else NULL
     significant <- if (significance) plot.data$Significance else NULL
     xyplot(formula, data = plot.data, xlab = xlab, ylab = ylab, origin = 0, horizontal = horizontal,

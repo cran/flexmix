@@ -1,10 +1,12 @@
 import(methods)
 import(modeltools)
+import(multcomp)
 
 importFrom(stats, fitted, predict)
 importFrom(stats4, AIC, BIC, logLik, plot, summary)
 
 export(
+       ExLinear,
        ExNPreg,
        ExNclus,
        FLXMCmvbinary,
@@ -15,9 +17,11 @@ export(
        FLXfit,
        FLXMRglm,
        FLXMRglmfix,
+       FLXMRrobglm,
        FLXMRziglm,
        flexmix,
        plotEll,
+       relabel,
        stepFlexmix,
        FLXglm,
        FLXglmFix,
@@ -36,6 +40,7 @@ exportClasses(
               FLXdist,
               FLXMRglmfix,
               FLXMRglm,
+              FLXMRrobglm,
               FLXMRziglm,
               FLXM,
               FLXMR,
@@ -78,6 +83,7 @@ exportMethods(
               predict,
               prior,
               refit,
+              relabel,
               show,
               summary,
               unique

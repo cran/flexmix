@@ -1,4 +1,4 @@
-\documentclass{vignette}
+\documentclass[nojss]{jss}
 \usepackage{amsfonts,bm,amsmath,amssymb}
 
 %%\usepackage{Sweave} %% already provided by jss.cls
@@ -7,13 +7,10 @@
 %%\VignetteKeywords{R, finite mixture model, generalized linear model, latent class regression}
 %%\VignettePackage{flexmix}
 
-
-
 \title{Applications of finite mixtures of regression models}
 <<echo=false, hide=true>>=
 library("flexmix")
 @ 
-\subtitle{\pkg{flexmix} version \Sexpr{packageDescription("flexmix", fields="Version")}\\\today}
 \author{Bettina Gr{\"u}n\\
   Wirtschaftsuniversit{\"a}t Wien \And
   Friedrich Leisch\\
@@ -60,10 +57,10 @@ library("flexmix")
 %%-------------------------------------------------------------------------
 %%-------------------------------------------------------------------------
 \begin{document}
-\SweaveOpts{engine=R, echo=true, height=5, width=8, eps=FALSE}
+\SweaveOpts{engine=R, echo=true, height=5, width=8, eps=FALSE, keep.source=TRUE}
 \setkeys{Gin}{width=0.8\textwidth}
 <<start, echo=false, results=hide>>=
-options(width=70)
+options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 set.seed(1802)
 library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)
@@ -251,7 +248,7 @@ library("flexmix")
 data("NregFix")
 Model <- FLXMRglm(~ x2 + x1)
 fittedModel <- stepFlexmix(y ~ 1, model = Model, nrep=5, k = 3,
-                           data = NregFix, concomitant = FLXPmultinom(~ w))             
+  data = NregFix, concomitant = FLXPmultinom(~ w))             
 summary(refit(fittedModel))
 @ 
 
@@ -263,11 +260,11 @@ for the other two components overlap. Therefore we fit a modified
 model, which is equivalent to the true underlying model. The
 previously fitted model is used for initializing the EM algorithm:
 <<diffModel>>=
-Model2 <- FLXMRglmfix(fixed = ~x2,
-                   nested = list(k = c(2,1), formula = c(~x1, ~0)),
-                   varFix = TRUE)
-fittedModel2 <- flexmix(y ~ 1, model = Model2, cluster = posterior(fittedModel),
-                        data = NregFix, concomitant = FLXPmultinom(~ w))             
+Model2 <- FLXMRglmfix(fixed = ~ x2, nested = list(k = c(2, 1), 
+  formula = c(~ x1, ~ 0)), varFix = TRUE)
+fittedModel2 <- flexmix(y ~ 1, model = Model2, 
+  cluster = posterior(fittedModel), data = NregFix, 
+  concomitant = FLXPmultinom(~ w))             
 BIC(fittedModel)
 BIC(fittedModel2)
 @ 
@@ -281,10 +278,10 @@ The BIC suggests that the restricted model should be preferred.
 plotNregFix <- NregFix
 plotNregFix$w <- factor(NregFix$w, levels = 0:1, labels = paste("w =", 0:1))
 plotNregFix$x2 <- factor(NregFix$x2, levels = 0:1,
-                         labels = paste("x2 =", 0:1))
+  labels = paste("x2 =", 0:1))
 plotNregFix$class <- factor(NregFix$class, levels = 1:3, labels = paste("Class", 1:3))
 print(xyplot(y ~ x1 | x2*w, groups = class, data = plotNregFix, cex = 0.6,
-             auto.key = list(space="right"), layout = c(2,2)))
+  auto.key = list(space="right"), layout = c(2,2)))
 @ 
 
 \setkeys{Gin}{width=0.8\textwidth}
@@ -324,7 +321,8 @@ regression model with treatment as covariate is fitted using
 \code{glm}, i.e.~$S=1$:
 <<beta-glm>>=
 data("betablocker")
-betaGlm <- glm(cbind(Deaths, Total - Deaths) ~ Treatment, family = "binomial", data = betablocker)
+betaGlm <- glm(cbind(Deaths, Total - Deaths) ~ Treatment, 
+  family = "binomial", data = betablocker)
 betaGlm
 @ 
 
@@ -339,9 +337,9 @@ criterion is used to select an appropriate model. In this case a model
 with three components is selected. The fitted values for the model
 with three components are given in Figure~\ref{fig:beta}.
 <<beta-fix>>=
-betaMixFix <- stepFlexmix(cbind(Deaths, Total - Deaths)~1| Center,
-                          model=FLXMRglmfix(family="binomial", fixed=~Treatment), 
-                          k=2:4, nrep=5, data=betablocker)
+betaMixFix <- stepFlexmix(cbind(Deaths, Total - Deaths) ~ 1 | Center,
+  model = FLXMRglmfix(family = "binomial", fixed = ~ Treatment), 
+  k = 2:4, nrep = 5, data = betablocker)
 betaMixFix
 @ 
 
@@ -353,8 +351,8 @@ betaMixFix_3 <- getModel(betaMixFix, "3")
 betablocker$Center <- with(betablocker, factor(Center, levels = Center[order((Deaths/Total)[1:22])]))
 clusters <- factor(clusters(betaMixFix_3), labels = paste("Cluster", 1:3))
 print(dotplot(Deaths/Total ~ Center | clusters, groups  = Treatment, as.table = TRUE,
-              data  = betablocker, xlab = "Center", layout = c(3, 1), scales = list(x = list(draw = FALSE)),
-              key = simpleKey(levels(betablocker$Treatment), lines = TRUE, corner = c(1,0))))
+  data  = betablocker, xlab = "Center", layout = c(3, 1), scales = list(x = list(draw = FALSE)),
+  key = simpleKey(levels(betablocker$Treatment), lines = TRUE, corner = c(1,0))))
 betaMixFix.fitted <- fitted(betaMixFix_3)
 for (i in 1:3) {
   seekViewport(trellis.vpname("panel", i, 1))
@@ -380,9 +378,9 @@ $\bm{\beta}^s=(\beta^s_{\textrm{Intercept|Center}},
 heterogeneity is only between centers and therefore the aggregated
 data for each center can be used.
 <<beta-full>>=
-betaMix <- stepFlexmix(cbind(Deaths, Total - Deaths)~Treatment | Center,
-                            model=FLXMRglm(family="binomial"), k=3,
-                            nrep=5, data=betablocker)
+betaMix <- stepFlexmix(cbind(Deaths, Total - Deaths) ~ Treatment | Center,
+  model = FLXMRglm(family = "binomial"), k = 3, nrep = 5, 
+  data = betablocker)
 summary(betaMix)
 @
  
@@ -418,11 +416,12 @@ table(clusters(betaMix))
 The estimated probabilities for each component for the treated
 patients and those in the control group can be obtained with:
 <<predict>>=
-predict(betaMix, newdata = data.frame(Treatment = c("Control", "Treated")))
+predict(betaMix, 
+  newdata = data.frame(Treatment = c("Control", "Treated")))
 @ 
 or 
 <<fitted>>=
-fitted(betaMix)[c(1, 23),]
+fitted(betaMix)[c(1, 23), ]
 @ 
 
 A further analysis of the model is possible with function
@@ -450,9 +449,9 @@ with $\bm{\beta}^s = (\beta^s_{\textrm{Intercept|Site}},
 \beta_{\textrm{Drug}})$. This model is fitted with:
 <<mehta-fix>>=
 data("Mehta")
-mehtaMix <- stepFlexmix(cbind(Response, Total - Response)~1 | Site, 
-model=FLXMRglmfix(family="binomial", fixed=~Drug), 
-                     control=list(minprior=0.04),nrep=5, k=3, data=Mehta)
+mehtaMix <- stepFlexmix(cbind(Response, Total - Response)~ 1 | Site, 
+  model = FLXMRglmfix(family = "binomial", fixed = ~ Drug), 
+  control = list(minprior = 0.04), nrep = 5, k = 3, data = Mehta)
 summary(mehtaMix)
 @ 
 
@@ -489,9 +488,9 @@ fitted, i.e.~$\bm{\beta}^s = (\beta^s_{\textrm{Intercept|Site}},
 \beta^s_{\textrm{Drug|Site}})$, this is estimated by:
 
 <<mehta-full>>=
-mehtaMix <- stepFlexmix(cbind(Response, Total - Response)~Drug | Site, 
-                        model=FLXMRglm(family="binomial"), k=3,
-                     control=list(minprior=0.04), data=Mehta, nrep=5)
+mehtaMix <- stepFlexmix(cbind(Response, Total - Response) ~ Drug | Site, 
+  model = FLXMRglm(family = "binomial"), k = 3, data = Mehta, nrep = 5,
+  control = list(minprior = 0.04))
 summary(mehtaMix)
 @ 
 
@@ -504,8 +503,8 @@ treatment is also fitted to the data where site 15 is omitted:
 <<mehta-sub>>=
 Mehta.sub <- subset(Mehta, Site != 15)
 mehtaMix <- stepFlexmix(cbind(Response, Total - Response) ~ 1 | Site, 
-                     model=FLXMRglmfix(family="binomial", fixed=~Drug),
-                     data=Mehta.sub, k=2, nrep=5)
+  model = FLXMRglmfix(family = "binomial", fixed = ~ Drug),
+  data = Mehta.sub, k = 2, nrep = 5)
 summary(mehtaMix)
 @ 
 
@@ -536,20 +535,20 @@ with $\bm{\beta}^s = (\beta^s_{\textrm{Intercept}},
 \bm{\beta}_{\textrm{Species}})$. This model is fitted with:
 <<tribolium>>=
 data("tribolium")
-TribMix <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, k = 2:3,
-model = FLXMRglmfix(fixed = ~ Species, family = "binomial"),
-concomitant = FLXPmultinom(~ Replicate), data = tribolium)
+TribMix <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, 
+  k = 2:3, model = FLXMRglmfix(fixed = ~ Species, family = "binomial"),
+  concomitant = FLXPmultinom(~ Replicate), data = tribolium)
 @ 
 
 The model which is selected as the best in
 \cite{flexmix:Wang+Puterman:1998} can be estimated with:
 <<wang-model>>=
-modelWang <- FLXMRglmfix(fixed = ~ I(Species == "Confusum"), family =
-                       "binomial") 
+modelWang <- FLXMRglmfix(fixed = ~ I(Species == "Confusum"), 
+  family = "binomial") 
 concomitantWang <- FLXPmultinom(~ I(Replicate == 3))
 TribMixWang <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1,
-                           data = tribolium, model = modelWang, concomitant = concomitantWang, 
-                           k = 2) 
+  data = tribolium, model = modelWang, concomitant = concomitantWang, 
+  k = 2) 
 summary(refit(TribMixWang))
 @ 
 
@@ -572,9 +571,9 @@ print(dotplot(Remaining/Total ~ factor(Replicate) | clusters, groups  = Species,
 \cite{flexmix:Wang+Puterman:1998} also considered a model where they
 omit one conspicuous observation. This model can be estimated with:
 <<subset>>=
-TribMixWangSub <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, k = 2, 
-                              data = tribolium[-7,], model = modelWang,
-                              concomitant = concomitantWang)
+TribMixWangSub <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ 1, 
+  k = 2, data = tribolium[-7,], model = modelWang,
+  concomitant = concomitantWang)
 @ 
 
 %%-----------------------------------------------------------------------  
@@ -602,9 +601,9 @@ where $\textrm{Dead} \in \{0,1\}$ and with $\bm{\beta}^s =
 model is fitted with:
 <<trypanosome>>=
 data("trypanosome")
-TrypMix <- stepFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, 
-nrep=5, data = trypanosome,
-model = FLXMRglmfix(family = "binomial", fixed = ~log(Dose)))
+TrypMix <- stepFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, nrep = 5, 
+  data = trypanosome,  model = FLXMRglmfix(family = "binomial", 
+  fixed = ~ log(Dose)))
 summary(refit(TrypMix))
 @ 
 
@@ -642,11 +641,11 @@ random intercept model is used where a fixed effect is assumed for the
 logarithm of length:
 <<fabric-fix>>=
 data("fabricfault")
-fabricMix <- stepFlexmix(Faults~1, model=FLXMRglmfix(family="poisson", fixed=~log(Length)), 
-                         data=fabricfault, k=2, nrep=5)
+fabricMix <- stepFlexmix(Faults ~ 1, model = FLXMRglmfix(family="poisson", 
+  fixed = ~ log(Length)), data = fabricfault, k = 2, nrep = 5)
 summary(fabricMix)
 summary(refit(fabricMix))
-Lnew = seq(0, 1000, by = 50)
+Lnew <- seq(0, 1000, by = 50)
 fabricMix.pred <- predict(fabricMix, newdata = data.frame(Length = Lnew))
 @ 
 
@@ -656,11 +655,12 @@ modified model where the intercept is a-priori set to zero for the
 first component. This nested structure is given as part of the model
 specification with argument \code{nested}. 
 <<fabric-fix-nested>>=
-fabricMix2 <- stepFlexmix(Faults~0, data=fabricfault, nrep=5, k = 2,
-                          model=FLXMRglmfix(family="poisson", fixed=~log(Length),
-                            nested = list(k=c(1,1), formula=list(~1,~0))))
+fabricMix2 <- stepFlexmix(Faults ~ 0, data = fabricfault, nrep = 5, 
+  k = 2, model = FLXMRglmfix(family = "poisson", fixed = ~ log(Length),
+  nested = list(k=c(1,1), formula=list(~1,~0))))
 summary(refit(fabricMix2))
-fabricMix2.pred <- predict(fabricMix2, newdata = data.frame(Length = Lnew))
+fabricMix2.pred <- predict(fabricMix2, 
+  newdata = data.frame(Length = Lnew))
 @ 
 
 The data and the fitted values for each of the components for both
@@ -701,8 +701,7 @@ The model is fitted with:
 data("patent")
 ModelPat <- FLXMRglm(family = "poisson")
 FittedPat <- stepFlexmix(Patents ~ lgRD, k = 3, nrep=5, 
-                         model = ModelPat, data = patent, 
-                         concomitant = FLXPmultinom(~ RDS))             
+  model = ModelPat, data = patent, concomitant = FLXPmultinom(~ RDS))             
 summary(FittedPat)
 @
 The fitted values for the component specific models and the
@@ -718,8 +717,8 @@ the a-posteriori probabilities.
 <<patent-fixed>>=
 ModelFixed <- FLXMRglmfix(family = "poisson", fixed = ~ lgRD)
 FittedPatFixed <- flexmix(Patents ~ 1, model = ModelFixed, 
-                       cluster = posterior(FittedPat),
-                       concomitant = FLXPmultinom(~ RDS), data = patent)             
+  cluster = posterior(FittedPat), concomitant = FLXPmultinom(~ RDS), 
+  data = patent)             
 summary(FittedPatFixed)
 @ 
 
@@ -806,9 +805,9 @@ where $\bm(\beta)^s = (\beta^s_{\textrm{Intercept}},
 used as offset. This model is fitted with:
 <<seizure>>=
 data("seizure")
-seizMix <- stepFlexmix(Seizures ~ Treatment*log(Day),
-                   data=seizure, k=2, nrep=5,
-                   model=FLXMRglm(family="poisson", offset=log(seizure$Hours)))
+seizMix <- stepFlexmix(Seizures ~ Treatment * log(Day), data = seizure, 
+  k = 2, nrep = 5, model = FLXMRglm(family = "poisson", 
+  offset = log(seizure$Hours)))
 summary(seizMix)
 summary(refit(seizMix))
 @ 
@@ -817,9 +816,9 @@ A different model with different contrasts to directly estimate the
 coefficients for the jump when changing between base and treatment
 period is given by:
 <<seizure>>=
-seizMix2 <- stepFlexmix(Seizures ~ Treatment*log(Day/27),
-                   data=seizure, k=2, nrep=5,
-                   model=FLXMRglm(family="poisson", offset=log(seizure$Hours)))
+seizMix2 <- stepFlexmix(Seizures ~ Treatment * log(Day/27), 
+  data = seizure, k = 2, nrep = 5, 
+  model = FLXMRglm(family = "poisson", offset = log(seizure$Hours)))
 summary(seizMix2)
 summary(refit(seizMix2))
 @ 
@@ -827,9 +826,9 @@ summary(refit(seizMix2))
 A different model which allows no jump at the change between base and
 treatment period is fitted with:
 <<seizure>>=
-seizMix3 <- stepFlexmix(Seizures ~ log(Day/27)/Treatment,
-                   data=seizure, k=2, nrep=5,
-                   model=FLXMRglm(family="poisson", offset=log(seizure$Hours)))
+seizMix3 <- stepFlexmix(Seizures ~ log(Day/27)/Treatment, data = seizure, 
+  k = 2, nrep = 5, model = FLXMRglm(family = "poisson", 
+  offset = log(seizure$Hours)))
 summary(seizMix3)
 summary(refit(seizMix3))
 @ 
@@ -872,11 +871,8 @@ where $\bm{\beta}^s = (\beta^s_{\textrm{Intercept}},
 \beta_{\textrm{x}}, \beta_{\textrm{log(x+10)}})$. The model is fitted with:
 <<salmonella>>=
 data("salmonellaTA98")
-salmonMix <- stepFlexmix(y~1,
-                         data=salmonellaTA98, 
-                         model=FLXMRglmfix(family="poisson", 
-                           fixed=~x + log(x + 10)),                        
-                         k=2, nrep=5)
+salmonMix <- stepFlexmix(y ~ 1, data = salmonellaTA98, k = 2, nrep = 5,
+  model = FLXMRglmfix(family = "poisson", fixed = ~ x + log(x + 10)))
 @ 
  
 \begin{figure}
@@ -913,6 +909,18 @@ purpose of the package which is flexible modelling of various finite
 mixture models. Furthermore, an additional visualization method for the
 fitted coefficients of the mixture would facilitate the comparison of
 the components.
+%%-----------------------------------------------------------------------  
+\section*{Computational details}
+<<echo=false,results=hide>>=
+SI <- sessionInfo()
+pkgs <- paste(sapply(c(SI$otherPkgs, SI$loadedOnly), function(x) 
+                     paste("\\\\pkg{", x$Package, "} ", 
+                           x$Version, sep = "")), collapse = ", ")
+@ 
+
+All computations and graphics in this paper have been done using
+\proglang{R} version \Sexpr{getRversion()} with the packages
+\Sexpr{pkgs}. 
 %%-----------------------------------------------------------------------  
 \section*{Acknowledgments}
 

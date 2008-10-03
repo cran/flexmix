@@ -1,7 +1,7 @@
 citHeader("To cite package flexmix in publications use:")
 
 citEntry(entry="Article",
-         title = "{FlexMix}: A general framework for finite mixture models and latent class regression in {R}",
+         title = "{FlexMix}: A General Framework for Finite Mixture Models and Latent Class Regression in {R}",
          author = person(first="Friedrich", last="Leisch"),
          journal = "Journal of Statistical Software",
          year = "2004",
@@ -16,9 +16,9 @@ citEntry(entry="Article",
 
 citEntry(entry="Article",
          title = "Fitting Finite Mixtures of Generalized Linear Regressions in {R}",
-         author = personList(person(first="Bettina", last="Gruen"),
+         author = personList(person(first="Bettina", last="Gr\\\"un"),
 			person(first="Friedrich", last="Leisch")),
-         journal = "Computational Statistics and Data Analysis",
+         journal = "Computational Statistics \\& Data Analysis",
          year = "2007",
 	 volume = "51",
 	 number = "11",
@@ -27,8 +27,20 @@ citEntry(entry="Article",
          
          textVersion = paste("Bettina Gruen and Friedrich Leisch. Fitting finite mixtures",
 			     "of generalized linear regressions in R. Computational Statistics",
-		             "and Data Analysis, 51(11), 5247-5252, 2007.")
+		             "& Data Analysis, 51(11), 5247-5252, 2007.")
          )
 
-
-
+citEntry(entry="Article",
+         title = "{FlexMix} Version 2: Finite Mixtures with Concomitant Variables and Varying and Constant Parameters",
+         author = personList(person(first="Bettina", last="Gr\\\"un"),
+			person(first="Friedrich", last="Leisch")),
+         journal = "Journal of Statistical Software",
+         year = "2008",
+         volume = "28",
+         number = "4",
+         url = "http://www.jstatsoft.org/v28/i04/",
+         
+         textVersion = paste("Bettina Gruen and Friedrich Leisch. FlexMix Version 2: Finite mixtures with concomitant variables and varying and constant parameters",
+                             "Journal of Statistical Software, 28(4), 2008.",
+                             "http://www.jstatsoft.org/v28/i04/")
+         )

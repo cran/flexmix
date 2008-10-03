@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: ziglm.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: ziglm.R 4117 2008-09-09 14:53:04Z gruen $
 #
 
 setClass("FLXMRziglm", contains = "FLXMRglm")
@@ -17,7 +17,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRziglm"),
   model <- callNextMethod(model, data, formula, lhs)
   if (attr(terms(model@fullformula), "intercept") == 0)
     stop("please include an intercept")
-  new("FLXMRziglm", model)
+  model
 })
 
 setMethod("FLXremoveComponent", signature(model = "FLXMRziglm"),

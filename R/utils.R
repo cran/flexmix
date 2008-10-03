@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: utils.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: utils.R 4044 2008-07-26 12:30:25Z leisch $
 #
 
 list2object = function(from, to){
@@ -29,3 +29,4 @@ LightColors <- c("#F9C3CD", "#D0D4A8", "#9DDDD5", "#D1CCF5",
 ## x = hcl(seq(0, 360*7/8, length.out = 8), c=100, l=65)
 FullColors <- c("#FF648A", "#96A100", "#00BCA3", "#9885FF",
                 "#DC8400", "#00B430", "#00AEEF", "#F45BE1")
+

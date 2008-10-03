@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 3969 2008-05-05 07:12:05Z gruen $
+#  $Id: refit.R 4016 2008-07-14 07:25:39Z gruen $
 #
 ###*********************************************************
 
@@ -18,6 +18,17 @@ function(object, model) {
 setMethod("getParameters", signature(object="FLXM"),
 function(object, components, ...) {
   lapply(components, function(x) unlist(slot(x, "parameters")))
+})
+
+setMethod("getParameters", signature(object="FLXMC"),
+function(object, components, ...) {
+  if (object@dist == "mvnorm") {
+    return(lapply(components, function(x) {
+      pars <- x@parameters
+      if (identical(pars$cov, diag(diag(pars$cov)))) return(c(pars$center, diag(pars$cov)))
+      else return(c(pars$center, pars$cov[lower.tri(pars$cov, diag = TRUE)]))
+    }))
+  } else return(lapply(components, function(x) unlist(slot(x, "parameters"))))
 })
 
 setMethod("getParameters", signature(object="FLXMRglm"),
@@ -64,27 +75,25 @@ function(object, model = TRUE, gradient, ...) {
   if (length(getParameters(object)) != object@df) stop("not implemented yet for restricted parameters.")
   if (missing(gradient)) gradient <- FLXgradlogLikfun(object)
   fit <- optim(fn = FLXlogLikfun(object), par = getParameters(object), gr = gradient,
-               hessian = TRUE, method = "BFGS", control = list(fnscale = -1))
+               hessian = TRUE, method = "BFGS", control = list(fnscale = -1), ...)
   list(coef = fit$par, vcov = -solve(as.matrix(fit$hessian)))
 })  
 
 setMethod("Likfun_comp", signature(object="flexmix"),
 function(object) {
-  function(parms) {
-    postunscaled <- matrix(0, nrow = FLXgetObs(object@model[[1]]), ncol = object@k)
-    for (m in seq_along(object@model))
-      postunscaled <- postunscaled + FLXdeterminePostunscaled(object@model[[m]], lapply(object@components, "[[", m))
-    if(length(object@group)>0)
-      postunscaled <- groupPosteriors(postunscaled, object@group)
-    exp(postunscaled)
-  }
+  postunscaled <- matrix(0, nrow = FLXgetObs(object@model[[1]]), ncol = object@k)
+  for (m in seq_along(object@model))
+    postunscaled <- postunscaled + FLXdeterminePostunscaled(object@model[[m]], lapply(object@components, "[[", m))
+  if(length(object@group)>0)
+    postunscaled <- groupPosteriors(postunscaled, object@group)
+  exp(postunscaled)
 })
 
 setMethod("FLXlogLikfun", signature(object="flexmix"),
 function(object, ...) function(parms) {
   object <- FLXreplaceParameters(object, parms)
   groupfirst <- if (length(object@group) > 1) groupFirst(object@group) else rep(TRUE, FLXgetObs(object@model[[1]]))
-  postunscaled <- getPriors(object@concomitant, object@group, groupfirst) * Likfun_comp(object)(parms)
+  postunscaled <- getPriors(object@concomitant, object@group, groupfirst) * Likfun_comp(object)
   if (is.null(object@weights)) return(sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))))
   else return(sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))*object@weights[groupfirst]))
 })
@@ -119,19 +128,45 @@ function(object, parms) {
 })
 
 setMethod("FLXreplaceParameters", signature(object="FLXM"),
-function(object, component, parms) {
-  Parameters <- list()
-  for (i in seq_along(component@parameters)) {
-    Parameters[[i]] <- parms[1:length(component@parameters[[i]])]
-    attributes(Parameters[[i]]) <- attributes(component@parameters[[i]])
-    parms <- parms[-c(1:length(component@parameters[[i]]))]
+function(object, components, parms) {
+  Design <- FLXgetDesign(object, components)
+  lapply(seq_along(components), function(k) {
+    Parameters <- list()
+    parms_k <- parms[as.logical(Design[k,])]
+    for (i in seq_along(components[[k]]@parameters)) {
+      Parameters[[i]] <- parms_k[1:length(components[[k]]@parameters[[i]])]
+      attributes(Parameters[[i]]) <- attributes(components[[k]]@parameters[[i]])
+      parms_k <- parms_k[-c(1:length(components[[k]]@parameters[[i]]))]
+    }
+    names(Parameters) <- names(components[[k]]@parameters)
+    Parameters$df <- components[[k]]@df
+    variables <- c("x", "y")
+    for (var in variables) 
+      assign(var, slot(object, var))
+    with(Parameters, eval(object@defineComponent))
+  })
+})
+
+setMethod("FLXreplaceParameters", signature(object="FLXMC"),
+function(object, components, parms) {
+  Design <- FLXgetDesign(object, components)
+  if (object@dist == "mvnorm") {
+    p <- sqrt(1/4+ncol(Design)/nrow(Design)) - 1/2
+    diagonal <- get("diagonal", environment(object@fit))
+    if (diagonal) {
+      cov <- diag(seq_len(p))
+      parms_comp <- as.vector(sapply(seq_len(nrow(Design)), function(i) 
+                                     c(parms[(i-1) * 2 * p + 1:p], as.vector(diag(diag(parms[(i-1) * 2 * p + p + 1:p]))))))
+      parms <- c(parms_comp, parms[(nrow(Design) * 2 * p + 1):length(parms)])
+    } else {
+      cov <- matrix(NA, nrow = p, ncol = p)
+      cov[lower.tri(cov, diag = TRUE)] <- seq_len(sum(lower.tri(cov, diag = TRUE)))
+      cov[upper.tri(cov)] <- t(cov)[upper.tri(cov)]
+      parms <- parms[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(1:p, as.vector(cov) + p))),
+                       (nrow(Design) * (max(cov) + p)+1):length(parms))]
+    }
   }
-  names(Parameters) <- names(component@parameters)
-  Parameters$df <- component@df
-  variables <- c("x", "y")
-  for (var in variables) 
-    assign(var, slot(object, var))
-  with(Parameters, eval(object@defineComponent))
+  callNextMethod(object = object, components = components, parms = parms)
 })
 
 setMethod("FLXreplaceParameters", signature(object="FLXMRglm"),
@@ -184,7 +219,7 @@ function(object, ...) {
   function(parms) {
     object <- FLXreplaceParameters(object, parms)
     groupfirst <- if (length(object@group) > 1) groupFirst(object@group) else rep(TRUE, FLXgetObs(object@model[[1]]))
-    Lik_comp <- Likfun_comp(object)(parms)
+    Lik_comp <- Likfun_comp(object)
     Priors <- getPriors(object@concomitant, object@group, groupfirst)
     Priors_Lik_comp <- Priors * Lik_comp
     Lik_sep <-  rowSums(Priors_Lik_comp)
@@ -202,6 +237,9 @@ function(object, ...) {
                   do.call("cbind", ConcomitantScores))[groupfirst,,drop=FALSE])
   }
 })
+
+setMethod("existGradient", signature(object = "FLXM"),
+function(object) FALSE)
 
 setMethod("existGradient", signature(object = "FLXMRglm"),
 function(object) {
@@ -269,11 +307,11 @@ function(object, newdata, method = c("optim", "mstep"), ...) {
 
 setMethod("refit_optim", signature(object = "FLXM"),
 function(object, components, coef, se) {
-  design <- FLXgetDesign(object, components)
-  x <- lapply(1:nrow(design), function(k) {
-    rval <- cbind(Estimate = coef[as.logical(design[k,])],
-                  "Std. Error" = se[as.logical(design[k,])])
-    pars <- components[[k]]@parameters$coef
+  Design <- FLXgetDesign(object, components)
+  x <- lapply(1:nrow(Design), function(k) {
+    rval <- cbind(Estimate = coef[as.logical(Design[k,])],
+                  "Std. Error" = se[as.logical(Design[k,])])
+    pars <- components[[k]]@parameters[[1]]
     rval <- rval[1:length(pars),,drop=FALSE]
     rownames(rval) <- names(pars)
     zval <- rval[,1]/rval[,2]
@@ -282,6 +320,34 @@ function(object, components, coef, se) {
   names(x) <- paste("Comp", seq_along(x), sep = ".")
   x
 })
+
+setMethod("refit_optim", signature(object = "FLXMC"),
+function(object, components, coef, se) {
+  Design <- FLXgetDesign(object, components)
+  if (object@dist == "mvnorm") {
+    p <- length(grep("Comp.1_center", colnames(Design), fixed = TRUE))
+    diagonal <- get("diagonal", environment(object@fit))
+    if (diagonal) {
+      cov <- diag(seq_len(p))
+      coef_comp <- as.vector(sapply(seq_len(nrow(Design)), function(i) 
+                                     c(coef[(i-1) * 2 * p + 1:p], as.vector(diag(diag(coef[(i-1) * 2 * p + p + 1:p]))))))
+      coef <- c(coef_comp, coef[(nrow(Design) * 2 * p + 1):length(coef)])
+      se_comp <- as.vector(sapply(seq_len(nrow(Design)), function(i) 
+                                     c(se[(i-1) * 2 * p + 1:p], as.vector(diag(diag(se[(i-1) * 2 * p + p + 1:p]))))))
+      se <- c(se_comp, se[(nrow(Design) * 2 * p + 1):length(se)])
+    } else {
+      cov <- matrix(NA, nrow = p, ncol = p)
+      cov[lower.tri(cov, diag = TRUE)] <- seq_len(sum(lower.tri(cov, diag = TRUE)))
+      cov[upper.tri(cov)] <- t(cov)[upper.tri(cov)]
+      coef <- coef[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(1:p, as.vector(cov) + p))),
+                       (nrow(Design) * (max(cov) + p)+1):length(coef))]
+      se <- se[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(1:p, as.vector(cov) + p))),
+                       (nrow(Design) * (max(cov) + p)+1):length(se))]
+    }
+  }
+  callNextMethod(object = object, components = components, coef = coef, se = se)
+})
+
 
 setMethod("refit_optim", signature(object = "FLXP"),
 function(object, coef, se) {

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: examples.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: examples.R 4144 2008-10-02 14:20:09Z gruen $
 #
 
 ExNPreg = function(n)
@@ -35,9 +35,50 @@ ExNclus = function(n=100)
 }
 
     
-
+ExLinear <- function(beta, n, xdist="runif", xdist.args=NULL,
+                     family=c("gaussian", "poisson"), sd=1, ...)
+{
+    family <- match.arg(family)
     
+    X <- NULL
+    y <- NULL
+    k <- ncol(beta)
+    d <- nrow(beta)-1
 
-
-
+    n <- rep(n, length.out=k)
+    if(family=="gaussian") sd <- rep(sd, length.out=k)
+    xdist <- rep(xdist, length.out=d)
     
+    if(is.null(xdist.args)){
+        xdist.args <- list(list(...))
+    }
+    if(!is.list(xdist.args[[1]]))
+        xdist.args <- list(xdist.args)
+    
+    xdist.args <- rep(xdist.args, length.out=d)
+    
+    for(i in 1:k)
+    {
+        X1 <- 1
+        for(j in 1:d){
+            xdist.args[[j]]$n <- n[i]
+            X1 <- cbind(X1, do.call(xdist[j], xdist.args[[j]]))
+        }
+
+        X <- rbind(X, X1)
+        xb <- X1 %*% beta[,i,drop=FALSE]
+        if(family=="gaussian")
+            y1 <- xb + rnorm(n[i], sd=sd[i])
+        else
+            y1 <- rpois(n[i], exp(xb))
+    
+        y <- c(y, y1)
+    }
+    X <- X[,-1,drop=FALSE]
+    colnames(X) <- paste("x", 1:d, sep="")
+               
+    z <- data.frame(y=y, X)
+    attr(z, "clusters") <- rep(1:k, n)
+    z
+}
+
