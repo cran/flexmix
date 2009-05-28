@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4016 2008-07-14 07:25:39Z gruen $
+#  $Id: refit.R 4349 2009-05-23 07:45:59Z gruen $
 #
 ###*********************************************************
 
@@ -228,13 +228,10 @@ function(object, ...) {
                           FLXgradlogLikfun(object@model[[m]],
                                            lapply(object@components, "[[", m), weights))
     ModelScores <- lapply(ModelScores, lapply, groupPosteriors, object@group)
-    ConcomitantScores <- if (object@k > 1) {
-      conc <- FLXgradlogLikfun(object@concomitant, Priors)
-      lapply(conc, function(p) matrix(rowSums(sapply(seq_along(p), function(k)
-                                                     p[[k]] * weights[,k])), ncol = ncol(p[[1]])))
-    } else NULL
-    colSums(cbind(do.call("cbind", lapply(ModelScores, function(x) do.call("cbind", x))),
-                  do.call("cbind", ConcomitantScores))[groupfirst,,drop=FALSE])
+    ConcomitantScores <- if (object@k > 1) FLXgradlogLikfun(object@concomitant, Priors[groupfirst,,drop=FALSE], weights[groupfirst,,drop=FALSE])
+                         else list()
+    colSums(cbind(do.call("cbind", lapply(ModelScores, function(x) do.call("cbind", x)))[groupfirst,,drop=FALSE],
+                  do.call("cbind", ConcomitantScores)))
   }
 })
 
@@ -260,18 +257,17 @@ function(object, components, weights, ...) {
     else as.vector(object@y - components[[k]]@predict(object@x))
     Scores <- weights[,k] * res * object@x
     if (object@family == "gaussian") {
-      Scores <- cbind(Scores/components[[k]]@parameters$sigma^2, weights[,k]
-                      * (-1 + res^2/components[[k]]@parameters$sigma^2))
+      Scores <- cbind(Scores/components[[k]]@parameters$sigma^2,
+                      weights[,k] * (-1 + res^2/components[[k]]@parameters$sigma^2))
     }
     Scores
   })
 })                       
 
 setMethod("FLXgradlogLikfun", signature(object="FLXP"),
-function(object, fitted, ...) {
-  Pi <- apply(fitted, 1, function(x) as.vector((diag(nrow = length(x))[,-1]) - rep(x[-1], each = length(x))))
-  Pi <- lapply(1:(ncol(fitted)-1), function(i) t(Pi[(i-1)*ncol(fitted) + 1:ncol(fitted),]))
-  lapply(Pi, function(p) lapply(1:ncol(p), function(i) apply(object@x, 2, "*", p[,i])))
+function(object, fitted, weights, ...) {
+  Pi <- lapply(2:ncol(fitted), function(i) - fitted[,i] + weights[,i])
+  lapply(Pi, function(p) apply(object@x, 2, "*", p))
 })
 
 setMethod("refit", signature(object = "flexmix"),

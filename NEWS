@@ -1,3 +1,16 @@
+Changes in flexmix version 2.2-3
+	
+  o New model driver FLXMCmvcombi() which is a combination of 
+    Gaussian and binary. 
+
+  o parameters() now also has a which argument in order to allow to
+    access the parameters of the concomitant variable model.
+
+  o Bug fixed in refit().
+
+  o nobs() now returns the number of rows in the data.frame and not the
+    number of individuals (similar as for example by lme).
+
 Changes in flexmix version 2.2-0
 
   o vignette describing Version 2 added

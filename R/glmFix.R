@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: glmFix.R 4344 2009-05-11 11:54:25Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -88,7 +88,7 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
 
 ###**********************************************************
 
-setMethod("refit", signature(object="FLXMRglmfix", newdata="missing"),
+setMethod("refit_mstep", signature(object="FLXMRglmfix", newdata="missing"),
 function(object, newdata, weights, ...)
 {
     z <- new("FLXRMRglmfix", design=object@design)

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4016 2008-07-14 07:25:39Z gruen $
+#  $Id: flexmix.R 4344 2009-05-11 11:54:25Z gruen $
 #
 
 
@@ -312,13 +312,13 @@ function(model, data, formula, lhs=TRUE, ...)
   ## </FIXME>
   
   if (lhs) {
-    mf <- model.frame(model@fullformula, data=data, na.action = NULL)
+    mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL) else model.frame(model@terms, data=data, na.action = NULL)
     model@terms <- attr(mf, "terms")
     model@y <- as.matrix(model.response(mf))
     model@y <- model@preproc.y(model@y)
   }
   else {
-    mt1 <- terms(model@fullformula, data=data)
+    mt1 <- if (is.null(model@terms)) terms(model@fullformula, data=data) else model@terms
     mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
     model@terms<- attr(mf, "terms")
     ## <FIXME>: warum war das da???
@@ -431,24 +431,30 @@ function(object, newdata=list(), aggregate=FALSE, ...){
 ###**********************************************************
 
 setMethod("parameters", signature(object="FLXdist"),
-function(object, component=NULL, model=NULL, simplify=TRUE, drop=TRUE)
+function(object, component=NULL, model=NULL, which = c("model", "concomitant"),
+         simplify=TRUE, drop=TRUE)
 {
+    which <- match.arg(which)
     if (is.null(component)) component <- 1:object@k
     if (is.null(model)) model <- 1:length(object@model)
-    
-    if (simplify) {
-      parameters <- sapply(model, function(m) sapply(object@components[component], function(x) unlist(x[[m]]@parameters), simplify=TRUE),
-                           simplify = FALSE)
+
+    if (which == "model") {
+      if (simplify) {
+        parameters <- sapply(model, function(m) sapply(object@components[component], function(x) unlist(x[[m]]@parameters), simplify=TRUE),
+                             simplify = FALSE)
+      }
+      else {
+        parameters <- sapply(model, function(m) sapply(object@components[component], function(x) x[[m]]@parameters, simplify=FALSE),
+                             simplify = FALSE)
+      }
+      if (drop) {
+        if (length(component) == 1 && !simplify) parameters <- lapply(parameters, "[[", 1)
+        if (length(model) == 1) parameters <- parameters[[1]]
+      }
+    } else {
+      parameters <- object@concomitant@coef[,component,drop=FALSE]
     }
-    else {
-      parameters <- sapply(model, function(m) sapply(object@components[component], function(x) x[[m]]@parameters, simplify=FALSE),
-                           simplify = FALSE)
-    }
-    if (drop) {
-      if (length(component) == 1 && !simplify) parameters <- lapply(parameters, "[[", 1)
-      if (length(model) == 1) parameters <- parameters[[1]]
-    }
-    return(parameters)
+    parameters
 })
 
 setMethod("prior", signature(object="FLXdist"),

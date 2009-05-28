@@ -1,19 +1,13 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: infocrit.R 3937 2008-03-28 14:56:01Z leisch $
+#  $Id: infocrit.R 4343 2009-05-11 11:21:48Z gruen $
 #
 
 setGeneric("nobs", function(object, ...) standardGeneric("nobs"))
 
 setMethod("nobs", signature(object="flexmix"),
 function(object, ...) {          
-  if (is.null(object@weights)) {
-    n <- if (length(object@group)) sum(groupFirst(object@group)) else nrow(object@posterior$scaled)
-  }
-  else {
-    n <- if (length(object@group)) sum(groupFirst(object@group) * object@weights) else sum(object@weights)
-  }
-  n
+  if (is.null(object@weights)) nrow(object@posterior$scaled) else  sum(object@weights)
 })
 
 setMethod("logLik", signature(object="flexmix"),

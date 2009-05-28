@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: classes.R 4018 2008-07-14 08:41:17Z gruen $
+#  $Id: allClasses.R 4211 2008-12-15 12:19:50Z gruen $
 #
 
 setClass("FLXcontrol",

@@ -1,6 +1,6 @@
 
-R version 2.6.2 (2008-02-08)
-Copyright (C) 2008 The R Foundation for Statistical Computing
+R version 2.9.0 (2009-04-17)
+Copyright (C) 2009 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -19,6 +19,8 @@ Type 'q()' to quit R.
 Loading required package: lattice
 Loading required package: modeltools
 Loading required package: stats4
+Loading required package: multcomp
+Loading required package: mvtnorm
 > 
 > set.seed(123)
 > 

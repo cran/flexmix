@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: allGenerics.R 3969 2008-05-05 07:12:05Z gruen $
+#  $Id: allGenerics.R 4211 2008-12-15 12:19:50Z gruen $
 #
 
 setGeneric("flexmix",
@@ -66,8 +66,13 @@ setGeneric("refit_optim", function(object, ...)  standardGeneric("refit_optim"))
 
 ###**********************************************************
 
+setGeneric("group", function(object, ...) standardGeneric("group"))
+setGeneric("rflexmix", function(object, newdata, ...) standardGeneric("rflexmix"))
+setGeneric("rFLXM", function(model, components, ...) standardGeneric("rFLXM"))
+
 ## just to make sure that some S3 generics are available in S4
 setGeneric("fitted")
 setGeneric("predict")
+setGeneric("simulate")
 setGeneric("summary")
 setGeneric("unique")

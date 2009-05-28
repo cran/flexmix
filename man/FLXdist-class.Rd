@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXdist-class.Rd 3934 2008-03-26 08:36:26Z gruen $
+%  $Id: FLXdist-class.Rd 4344 2009-05-11 11:54:25Z gruen $
 %
 \name{FLXdist-class}
 \docType{class}
@@ -8,7 +8,6 @@
 \alias{predict,FLXdist-method}
 \alias{predict,FLXM-method}
 \alias{predict,FLXMRglm-method}
-\alias{parameters}
 \alias{parameters,FLXdist-method}
 \alias{prior}
 \alias{prior,FLXdist-method}
@@ -18,8 +17,8 @@
   models. 
 }
 \usage{
-\S4method{parameters}{FLXdist}(object, component=NULL, model=NULL, simplify=TRUE,
-          drop=TRUE)
+\S4method{parameters}{FLXdist}(object, component=NULL, model=NULL, which = c("model",
+    "concomitant"), simplify=TRUE, drop=TRUE)
 \S4method{predict}{FLXdist}(object, newdata=list(), aggregate=FALSE, ...)
 }
 \arguments{
@@ -28,6 +27,8 @@
     are returned.}
   \item{model}{Number of model(s), if \code{NULL} all models are
     returned.}
+  \item{which}{Specifies if the parameters of the component specific model or the
+    concomitant variable model are returned.}
   \item{simplify}{Logical, if \code{TRUE} the returned values are
     simplified to a vector or matrix if possible.}
   \item{drop}{Logical, if \code{TRUE} the function tries to simplify the

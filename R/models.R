@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4144 2008-10-02 14:20:09Z gruen $
+#  $Id: models.R 4322 2009-04-04 12:29:21Z leisch $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -217,6 +217,8 @@ MCmvbinary <- function(formula=.~.)
 }
 
 
+
+
 ###**********************************************************
 
 binary_truncated <- function(y, w, maxit = 200, epsilon = .Machine$double.eps) {
@@ -256,3 +258,66 @@ MCmvbinary_truncated <- function(formula=.~.)
     }   
     z
 }
+
+
+###**********************************************************
+
+FLXMCmvcombi <- function(formula=.~.)
+{
+    z <- new("FLXMC", weighted=TRUE, formula=formula,
+             dist = "mvcombi",
+             name="model-based binary-Gaussian clustering")
+
+    ## figure out who is binary
+    BINARY <- NULL
+    z@preproc.y <- function(x){
+      x <- as.matrix(x)
+      BINARY <<- apply(x, 2, function(z) all(unique(z) %in% c(0,1)))
+      x
+    }
+    
+    z@defineComponent <- expression({
+      predict <- function(x, ...){
+        matrix(center, nrow=nrow(x), ncol=length(center),
+               byrow=TRUE)
+      }
+      
+      logLik <- function(x, y){
+        z <- 0
+        if(any(BINARY)){
+          p <- matrix(center[BINARY], nrow=nrow(x),
+                      ncol=sum(BINARY), byrow=TRUE)
+          z <- z+rowSums(log(y[,BINARY,drop=FALSE]*p +
+                             (1-y[,BINARY,drop=FALSE])*(1-p)))
+        }
+        if(!all(BINARY)){
+          if(sum(!BINARY)==1)
+            z <- z + dnorm(y[,!BINARY],
+                           mean=center[!BINARY], sd=sqrt(var[!BINARY]),
+                           log=TRUE)
+          else
+            z <- z + dmvnorm(y[,!BINARY,drop=FALSE],
+                             mean=center[!BINARY], sigma=diag(var[!BINARY]),
+                             log=TRUE)
+        }
+        z
+      }
+            
+      new("FLXcomponent", parameters=list(center=center, var=var), df=df,
+          logLik=logLik, predict=predict)
+    })
+
+    z@fit <- function(x, y, w){
+      para <- cov.wt(y, wt=w)[c("center","cov")]
+      para$var <- diag(para$cov)
+      para$var <- pmax(para$var, sqrt(.Machine$double.eps))
+      para$var[BINARY] <- NA
+      para$cov <- NULL
+      para$df <- ncol(y) + sum(!BINARY)
+
+
+      with(para, eval(z@defineComponent))
+    }
+    z
+}
+

@@ -2,14 +2,16 @@ import(methods)
 import(modeltools)
 import(multcomp)
 
-importFrom(stats, fitted, predict)
+importFrom(stats, fitted, predict, simulate)
 importFrom(stats4, AIC, BIC, logLik, plot, summary)
 
 export(
        ExLinear,
        ExNPreg,
        ExNclus,
+       FLXdist,
        FLXMCmvbinary,
+       FLXMCmvcombi,
        FLXMCmvnorm,
        FLXMCmvpois,
        FLXPmultinom,
@@ -69,8 +71,8 @@ exportMethods(
               FLXremoveComponent,
               KLdiv,
               ICL,
-              coerce,
               Lapply,
+              coerce,
               clusters,
               fitted,
               flexmix,
@@ -82,8 +84,10 @@ exportMethods(
               posterior,
               predict,
               prior,
+              rFLXM,
               refit,
               relabel,
+              rflexmix,
               show,
               summary,
               unique

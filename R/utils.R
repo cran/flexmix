@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: utils.R 4044 2008-07-26 12:30:25Z leisch $
+#  $Id: utils.R 4294 2009-03-03 05:23:40Z leisch $
 #
 
 list2object = function(from, to){
@@ -30,3 +30,29 @@ LightColors <- c("#F9C3CD", "#D0D4A8", "#9DDDD5", "#D1CCF5",
 FullColors <- c("#FF648A", "#96A100", "#00BCA3", "#9885FF",
                 "#DC8400", "#00B430", "#00AEEF", "#F45BE1")
 
+
+###**********************************************************
+
+## similar defaults to silhouette plots in flexclust
+unipolarCols <- function(n, hue=0, chr=50, lum = c(55, 90))
+{
+    lum <- seq(lum[1], lum[2], length=n)
+    hcl(hue, chr, lum)
+}
+
+
+bipolarCols <- function(n, hue=c(10, 130), ...)
+{        
+    if(n%%2){ # n odd
+        n2 <- (n-1)/2
+        c1 <- unipolarCols(n2, hue[1])
+        c2 <- rev(unipolarCols(n2, hue[2]))
+        return(c(c1, "white", c2))
+    }
+    else{ # n even
+        n2 <- n/2
+        c1 <- unipolarCols(n2, hue[1])
+        c2 <- rev(unipolarCols(n2, hue[2]))
+        return(c(c1, c2))
+    }
+}

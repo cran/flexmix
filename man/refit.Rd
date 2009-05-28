@@ -1,12 +1,9 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: refit.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: refit.Rd 4344 2009-05-11 11:54:25Z gruen $
 %
 \name{refit-methods}
-\alias{refit,flexmix,ANY-method}
-\alias{refit,flexmix,missing-method}
-\alias{refit,flexmix,listOrdata.frame-method}
-\alias{refit,FLXMRglmfix,missing-method}
+\alias{refit,flexmix-method}
 \alias{FLXRmstep-class}
 \alias{FLXRoptim-class}
 \alias{show,FLXR-method}
@@ -20,7 +17,7 @@
   like coefficient significance p-values for GLM regression.
 }
 \usage{
-\S4method{refit}{flexmix,ANY}(object, newdata, method = c("optim",
+\S4method{refit}{flexmix}(object, newdata, method = c("optim",
 "mstep"), ...)
 \S4method{summary}{FLXRoptim}(object, model = 1, which = c("model",
 "concomitant"), ...)
