@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-flexmix.R 4344 2009-05-11 11:54:25Z gruen $
+#  $Id: plot-flexmix.R 4371 2009-06-30 13:17:38Z gruen $
 #
 
 determine_y <- function(h, root) {
@@ -92,8 +92,8 @@ function(x, y, mark=NULL, markcol=NULL, col=NULL,
     groupfirst <- if (length(x@group)) !duplicated(x@group) else TRUE
     if (is.null(x@weights))
       z <- data.frame(posterior = as.vector(x@posterior$scaled[groupfirst,,drop=FALSE]),
-                      component = factor(rep(1:x@k, each = sum(groupfirst)), levels = 1:x@k,
-                        labels = paste("Comp.", 1:x@k)),
+                      component = factor(rep(1:x@k, each = nrow(x@posterior$scaled[groupfirst,,drop=FALSE])),
+                        levels = 1:x@k, labels = paste("Comp.", 1:x@k)),
                       cluster = rep(as.vector(x@cluster[groupfirst]), k))
     else 
       z <- data.frame(posterior = rep(as.vector(x@posterior$scaled[groupfirst,,drop=FALSE]),

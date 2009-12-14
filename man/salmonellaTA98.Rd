@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: salmonellaTA98.Rd 3937 2008-03-28 14:56:01Z leisch $
+%  $Id: salmonellaTA98.Rd 4411 2009-09-23 15:03:19Z gruen $
 %
 \name{salmonellaTA98}
 \alias{salmonellaTA98}
@@ -14,9 +14,9 @@
   This data frame contains the following columns:
   \describe{
     \item{x}{Dose levels of quinoline.}
-    \item{y}{ Numbers of revertant colonies of TA98 Salmonella observed on
-      each of three replicate plates testes at each of six dose levels of
-      quinolinediameter 4.5 feet of the ground, inches.}
+    \item{y}{Numbers of revertant colonies of TA98 Salmonella observed on
+      each of three replicate plates tested at each of six dose levels of
+      quinoline diameter.}
   }
 }
 
@@ -42,16 +42,16 @@
 
 \examples{
 data("salmonellaTA98")
-salmonMix <- stepFlexmix(y~1,
-                         data=salmonellaTA98, 
-                         model=FLXMRglmfix(family="poisson", 
-                           fixed=~x + log(x + 10)),                        
-                         k=2, nrep=5)
-salmonMix.pr <- predict(salmonMix, newdata=salmonellaTA98)
-plot(y~x, data=salmonellaTA98, 
-     pch=as.character(clusters(salmonMix)), 
-     ylim=range(c(salmonellaTA98$y, unlist(salmonMix.pr))))
-for (i in 1:2) lines(salmonellaTA98$x, salmonMix.pr[[i]], lty=i)
+salmonMix <- stepFlexmix(y ~ 1,
+                         data = salmonellaTA98, 
+                         model = FLXMRglmfix(family = "poisson", 
+                           fixed = ~ x + log(x + 10)),                        
+                         k = 2, nrep = 5)
+salmonMix.pr <- predict(salmonMix, newdata = salmonellaTA98)
+plot(y ~ x, data = salmonellaTA98, 
+     pch = as.character(clusters(salmonMix)), 
+     ylim = range(c(salmonellaTA98$y, unlist(salmonMix.pr))))
+for (i in 1:2) lines(salmonellaTA98$x, salmonMix.pr[[i]], lty = i)
 }
 
 \keyword{datasets}

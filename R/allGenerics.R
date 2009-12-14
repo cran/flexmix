@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: allGenerics.R 4211 2008-12-15 12:19:50Z gruen $
+#  $Id: allGenerics.R 4411 2009-09-23 15:03:19Z gruen $
 #
 
 setGeneric("flexmix",
@@ -28,6 +28,8 @@ setGeneric("FLXfillConcomitant",
 setGeneric("logLik")
 
 setGeneric("clogLik", function(object, ...) standardGeneric("clogLik"))
+
+setGeneric("EIC", function(object, ...) standardGeneric("EIC"))
 
 ###**********************************************************
 

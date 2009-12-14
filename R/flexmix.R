@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4344 2009-05-11 11:54:25Z gruen $
+#  $Id: flexmix.R 4485 2009-12-16 06:41:19Z gruen $
 #
 
 
@@ -364,14 +364,19 @@ ungroupPriors <- function(x, group, groupfirst) {
 }
 
 allweighted <- function(model, control, weights) {
-  allweighted = all(sapply(model, function(x) x@weighted))
+  allweighted <- all(sapply(model, function(x) x@weighted))
   if(allweighted){
     if(control@classify=="auto")
-      control@classify="weighted"
+      control@classify <- "weighted"
   }
   else{
-    if(control@classify %in% c("auto", "weighted"))
-      control@classify="hard"
+    if(control@classify=="auto") 
+      control@classify <- "hard"
+    else if (control@classify=="weighted") {
+      warning("only hard classification supported for the modeldrivers")
+      control@classify <- "hard"
+    }
+      
     if(!is.null(weights))
       stop("it is not possible to specify weights for models without weighted ML estimation")
   }

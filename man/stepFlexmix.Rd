@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 3934 2008-03-26 08:36:26Z gruen $
+%  $Id: stepFlexmix.Rd 4411 2009-09-23 15:03:19Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -65,7 +65,7 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
   class \code{"flexmix"}.
 
   If \code{unique=FALSE}, then the resulting object contains one
-  model per element of \code{k} (which is the numer of clusters the EM
+  model per element of \code{k} (which is the number of clusters the EM
   algorithm started with). If \code{unique=TRUE}, then the result
   is resorted according to the number of clusters contained in the
   fitted models (which may be less than the number with which the EM

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 3937 2008-03-28 14:56:01Z leisch $
+%  $Id: flexmix.Rd 4411 2009-09-23 15:03:19Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -45,7 +45,7 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     object returned by calling \code{\link{FLXPconstant}}.}
   \item{control}{Object of class \code{FLXcontrol} or a named list.}
   \item{object}{Object of class \code{flexmix}.}
-  \item{eps}{Probabilities below this treshold are treated as zero in the
+  \item{eps}{Probabilities below this threshold are treated as zero in the
     summary method.}
   \item{\dots}{Currently not used.}
 }

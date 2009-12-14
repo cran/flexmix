@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: ICL.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: ICL.Rd 4411 2009-09-23 15:03:19Z gruen $
 %
 \name{ICL}
 \alias{ICL,flexmix-method}
@@ -30,7 +30,7 @@
 \keyword{methods}
 \author{Friedrich Leisch and Bettina Gruen}
 \references{
-  C. Biernacki, G. Celeux and G. Govaert. Assessing a mixture model
+  C. Biernacki, G. Celeux, and G. Govaert. Assessing a mixture model
   for clustering with the integrated completed likelihood. IEEE
   Transactions on Pattern Analysis and Machine Intelligence 22(7),
   pages 719-725, 2000.

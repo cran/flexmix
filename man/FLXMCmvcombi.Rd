@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2009 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMCmvcombi.Rd 4322 2009-04-04 12:29:21Z leisch $
+%  $Id: FLXMCmvcombi.Rd 4411 2009-09-23 15:03:19Z gruen $
 %
 \name{FLXMCmvcombi}
 \alias{FLXMCmvcombi}
@@ -24,7 +24,7 @@ FLXMCmvcombi(formula = . ~ .)
   This model driver can be used to cluster mixed-mode binary and
   Gaussian data. It checks which columns of a matrix contain only zero
   and ones, and does the same as \code{\link{FLXMCmvbinary}} for them. For
-  the remaing columns of the data matrix independent Gaussian
+  the remaining columns of the data matrix independent Gaussian
   distributions are used (same as \code{\link{FLXMCmvnorm}} with
   \code{diagonal=FALSE}. 
   The same could be obtained by creating a corresponding list of two

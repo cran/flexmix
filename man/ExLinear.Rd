@@ -30,13 +30,13 @@ ExLinear(beta, n, xdist = "runif", xdist.args=NULL,
 }
 \details{
   First, arguments \code{n} (and \code{sd} for Gaussian response) are
-  recycled to the number of mixture componets \code{ncol(beta)}, and
+  recycled to the number of mixture components \code{ncol(beta)}, and
   arguments \code{xdist} and \code{xdist.args} are recycled to the
   number of explanatory variables \code{nrow(beta)-1}. Then a design
   matrix is created for each mixture component by drawing random numbers
   from \code{xdist}. For each component, the design matrix is multiplied
   by the regression coefficients to form the linear predictor. For
-  Gaussian responses the idendity link is used, for Poisson responses
+  Gaussian responses the identity link is used, for Poisson responses
   the log link.
 
   The true cluster memberships are returned as attribute \code{"clusters"}.

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXcontrol-class.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: FLXcontrol-class.Rd 4411 2009-09-23 15:03:19Z gruen $
 %
 \name{FLXcontrol-class}
 \docType{class}
@@ -21,7 +21,7 @@
       components falling below this threshold are removed during the
       iteration.}
     \item{\code{tolerance}:}{The EM algorithm is stopped when the
-      (relative) change of log-likelood is smaller than \code{tolerance}.}
+      (relative) change of log-likelihood is smaller than \code{tolerance}.}
     \item{\code{verbose}:}{If a positive integer, then the
       log-likelihood is reported every \code{verbose} iterations. If 0,
       no output is generated during model fitting.}

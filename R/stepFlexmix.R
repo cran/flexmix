@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 4016 2008-07-14 07:25:39Z gruen $
+#  $Id: stepFlexmix.R 4411 2009-09-23 15:03:19Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -150,6 +150,12 @@ setMethod("ICL", "stepFlexmix",
 function(object, ...)
 {
    sapply(object@models, function(x) ICL(x, ...))
+})
+
+setMethod("EIC", "stepFlexmix",
+function(object, ...)
+{
+   sapply(object@models, function(x) EIC(x, ...))
 })
 
 ###**********************************************************

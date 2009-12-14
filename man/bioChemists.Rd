@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: bioChemists.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: bioChemists.Rd 4467 2009-12-07 17:53:00Z gruen $
 %
 \name{bioChemists}
 \alias{bioChemists}
@@ -13,14 +13,14 @@
 data("bioChemists")
 }
 \format{
-  \itemize{
-    \item{\code{art}}{count of articles produced during last 3 years of Ph.D.}
-    \item{\code{fem}}{factor indicating gender of student, with levels Men and Women}
-    \item{\code{mar}}{factor indicating marital status of student, with levels
+  \describe{
+    \item{art}{count of articles produced during last 3 years of Ph.D.}
+    \item{fem}{factor indicating gender of student, with levels Men and Women}
+    \item{mar}{factor indicating marital status of student, with levels
       Single and Married}
-    \item{\code{kid5}}{number of children aged 5 or younger}
-    \item{\code{phd}}{prestige of Ph.D. department}
-    \item{\code{ment}}{count of articles produced by Ph.D. mentor during last 3 years}
+    \item{kid5}{number of children aged 5 or younger}
+    \item{phd}{prestige of Ph.D. department}
+    \item{ment}{count of articles produced by Ph.D. mentor during last 3 years}
   }
 }
 \details{

@@ -1,3 +1,12 @@
+Changes in flexmix version 2.2-4
+
+  o Model drivers FLXMRlmer() and FLXMRlmm() added for fitting finite
+    mixtures of linear mixed effects models.
+
+  o EIC() added as additional information criterion for assessing model fit.
+	
+  o Bug fixed in plot method for flexmix objects introduced in version 2.2-3.
+
 Changes in flexmix version 2.2-3
 	
   o New model driver FLXMCmvcombi() which is a combination of 
