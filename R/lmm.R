@@ -63,12 +63,12 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
       mu <- predict(x, ...)
       llh <- sapply(1:length(x), function(i) 
                     mvtnorm::dmvnorm(t(y[[i]]), mean = mu[[i]], sigma = V[[which[i]]], log=TRUE)/nrow(V[[which[i]]]))
-      as.vector(flexmix:::ungroupPriors(matrix(llh), group, !duplicated(group)))
+      as.vector(ungroupPriors(matrix(llh), group, !duplicated(group)))
     }
     Sigma <- lapply(z, function(Z)
                     solve(crossprod(Z) / sigma2$Residual + solve(sigma2$Random)))
     Sigma_tilde <-  lapply(seq_along(z), function(i) (tcrossprod(Sigma[[i]], z[[i]])/sigma2$Residual))
-    mu <- predict(x, ...)
+    mu <- predict(x)
     beta <- lapply(seq_along(which), function(i) Sigma_tilde[[which[i]]] %*% (y[[i]] - mu[[i]]))
     new("FLXcomponent",
         parameters=list(coef=coef, sigma2=sigma2,
@@ -140,15 +140,15 @@ setMethod("FLXmstep", signature(model = "FLXMRlmmfix"),
 setMethod("FLXgetModelmatrix", signature(model="FLXMRlmm"),
           function(model, data, formula, lhs=TRUE, ...)
 {
-  formula_nogrouping <- flexmix:::RemoveGrouping(formula)
-  if (formula_nogrouping == formula) stop("please specify a grouping variable")
+  formula_nogrouping <- RemoveGrouping(formula)
+  if (identical(deparse(formula_nogrouping), deparse(formula))) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   model@fullformula <- update(model@fullformula,
-                              paste(".~. |", flexmix:::.FLXgetGroupingVar(formula)))
+                              paste(".~. |", .FLXgetGroupingVar(formula)))
   mt1 <- terms(model@random, data=data)
   mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
   model@z <- model.matrix(attr(mf, "terms"), data)
-  model@group <- grouping <- flexmix:::.FLXgetGrouping(formula, data)$group
+  model@group <- grouping <- .FLXgetGrouping(formula, data)$group
   model@x <- matrix(lapply(unique(grouping), function(g) model@x[grouping == g, , drop = FALSE]), ncol = 1)
   if (lhs) model@y <- matrix(lapply(unique(grouping), function(g) model@y[grouping == g, , drop = FALSE]), ncol = 1)
   z <- matrix(lapply(unique(grouping), function(g) model@z[grouping == g, , drop = FALSE]), ncol = 1)

@@ -1,3 +1,14 @@
+Changes in flexmix version 2.2-5
+
+  o Model class FLXMRfix introduced which is a subclass of FLXMR and a
+    superclass for FLXMRglmfix which also extends FLXMRglm.
+
+  o Model driver FLXMCfactanal added which allows to fit finite
+    mixtures of Gaussian distributions where the variance-covariance
+    matrix is estimated using factor analyzers.
+
+  o Comparison of formulas now done using identical().
+
 Changes in flexmix version 2.2-4
 
   o Model drivers FLXMRlmer() and FLXMRlmm() added for fitting finite

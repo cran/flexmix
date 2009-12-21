@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4349 2009-05-23 07:45:59Z gruen $
+#  $Id: refit.R 4523 2010-02-26 10:34:22Z gruen $
 #
 ###*********************************************************
 
@@ -33,7 +33,6 @@ function(object, components, ...) {
 
 setMethod("getParameters", signature(object="FLXMRglm"),
 function(object, components, ...) {
-  if (object@family == "Gamma") stop("not implemented yet")
   parms <- lapply(components, function(x) unlist(slot(x, "parameters")))
   Design <- FLXgetDesign(object, components)
   if (object@family == "gaussian") {

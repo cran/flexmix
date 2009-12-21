@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmclust.Rd 3937 2008-03-28 14:56:01Z leisch $
+%  $Id: FLXmclust.Rd 4523 2010-02-26 10:34:22Z gruen $
 %
 \name{FLXMCmvnorm}
 \alias{FLXMCmvnorm}
@@ -50,7 +50,7 @@ print(ex1)
 plotEll(ex1, Nclus)
 
 ## True model, wrong number of components
-ex2 <- flexmix(Nclus~1, k=6, model=FLXMCmvnorm(diag=FALSE))  
+ex2 <- flexmix(Nclus~1, k=6, model=FLXMCmvnorm(diagonal=FALSE))  
 print(ex2)
 
 plotEll(ex2, Nclus)

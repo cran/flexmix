@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 4344 2009-05-11 11:54:25Z gruen $
+#  $Id: glmFix.R 4493 2009-12-21 16:12:54Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -131,9 +131,9 @@ function(object, newdata, components, ...)
 
 ###**********************************************************
 
-setMethod("FLXgetModelmatrix", signature(model="FLXMRglmfix"), function(model, data, formula, lhs=TRUE, ...)
+setMethod("FLXgetModelmatrix", signature(model="FLXMRfix"), function(model, data, formula, lhs=TRUE, ...)
 {
-    formula <- RemoveGrouping(formula)
+  formula <- RemoveGrouping(formula)
   if (length(grep("\\|", deparse(model@formula)))) stop("no grouping variable allowed in the model")
     if(is.null(model@formula))
       model@formula <- formula

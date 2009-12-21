@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 4211 2008-12-15 12:19:50Z gruen $
+#  $Id: allClasses.R 4493 2009-12-21 16:12:54Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -281,13 +281,16 @@ setMethod("initialize", "FLXnested", function(.Object, formula=~0, k = numeric(0
 
 ###**********************************************************
 
-setClass("FLXMRglmfix",
+setClass("FLXMRfix",
          representation(design = "matrix",
                         nestedformula = "FLXnested",
                         fixed = "formula",
                         segment = "matrix",
                         variance = "vector"),
-         contains="FLXMRglm")
+         contains="FLXMR")
+
+setClass("FLXMRglmfix",
+         contains=c("FLXMRfix", "FLXMRglm"))
 
 ###**********************************************************
 

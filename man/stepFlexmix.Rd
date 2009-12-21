@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 4411 2009-09-23 15:03:19Z gruen $
+%  $Id: stepFlexmix.Rd 4523 2010-02-26 10:34:22Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -85,11 +85,11 @@ data("Nclus")
 set.seed(511)
 
 ## try 5 times for k=4
-ex1 <- stepFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diag=FALSE), nrep=5)
+ex1 <- stepFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diagonal=FALSE), nrep=5)
 ex1
 
 ## now 3 times each for k=2:6, specify control parameter
-ex2 <- stepFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diag=FALSE),
+ex2 <- stepFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
                    control=list(minprior=0), nrep=3)
 ex2
 plot(ex2)
@@ -107,7 +107,7 @@ getModel(ex2, which="3")
 getModel(ex2, which="ICL")
 
 ## now 1 time each for k=2:6, with larger minimum prior
-ex3 <- stepFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diag=FALSE),
+ex3 <- stepFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
                    control=list(minprior=0.1), nrep=1)
 ex3
 

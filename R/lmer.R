@@ -114,17 +114,17 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmer"),
           function(model, data, formula, lhs=TRUE, contrasts = NULL, ...)
 {
   mc <- match.call()
-  formula_nogrouping <- flexmix:::RemoveGrouping(formula)
-  if (formula_nogrouping == formula) stop("please specify a grouping variable")
+  formula_nogrouping <- RemoveGrouping(formula)
+  if (identical(deparse(formula_nogrouping), deparse(formula))) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   random_formula <- update(model@random,
-                           paste(".~. |", flexmix:::.FLXgetGroupingVar(formula)))
+                           paste(".~. |", .FLXgetGroupingVar(formula)))
   fullformula <- model@fullformula
   if (!lhs) fullformula <- fullformula[c(1,3)]
   fullformula <- update(fullformula,
                         paste(ifelse(lhs, ".", ""), "~. + ", deparse(random_formula[[3]])))
   model@fullformula <- update(model@fullformula,
-                              paste(ifelse(lhs, ".", ""), "~. |", flexmix:::.FLXgetGroupingVar(formula)))
+                              paste(ifelse(lhs, ".", ""), "~. |", .FLXgetGroupingVar(formula)))
   fr <- lme4:::lmerFrames(mc, fullformula, contrasts)
   FL <- lme4:::lmerFactorList(random_formula, fr, 0L, 0L)
   model@fr <- fr

@@ -20,18 +20,18 @@
 
 \Address{
   Bettina Gr\"un\\
-  Department f\"ur Statistik und Mathematik\\
-  Wirtschaftsuniversit\"at Wien\\
+  Institute for Statistics and Mathematics\\
+  WU Wirtschaftsuniversit\"at Wien\\
   Augasse 2--6\\
-  A-1090 Wien, Austria\\
-  E-mail: \email{Bettina.Gruen@wu-wien.ac.at}\\
-  URL: \url{http://statmath.wu-wien.ac.at/~gruen/}\\
+  1090 Wien, Austria\\
+  E-mail: \email{Bettina.Gruen@wu.ac.at}\\
+  URL: \url{http://statmath.wu.ac.at/~gruen/}\\
 
   Friedrich Leisch\\
   Institut f\"ur Statistik\\
   Ludwig-Maximilians-Universit\"at M\"unchen\\
   Ludwigstra{\ss }e 33\\
-  D-80539 M\"unchen, Germany\\
+  80539 M\"unchen, Germany\\
   E-mail: \email{Friedrich.Leisch@stat.uni-muenchen.de}\\
   URL: \url{http://www.stat.uni-muenchen.de/~leisch/}
 }

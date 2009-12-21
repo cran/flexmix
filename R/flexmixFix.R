@@ -1,9 +1,9 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: flexmixFix.R 4523 2010-02-26 10:34:22Z gruen $
 #
 
-setMethod("FLXcheckComponent", signature(model = "FLXMRglmfix"), function(model, k, cluster, ...) {
+setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {
   if (sum(model@nestedformula@k)) {
     if (!is.null(k)) {
       if (k != sum(model@nestedformula@k)) stop("specified k does not match the nestedformula in the model")
@@ -32,10 +32,10 @@ setMethod("FLXcheckComponent", signature(model = "FLXMRglmfix"), function(model,
   model
 })
 
-setMethod("FLXgetObs", signature(model = "FLXMRglmfix"), function(model) nrow(model@y)/sum(model@nestedformula@k))
-setMethod("FLXgetK", signature(model = "FLXMRglmfix"), function(model, ...) sum(model@nestedformula@k))
+setMethod("FLXgetObs", signature(model = "FLXMRfix"), function(model) nrow(model@y)/sum(model@nestedformula@k))
+setMethod("FLXgetK", signature(model = "FLXMRfix"), function(model, ...) sum(model@nestedformula@k))
 
-setMethod("FLXremoveComponent", signature(model = "FLXMRglmfix"), function(model, nok, ...)
+setMethod("FLXremoveComponent", signature(model = "FLXMRfix"), function(model, nok, ...)
 {
   if (!length(nok)) return(model)
   K <- model@nestedformula
@@ -70,7 +70,7 @@ setMethod("FLXremoveComponent", signature(model = "FLXMRglmfix"), function(model
 })
 
 ###**********************************************************
-setMethod("FLXmstep", signature(model = "FLXMRglmfix"), function(model, weights, ...)
+setMethod("FLXmstep", signature(model = "FLXMRfix"), function(model, weights, ...)
 {
   model@fit(model@x, model@y,
             as.vector(weights),
@@ -78,7 +78,7 @@ setMethod("FLXmstep", signature(model = "FLXMRglmfix"), function(model, weights,
 })
 
 ###**********************************************************
-setMethod("FLXdeterminePostunscaled", signature(model = "FLXMRglmfix"), function(model, components, ...)
+setMethod("FLXdeterminePostunscaled", signature(model = "FLXMRfix"), function(model, components, ...)
 {
   sapply(1:length(components), function(m)
          components[[m]]@logLik(model@x[model@segment[,m], as.logical(model@design[m,]), drop=FALSE],
@@ -93,14 +93,14 @@ modelMatrix <- function(random, fixed, nested, data=list(), lhs)
     random <- random[-2]
   mf.random <- model.frame(random, data=data, na.action = NULL)
   response <- if (lhs) as.matrix(model.response(mf.random)) else NULL
-  
   mm.random <- model.matrix(attr(mf.random, "terms"), data=mf.random)
-  randomfixed <- if(fixed=="~0") random else update(random, paste("~.+", deparse(fixed[[length(fixed)]])))
+  randomfixed <- if(identical(deparse(fixed), "~0")) random
+                 else update(random, paste("~.+", deparse(fixed[[length(fixed)]])))
   mm.randomfixed <- model.matrix(terms(randomfixed, data=data), data=data)
   mm.fixed <- mm.randomfixed[,!colnames(mm.randomfixed) %in% colnames(mm.random), drop=FALSE]
   all <- mm.all <- mm.nested <- list()
   for (l in seq_along(nested)) {
-    all[[l]] <- if (nested[[l]] == "~0") randomfixed
+    all[[l]] <- if (identical(deparse(nested[[l]]), "~0")) randomfixed
     else update(randomfixed, paste("~.+", deparse(nested[[l]][[length(nested[[l]])]])))
     mm.all[[l]] <- model.matrix(terms(all[[l]], data=data), data=data)
     mm.nested[[l]] <- mm.all[[l]][,!colnames(mm.all[[l]]) %in% colnames(mm.randomfixed),drop=FALSE]

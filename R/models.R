@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4322 2009-04-04 12:29:21Z leisch $
+#  $Id: models.R 4523 2010-02-26 10:34:22Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -125,7 +125,7 @@ FLXMRglm <- function(formula=.~.,
           dgamma(y, shape = shape, scale=predict(x, ...)/shape, log=TRUE)
         
         new("FLXcomponent", 
-            parameters = list(coef, shape = shape),
+            parameters = list(coef = coef, shape = shape),
             predict = predict, logLik = logLik,
             df = df)
       })
