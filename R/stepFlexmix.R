@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 4411 2009-09-23 15:03:19Z gruen $
+#  $Id: stepFlexmix.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -22,7 +22,7 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     {
         z = new("flexmix", logLik=-Inf)
         logLiks = rep(NA, length.out = nrep)
-        for(m in 1:nrep){
+        for(m in seq_len(nrep)){
             if(verbose) cat(" *")
             x = try(flexmix(...))
             if (!is(x, "try-error")) {
@@ -47,7 +47,7 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     else{
         k = as.integer(k)
         logLiks <- matrix(nrow = length(k), ncol = nrep)
-        for(n in 1:length(k)){
+        for(n in seq_along(k)){
             ns <- as.character(k[n])
             if(verbose) cat(k[n], ":")
             RET <- bestFlexmix(..., k=k[n])
@@ -199,14 +199,14 @@ function(x, y, what=c("AIC", "BIC", "ICL"), xlab=NULL, ylab=NULL,
     }
     
     matplot(X, Y, xlab=xlab, ylab=ylab, type="b", lty=1,
-            pch=1:length(what), ...)
+            pch=seq_along(what), ...)
 
     if(legend!=FALSE && length(what)>1)
         legend(x=legend, legend=what,
-               pch=1:length(what),
-               col=1:length(what))
+               pch=seq_along(what),
+               col=seq_along(what))
 
-    for(n in 1:ncol(Y)){
+    for(n in seq_len(ncol(Y))){
         m <- which.min(Y[,n])
         points(X[m], Y[m,n], pch=16, cex=1.5, col=n)
     }

@@ -61,7 +61,7 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
     logLik <- function(x, y, z, which, group, ...) {
       V <- lapply(z, function(Z) tcrossprod(tcrossprod(Z, sigma2$Random), Z) + diag(nrow(Z)) * sigma2$Residual)
       mu <- predict(x, ...)
-      llh <- sapply(1:length(x), function(i) 
+      llh <- sapply(seq_along(x), function(i) 
                     mvtnorm::dmvnorm(t(y[[i]]), mean = mu[[i]], sigma = V[[which[i]]], log=TRUE)/nrow(V[[which[i]]]))
       as.vector(ungroupPriors(matrix(llh), group, !duplicated(group)))
     }
@@ -79,16 +79,16 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
   
   object@fit <- if (any(varFix)) {
     function(x, y, w, z, which, random) {
-      fit <- lapply(1:ncol(w), function(k) lmm.wfit(x, y, w[,k], z, which, random[[k]]))
+      fit <- lapply(seq_len(ncol(w)), function(k) lmm.wfit(x, y, w[,k], z, which, random[[k]]))
       if (varFix["Random"]) {
         prior_w <- apply(w, 2, weighted.mean, w = sapply(x, length))
         Random <- add(lapply(seq_along(fit), function(i) fit[[i]]$sigma2$Random * prior_w[i]))
-        for (i in 1:length(fit)) fit[[i]]$sigma2$Random <- Random
+        for (i in seq_along(fit)) fit[[i]]$sigma2$Random <- Random
       }
       if (varFix["Residual"]) {
         prior <- colMeans(w)
         Residual <- sum(sapply(fit, function(x) x$sigma2$Residual) * prior)
-        for (i in 1:length(fit)) fit[[i]]$sigma2$Residual <- Residual
+        for (i in seq_along(fit)) fit[[i]]$sigma2$Residual <- Residual
       }
       n <- nrow(fit[[1]]$sigma2$Random)
       lapply(fit, function(Z) with(list(coef = coef(Z),
@@ -117,10 +117,12 @@ setMethod("FLXmstep", signature(model = "FLXMRlmm"),
   if (is.null(components)) {
     random <- list(beta = lapply(model@which, function(i) rep(0, ncol(model@z[[i]]))),
                    Sigma = lapply(model@z, function(x) diag(ncol(x))))
-    return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@z, model@which, random)))
+    return(sapply(seq_len(ncol(weights)),
+                  function(k) model@fit(model@x, model@y, weights[,k], model@z, model@which, random)))
  }else {
-   return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@z, model@which, 
-                                                        components[[k]]@parameters$random)))
+   return(sapply(seq_len(ncol(weights)),
+                 function(k) model@fit(model@x, model@y, weights[,k], model@z, model@which, 
+                                       components[[k]]@parameters$random)))
  }
 })
 

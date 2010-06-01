@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-refit.R 4144 2008-10-02 14:20:09Z gruen $
+#  $Id: plot-refit.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = TRUE, nlevels, origin = NULL, 
@@ -11,7 +11,7 @@ prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = T
       if (!is.factor(y)) {
         if (missing(nlevels)) 
           nlevels <- length(unique(y))
-        y <- factor(y, levels = 1:nlevels)
+        y <- factor(y, levels = seq_len(nlevels))
       }
       if (!is.null(groups)) {
         if (!is.numeric(x)) stop("x must be numeric")
@@ -25,7 +25,7 @@ prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = T
       if (!is.factor(x)) {
         if (missing(nlevels)) 
           nlevels <- length(unique(x))
-        x <- factor(x, levels = 1:nlevels)
+        x <- factor(x, levels = seq_len(nlevels))
       }
       if (!is.null(groups)) {
         if (!is.numeric(y)) stop("y must be numeric")
@@ -86,7 +86,7 @@ function(x, y, model = 1, which = c("model", "concomitant"),
          ci = TRUE, scales = list(), as.table = TRUE, horizontal = TRUE, ...)
 {
     which <- match.arg(which)
-    if (missing(components)) components <- 1:x@k
+    if (missing(components)) components <- seq_len(x@k)
     plot.data <- if (which == "model") getCoefs(x@components[[model]], alpha, components) else getCoefs(x@concomitant, alpha, components)
     if (!is.null(labels)) plot.data$Variable <- factor(plot.data$Variable, labels = labels)
     plot.data$Component <- with(plot.data, factor(Component, sort(unique(Component)), labels = paste("Comp.", sort(unique(Component)))))

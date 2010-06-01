@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 4144 2008-10-02 14:20:09Z gruen $
+#  $Id: concomitant.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {
@@ -21,8 +21,8 @@ FLXPmultinom <- function(formula=~1) {
     fit <- multinom.fit(x, y, w, ...)
     fit$coefnames <- colnames(x)
     fit$weights <- w
-    fit$vcoefnames <- fit$coefnames[1:ncol(x)]
-    fit$lab <- 1:ncol(y)
+    fit$vcoefnames <- fit$coefnames[seq_len(ncol(x))]
+    fit$lab <- seq_len(ncol(y))
     class(fit) <- c("multinom", "nnet")
     fit$Hessian <- nnet:::multinomHess(fit, x)
     Xr <- qr(x)$rank
@@ -37,8 +37,8 @@ FLXPmultinom <- function(formula=~1) {
 FLXPconstant <- function() {
   new("FLXP", name="FLXPconstant", formula = ~1,
       fit = function(x, y, w, ...){
-        if (missing(w) || is.null(w)) return(matrix(colMeans(y), ncol=ncol(y), dimnames = list("prior", 1:ncol(y))))
-        else return(matrix(colMeans(w*y)/mean(w), ncol=ncol(y), dimnames = list("prior", 1:ncol(y))))
+        if (missing(w) || is.null(w)) return(matrix(colMeans(y), ncol=ncol(y), dimnames = list("prior", seq_len(ncol(y)))))
+        else return(matrix(colMeans(w*y)/mean(w), ncol=ncol(y), dimnames = list("prior", seq_len(ncol(y)))))
       })
 }
 

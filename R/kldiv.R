@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: kldiv.R 3913 2008-03-13 15:13:55Z gruen $
+#  $Id: kldiv.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 setMethod("KLdiv", "matrix",
@@ -16,7 +16,7 @@ function(object, eps=10^-4, overlap=TRUE,...)
     if (any(w)) object[w] <- eps
     object <- sweep(object, 2, colSums(object) , "/")
     
-    for(k in 1:(ncol(object)-1)){
+    for(k in seq_len(ncol(object)-1)){
       for(l in 2:ncol(object)){
         ok <- (object[, k] > eps) & (object[, l] > eps)
         if (!overlap | any(ok)) {
@@ -51,24 +51,24 @@ function(object, components, ...) {
   mu <- lapply(components, function(x) x@predict(object@x))
   if (object@family == "gaussian") {
     sigma <- lapply(components, function(x) x@parameters$sigma)
-    for (k in 1:(ncol(z)-1)) {
-      for (l in 2:ncol(z)) {
+    for (k in seq_len(ncol(z)-1)) {
+      for (l in seq_len(ncol(z))[-1]) {
         z[k,l] <- sum(log(sigma[[l]]) - log(sigma[[k]]) + 1/2 * (-1 + ((sigma[[k]]^2 + (mu[[k]] - mu[[l]])^2))/sigma[[l]]^2))
         z[l,k] <- sum(log(sigma[[k]]) - log(sigma[[l]]) + 1/2 * (-1 + ((sigma[[l]]^2 + (mu[[l]] - mu[[k]])^2))/sigma[[k]]^2))
       }
     }
   }
   else if (object@family == "binomial") {
-    for (k in 1:(ncol(z)-1)) {
-      for (l in 2:ncol(z)) {
+    for (k in seq_len(ncol(z)-1)) {
+      for (l in seq_len(ncol(z))[-1]) {
         z[k,l] <- sum(mu[[k]] * log(mu[[k]]/mu[[l]]) + (1-mu[[k]]) * log((1-mu[[k]])/(1-mu[[l]])))
         z[l,k] <- sum(mu[[l]] * log(mu[[l]]/mu[[k]]) + (1-mu[[l]]) * log((1-mu[[l]])/(1-mu[[k]])))
       }
     }
   }
   else if (object@family == "poisson") {
-    for (k in 1:(ncol(z)-1)) {
-      for (l in 2:ncol(z)) {
+    for (k in seq_len(ncol(z)-1)) {
+      for (l in seq_len(ncol(z))[-1]) {
         z[k,l] <- sum(mu[[k]] * log(mu[[k]]/mu[[l]]) + mu[[l]] - mu[[k]])
         z[l,k] <- sum(mu[[l]] * log(mu[[l]]/mu[[k]]) + mu[[k]] - mu[[l]])
       }
@@ -76,8 +76,8 @@ function(object, components, ...) {
   }
   else if (object@family == "gamma") {
     shape <- lapply(components, function(x) x@parameters$shape)
-    for (k in 1:(ncol(z)-1)) {
-      for (l in 2:ncol(z)) {
+    for (k in seq_len(ncol(z)-1)) {
+      for (l in seq_len(ncol(z))[-1]) {
         X <- mu[[k]]*shape[[l]]/mu[[l]]/shape[[k]]
         z[k,l] <- sum(log(gamma(shape[[l]])/gamma(shape[[k]])) + shape[[l]] * log(X) - shape[[k]] * (1 - 1/X) +
                       (shape[[k]] - shape[[l]])*digamma(shape[[k]]))
@@ -97,8 +97,8 @@ function(object, components, ...) {
   if (object@dist == "mvnorm") {
     center <- lapply(components, function(x) x@parameters$center)
     cov <- lapply(components, function(x) x@parameters$cov)
-    for (k in 1:(ncol(z)-1)) {
-      for (l in 2:ncol(z)) {
+    for (k in seq_len(ncol(z)-1)) {
+      for (l in seq_len(ncol(z))[-1]) {
         z[k,l] <- 1/2 * (log(det(cov[[l]])) - log(det(cov[[k]])) - length(center[[k]]) +
                          sum(diag(solve(cov[[l]]) %*% (cov[[k]] + tcrossprod(center[[k]] - center[[l]])))))
         z[l,k] <- 1/2 * (log(det(cov[[k]])) - log(det(cov[[l]])) - length(center[[l]]) +

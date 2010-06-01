@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: ziglm.R 4117 2008-09-09 14:53:04Z gruen $
+#  $Id: ziglm.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 setClass("FLXMRziglm", contains = "FLXMRglm")
@@ -51,6 +51,6 @@ function(object, components, weights, ...)
 setMethod("refit_optim", signature(object = "FLXMRziglm"),
 function(object, components, ...) {
   x <- refit_optim(as(object, "FLXMRglm"), components[-1], ...)
-  names(x) <- paste("Comp", 1 + 1:length(x), sep = ".")
+  names(x) <- paste("Comp", 1 + seq_along(x), sep = ".")
   x
 })

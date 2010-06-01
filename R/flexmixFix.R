@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 4523 2010-02-26 10:34:22Z gruen $
+#  $Id: flexmixFix.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {
@@ -80,7 +80,7 @@ setMethod("FLXmstep", signature(model = "FLXMRfix"), function(model, weights, ..
 ###**********************************************************
 setMethod("FLXdeterminePostunscaled", signature(model = "FLXMRfix"), function(model, components, ...)
 {
-  sapply(1:length(components), function(m)
+  sapply(seq_along(components), function(m)
          components[[m]]@logLik(model@x[model@segment[,m], as.logical(model@design[m,]), drop=FALSE],
                                 model@y[model@segment[,m],,drop=FALSE]))
 })
@@ -118,7 +118,7 @@ modelDesign <- function(mm.all, k) {
   i <- 0
   for (l in seq_along(mm.all$nested)) {
     if (ncol(mm.all$nested[[l]])) {
-      nested[(cumK[l] + 1):cumK[l+1], i+1:ncol(mm.all$nested[[l]])] <- 1
+      nested[(cumK[l] + 1):cumK[l+1], i+seq_len(ncol(mm.all$nested[[l]]))] <- 1
       i <- i+ncol(mm.all$nested[[l]])
       col.names <- c(col.names, colnames(mm.all$nested[[l]]))
     }

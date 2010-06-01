@@ -16,6 +16,7 @@ export(
        FLXMCmvnorm,
        FLXMCmvpois,
        FLXPmultinom,
+       FLXMCnorm1,
        FLXPconstant,
        FLXfit,
        FLXMRglm,

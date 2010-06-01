@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4523 2010-02-26 10:34:22Z gruen $
+#  $Id: models.R 4553 2010-05-11 10:38:06Z leisch $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -169,6 +169,31 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
       }
       with(para,
            eval(z@defineComponent))
+    }
+    z
+}
+
+FLXMCnorm1 <- function(formula=.~.)
+{
+    z <- new("FLXMC", weighted=TRUE, formula=formula,
+             dist = "mvnorm", name="model-based univariate Gaussian clustering")
+
+    z@defineComponent <- expression({
+      logLik <- function(x, y)
+        dnorm(y, mean=center, sd=sqrt(cov), log=TRUE)
+    
+      predict <-  function(x, ...)
+        matrix(center, nrow=nrow(x), ncol=1,
+               byrow=TRUE)
+      new("FLXcomponent",
+          parameters=list(mean = as.vector(center), sd = as.vector(sqrt(cov))),
+          df=df, logLik=logLik, predict=predict)
+    })
+    
+    z@fit <- function(x, y, w){
+      para <- cov.wt(as.matrix(y), wt=w)[c("center","cov")]
+      para$df <- 2
+      with(para, eval(z@defineComponent))
     }
     z
 }

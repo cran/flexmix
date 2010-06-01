@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 4493 2009-12-21 16:12:54Z gruen $
+#  $Id: glmFix.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -23,15 +23,15 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             sigma <- vector(length=k)
             cumVar <- cumsum(c(0, variance))
             for (i in seq_along(variance)) {
-              ind <- cumVar[i]*n + 1:(n*variance[i])
-              sigma[cumVar[i] + 1:variance[i]] <- sqrt(sum(fit$weights[ind] * fit$residuals[ind]^2 /
+              ind <- cumVar[i]*n + seq_len(n*variance[i])
+              sigma[cumVar[i] + seq_len(variance[i])] <- sqrt(sum(fit$weights[ind] * fit$residuals[ind]^2 /
                                                            mean(fit$weights[ind]))/ (length(ind) - sum(incidence[i,])))
             }
             fit <- fit[c("coefficients")]
             coefs <- coef(fit)
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence))) + rep(1/variance, variance)
-            lapply(1:k,
+            lapply(seq_len(k),
                    function(K) with(list(coef=coefs[as.logical(incidence[K,])],
                                          sigma=sigma[K],
                                          df= df[K]),
@@ -46,7 +46,7 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             coefs <- coef(fit)
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
-            lapply(1:k,
+            lapply(seq_len(k),
                    function(K) with(list(coef=coefs[as.logical(incidence[K,])],
                                          df = df[K]),
                                     eval(z@defineComponent)))
@@ -60,7 +60,7 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             coefs <- coef(fit)
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
-            lapply(1:k,
+            lapply(seq_len(k),
                    function(K) with(list(coef=coefs[as.logical(incidence[K,])],
                                          df = df[K]),
                                     eval(z@defineComponent)))
@@ -75,7 +75,7 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             coefs <- coef(fit)
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
-            lapply(1:k,
+            lapply(seq_len(k),
                    function(K) with(list(coef=coefs[as.logical(incidence[K,])],
                                          df = df[K],
                                          shape = shape),
@@ -107,8 +107,8 @@ function(object, components, ...)
 {
     N <- nrow(object@x)/length(components)
     z <- list()
-    for(n in 1:length(components)){
-      x <- object@x[(n-1)*N + 1:N, as.logical(object@design[n,]), drop=FALSE]
+    for(n in seq_along(components)){
+      x <- object@x[(n-1)*N + seq_len(N), as.logical(object@design[n,]), drop=FALSE]
       z[[n]] <- list(components[[n]]@predict(x))
     }
     z
@@ -142,8 +142,8 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRfix"), function(model, data
     mm.all <- modelMatrix(model@fullformula, model@fixed, k@formula, data, lhs)
     model@design <- modelDesign(mm.all, k)
     desNested <- if (sum(sapply(mm.all$nested, ncol))) {
-      rbind(ncol(mm.all$fixed) + 1:sum(sapply(mm.all$nested, ncol)),
-            unlist(lapply(1:length(mm.all$nested), function(i) rep(i, ncol(mm.all$nested[[i]])))))
+      rbind(ncol(mm.all$fixed) + seq_len(sum(sapply(mm.all$nested, ncol))),
+            unlist(lapply(seq_along(mm.all$nested), function(i) rep(i, ncol(mm.all$nested[[i]])))))
     }else  matrix(ncol=0, nrow=2)
     model@x <- cbind(kronecker(rep(1, sum(k@k)), mm.all$fixed),
                      do.call("cbind", lapply(unique(desNested[2,]), function(i) {
@@ -152,7 +152,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRfix"), function(model, data
                      kronecker(diag(sum(k@k)), mm.all$random))
     N <- nrow(model@x)/sum(k@k)
     model@segment <- matrix(FALSE, ncol = sum(k@k), nrow = nrow(model@x))
-    for (m in seq_len(sum(k@k))) model@segment[(m - 1) * N + 1:N, m] <- TRUE
+    for (m in seq_len(sum(k@k))) model@segment[(m - 1) * N + seq_len(N), m] <- TRUE
     if (lhs) {
       y <- mm.all$response
       rownames(y) <- NULL

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4523 2010-02-26 10:34:22Z gruen $
+#  $Id: refit.R 4556 2010-05-14 13:20:36Z gruen $
 #
 ###*********************************************************
 
@@ -53,7 +53,7 @@ setMethod("getParameters", signature(object="FLXP"),
 function(object, ...) {
   if (length(object@coef) == 1) return(NULL) 
   alpha <- log(object@coef[-1]) - log(object@coef[1])
-  names(alpha) <- paste("concomitant", paste("Comp", 2:length(object@coef), "alpha", sep = "."), sep = "_")
+  names(alpha) <- paste("concomitant", paste("Comp", seq_along(object@coef)[-1], "alpha", sep = "."), sep = "_")
   return(alpha)
 })  
 
@@ -61,7 +61,8 @@ setMethod("getParameters", signature(object="FLXPmultinom"),
 function(object, ...) {
   coefficients <- object@coef[,-1,drop=FALSE]
   if (ncol(coefficients) > 0) {
-    Names <- paste("Comp", rep(2:(ncol(coefficients)+1), each = nrow(coefficients)), rownames(coefficients), sep = ".")
+    Names <- paste("Comp", rep(seq_len(ncol(coefficients)+1)[-1], each = nrow(coefficients)),
+                   rownames(coefficients), sep = ".")
     coefficients <- as.vector(coefficients)
     names(coefficients) <- paste("concomitant", Names, sep = "_")
     return(coefficients)
@@ -133,9 +134,9 @@ function(object, components, parms) {
     Parameters <- list()
     parms_k <- parms[as.logical(Design[k,])]
     for (i in seq_along(components[[k]]@parameters)) {
-      Parameters[[i]] <- parms_k[1:length(components[[k]]@parameters[[i]])]
+      Parameters[[i]] <- parms_k[seq_along(components[[k]]@parameters[[i]])]
       attributes(Parameters[[i]]) <- attributes(components[[k]]@parameters[[i]])
-      parms_k <- parms_k[-c(1:length(components[[k]]@parameters[[i]]))]
+      parms_k <- parms_k[-seq_along(components[[k]]@parameters[[i]])]
     }
     names(Parameters) <- names(components[[k]]@parameters)
     Parameters$df <- components[[k]]@df
@@ -155,13 +156,13 @@ function(object, components, parms) {
     if (diagonal) {
       cov <- diag(seq_len(p))
       parms_comp <- as.vector(sapply(seq_len(nrow(Design)), function(i) 
-                                     c(parms[(i-1) * 2 * p + 1:p], as.vector(diag(diag(parms[(i-1) * 2 * p + p + 1:p]))))))
+                                     c(parms[(i-1) * 2 * p + seq_len(p)], as.vector(diag(diag(parms[(i-1) * 2 * p + p + seq_len(p)]))))))
       parms <- c(parms_comp, parms[(nrow(Design) * 2 * p + 1):length(parms)])
     } else {
       cov <- matrix(NA, nrow = p, ncol = p)
       cov[lower.tri(cov, diag = TRUE)] <- seq_len(sum(lower.tri(cov, diag = TRUE)))
       cov[upper.tri(cov)] <- t(cov)[upper.tri(cov)]
-      parms <- parms[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(1:p, as.vector(cov) + p))),
+      parms <- parms[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(seq_len(p), as.vector(cov) + p))),
                        (nrow(Design) * (max(cov) + p)+1):length(parms))]
     }
   }
@@ -175,9 +176,9 @@ function(object, components, parms) {
     Parameters <- list()
     parms_k <- parms[as.logical(Design[k,])]
     for (i in seq_along(components[[k]]@parameters)) {
-      Parameters[[i]] <- parms_k[1:length(components[[k]]@parameters[[i]])]
+      Parameters[[i]] <- parms_k[seq_along(components[[k]]@parameters[[i]])]
       attributes(Parameters[[i]]) <- attributes(components[[k]]@parameters[[i]])
-      parms_k <- parms_k[-c(1:length(components[[k]]@parameters[[i]]))]
+      parms_k <- parms_k[-seq_along(components[[k]]@parameters[[i]])]
     }
     names(Parameters) <- names(components[[k]]@parameters)
     if (object@family == "gaussian") {
@@ -265,7 +266,7 @@ function(object, components, weights, ...) {
 
 setMethod("FLXgradlogLikfun", signature(object="FLXP"),
 function(object, fitted, weights, ...) {
-  Pi <- lapply(2:ncol(fitted), function(i) - fitted[,i] + weights[,i])
+  Pi <- lapply(seq_len(ncol(fitted))[-1], function(i) - fitted[,i] + weights[,i])
   lapply(Pi, function(p) apply(object@x, 2, "*", p))
 })
 
@@ -291,7 +292,7 @@ function(object, newdata, method = c("optim", "mstep"), ...) {
              call=sys.call(-1), k = object@k)
     z@components <- lapply(object@model, function(x) {
       x <- refit_mstep(x, weights=object@posterior$scaled)
-      names(x) <- paste("Comp", 1:object@k, sep=".")
+      names(x) <- paste("Comp", seq_len(object@k), sep=".")
       x
     })
     z@concomitant <- if (object@k > 1) refit_mstep(object@concomitant, posterior = object@posterior$scaled,
@@ -303,11 +304,11 @@ function(object, newdata, method = c("optim", "mstep"), ...) {
 setMethod("refit_optim", signature(object = "FLXM"),
 function(object, components, coef, se) {
   Design <- FLXgetDesign(object, components)
-  x <- lapply(1:nrow(Design), function(k) {
+  x <- lapply(seq_len(nrow(Design)), function(k) {
     rval <- cbind(Estimate = coef[as.logical(Design[k,])],
                   "Std. Error" = se[as.logical(Design[k,])])
     pars <- components[[k]]@parameters[[1]]
-    rval <- rval[1:length(pars),,drop=FALSE]
+    rval <- rval[seq_along(pars),,drop=FALSE]
     rownames(rval) <- names(pars)
     zval <- rval[,1]/rval[,2]
     new("Coefmat", cbind(rval, "z value" = zval, "Pr(>|z|)" = 2 * pnorm(abs(zval), lower.tail = FALSE)))
@@ -325,18 +326,22 @@ function(object, components, coef, se) {
     if (diagonal) {
       cov <- diag(seq_len(p))
       coef_comp <- as.vector(sapply(seq_len(nrow(Design)), function(i) 
-                                     c(coef[(i-1) * 2 * p + 1:p], as.vector(diag(diag(coef[(i-1) * 2 * p + p + 1:p]))))))
+                                     c(coef[(i-1) * 2 * p + seq_len(p)],
+                                       as.vector(diag(diag(coef[(i-1) * 2 * p + p + seq_len(p)]))))))
       coef <- c(coef_comp, coef[(nrow(Design) * 2 * p + 1):length(coef)])
       se_comp <- as.vector(sapply(seq_len(nrow(Design)), function(i) 
-                                     c(se[(i-1) * 2 * p + 1:p], as.vector(diag(diag(se[(i-1) * 2 * p + p + 1:p]))))))
+                                     c(se[(i-1) * 2 * p + seq_len(p)],
+                                       as.vector(diag(diag(se[(i-1) * 2 * p + p + seq_len(p)]))))))
       se <- c(se_comp, se[(nrow(Design) * 2 * p + 1):length(se)])
     } else {
       cov <- matrix(NA, nrow = p, ncol = p)
       cov[lower.tri(cov, diag = TRUE)] <- seq_len(sum(lower.tri(cov, diag = TRUE)))
       cov[upper.tri(cov)] <- t(cov)[upper.tri(cov)]
-      coef <- coef[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(1:p, as.vector(cov) + p))),
+      coef <- coef[c(as.vector(sapply(seq_len(nrow(Design)),
+                                      function(i) (i-1)*(max(cov)+p) + c(seq_len(p), as.vector(cov) + p))),
                        (nrow(Design) * (max(cov) + p)+1):length(coef))]
-      se <- se[c(as.vector(sapply(seq_len(nrow(Design)), function(i) (i-1)*(max(cov)+p) + c(1:p, as.vector(cov) + p))),
+      se <- se[c(as.vector(sapply(seq_len(nrow(Design)),
+                                  function(i) (i-1)*(max(cov)+p) + c(seq_len(p), as.vector(cov) + p))),
                        (nrow(Design) * (max(cov) + p)+1):length(se))]
     }
   }
@@ -346,11 +351,11 @@ function(object, components, coef, se) {
 
 setMethod("refit_optim", signature(object = "FLXP"),
 function(object, coef, se) {
-  x <- lapply(2:ncol(object@coef), function(k) {
+  x <- lapply(seq_len(ncol(object@coef))[-1], function(k) {
     indices <- grep(paste("Comp", k, sep = "."), names(coef))
     rval <- cbind(Estimate = coef[indices],
                   "Std. Error" = se[indices])
-    rval <- rval[1:nrow(object@coef),,drop=FALSE]
+    rval <- rval[seq_len(nrow(object@coef)),,drop=FALSE]
     rownames(rval) <- rownames(object@coef)
     zval <- rval[,1]/rval[,2]
     new("Coefmat", cbind(rval, "z value" = zval, "Pr(>|z|)" = 2 * pnorm(abs(zval), lower.tail = FALSE)))
@@ -364,8 +369,8 @@ function(object, components, ...) {
   parms <- lapply(components, function(x) unlist(slot(x, "parameters")))
   nr_parms <- sapply(parms, length)
   cumSum <- cumsum(c(0, nr_parms))
-  Design <- t(sapply(1:(length(cumSum)-1), function(i) rep(c(0, 1, 0), c(cumSum[i], nr_parms[i], max(cumSum) - cumSum[i] - nr_parms[i]))))
-  colnames(Design) <- paste(rep(paste("Comp", 1:nrow(Design), sep = "."), nr_parms),
+  Design <- t(sapply(seq_len(length(cumSum)-1), function(i) rep(c(0, 1, 0), c(cumSum[i], nr_parms[i], max(cumSum) - cumSum[i] - nr_parms[i]))))
+  colnames(Design) <- paste(rep(paste("Comp", seq_len(nrow(Design)), sep = "."), nr_parms),
                             unlist(lapply(parms, names)), sep = "_")
   Design
 })
@@ -375,7 +380,7 @@ function(object, components, ...) {
   Design <- object@design
   if (object@family == "gaussian") {
     cumSum <- cumsum(c(0, object@variance))
-    variance <- matrix(sapply(1:(length(cumSum)-1), function(i)
+    variance <- matrix(sapply(seq_len(length(cumSum)-1), function(i)
                               rep(c(0, 1, 0), c(cumSum[i], object@variance[i], length(components) - cumSum[i] - object@variance[i]))),
                        nrow = length(components))
     colnames(variance) <- paste("Comp", apply(variance, 2, function(x) which(x == 1)[1]), "sigma", sep= ".")
@@ -423,7 +428,8 @@ function(object, drop=TRUE, aggregate = FALSE, ...)
       x[[m]] <- fitted(object@model[[m]], comp, ...)
     }
     if (aggregate) {
-      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(1:object@k, function(K) z[[K]] * object@prior[K]), ncol = object@k)),
+      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(seq_len(object@k),
+                                                              function(K) z[[K]] * object@prior[K]), ncol = object@k)),
                                         nrow = nrow(z[[1]])))
       if(drop && all(lapply(z, ncol)==1)){
         z <- sapply(z, unlist)
@@ -434,7 +440,7 @@ function(object, drop=TRUE, aggregate = FALSE, ...)
       for (k in seq_len(object@k)) {
         z[[k]] <- do.call("cbind", lapply(x, "[[", k))
       }
-      names(z) <- paste("Comp", 1:object@k, sep=".")
+      names(z) <- paste("Comp", seq_len(object@k), sep=".")
       if(drop && all(lapply(z, ncol)==1)){
         z <- sapply(z, unlist)
       }
@@ -473,7 +479,7 @@ function(object, newdata, ...)
     z@components <- lapply(object@model, function(x) {
       x <- refit_mstep(x, newdata = newdata,
                            weights=posterior(object, newdata = newdata))
-      names(x) <- paste("Comp", 1:object@k, sep=".")
+      names(x) <- paste("Comp", seq_len(object@k), sep=".")
       x
     })
     z@concomitant <- if (object@k > 1) refit_mstep(object@concomitant, newdata, object@posterior$scaled, object@group, w = object@weights)

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4485 2009-12-16 06:41:19Z gruen $
+#  $Id: flexmix.R 4560 2010-06-01 15:07:26Z gruen $
 #
 
 
@@ -96,6 +96,10 @@ setMethod("FLXdeterminePostunscaled", signature(model = "FLXM"), function(model,
 setMethod("FLXfit", signature(model="list"),
 function(model, concomitant, control, postunscaled=NULL, groups, weights)
 {
+  sum_logs <- function(m) {
+    M <- apply(m, 1, max)
+    M + log(rowSums(exp(m - M)))
+  }
   ### initialize
   k <- ncol(postunscaled)
   N <- nrow(postunscaled)
@@ -106,14 +110,16 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   group <- groups$group
   groupfirst <- groups$groupfirst
   if(length(group)>0) postunscaled <- groupPosteriors(postunscaled, group)
-  postscaled <- postunscaled/rowSums(postunscaled)
+
+  logpostunscaled <- log(postunscaled)
+  postscaled <- exp(logpostunscaled - sum_logs(logpostunscaled))
   
   llh <- -Inf
   if (control@classify=="random") llh.max <- -Inf
   converged <- FALSE
   components <- NULL
   ### EM
-  for(iter in 1:control@iter.max) {
+  for(iter in seq_len(control@iter.max)) {
       ### M-Step
       postscaled = .FLXgetOK(postscaled, control, weights)
       prior <- if (is.null(weights))
@@ -144,22 +150,25 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
         }
         model <- lapply(model, FLXremoveComponent, nok)
       }
-      components <- lapply(1:length(model), function(i) FLXmstep(model[[i]], postscaled, components[[i]]))
+      components <- lapply(seq_along(model), function(i) FLXmstep(model[[i]], postscaled, components[[i]]))
       postunscaled <- matrix(0, nrow = N, ncol = k)
       for (n in seq_along(model))
         postunscaled <- postunscaled + FLXdeterminePostunscaled(model[[n]], components[[n]])
       if(length(group)>0)
         postunscaled <- groupPosteriors(postunscaled, group)
-      ### E-Step     
+      ### E-Step
+      ## Code changed thanks to Nicolas Picard
+      ## to avoid problems with small likelihoods
+      postunscaled <- if (nrow(prior) > 1) postunscaled + log(prior)
+                         else sweep(postunscaled, 2, log(prior), "+")
+      logpostunscaled <- postunscaled
       postunscaled <- exp(postunscaled)
-      for(m in 1:k)
-        postunscaled[,m] <- prior[,m] * postunscaled[,m]
+      postscaled <- exp(logpostunscaled - sum_logs(logpostunscaled))
       ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
       ## kleine postunscaled-werte hat, ist exp(-postunscaled)
       ## numerisch Null, und damit postscaled NaN
       ## log(rowSums(postunscaled)) ist -Inf
       ##</FIXME>
-      postscaled <- postunscaled/rowSums(postunscaled)
       if (any(is.nan(postscaled))) {
         index <- which(as.logical(rowSums(is.nan(postscaled))))
         postscaled[index,] <- if(nrow(prior)==1) rep(prior, each = length(index)) else prior[index,]
@@ -167,8 +176,8 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       }
       ### check convergence
       llh.old <- llh
-      llh <- if (is.null(weights)) sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE])))
-             else sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))*weights[groupfirst])
+      llh <- if (is.null(weights)) sum(sum_logs(logpostunscaled[groupfirst,,drop=FALSE]))
+             else sum(sum_logs(logpostunscaled[groupfirst,,drop=FALSE])*weights[groupfirst])
       if(is.na(llh) | is.infinite(llh))
         stop(paste(formatC(iter, width=4),
                    "Log-likelihood:", llh))
@@ -203,11 +212,11 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
     iter <- control@iter.max - iter.rm
   }
 
-  components <- lapply(1:k, function(i) lapply(components, function(x) x[[i]]))
-  names(components) <- paste("Comp", 1:k, sep=".") 
+  components <- lapply(seq_len(k), function(i) lapply(components, function(x) x[[i]]))
+  names(components) <- paste("Comp", seq_len(k), sep=".") 
   cluster <- max.col(postscaled)
   size <-  if (is.null(weights)) tabulate(cluster, nbins=k) else tabulate(rep(cluster, weights), nbins=k)
-  names(size) <- 1:k
+  names(size) <- seq_len(k)
   concomitant <- FLXfillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights)
   df <- concomitant@df(concomitant@x, k) + sum(sapply(components, sapply, slot, "df"))
   control@nrep <- 1
@@ -229,7 +238,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
 ###**********************************************************
 .FLXgetOK = function(p, control, weights){
     n = ncol(p)
-    N = 1:n
+    N = seq_len(n)
     if (is.null(weights)) {
       if (control@classify == "weighted")
         return(p)
@@ -240,7 +249,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
         else if(control@classify %in% c("SEM", "random")) 
             m = apply(p, 1, function(x) sample(N, size = 1, prob = x))
         else stop("Unknown classification method")
-        z[cbind(1:nrow(p), m)] = TRUE
+        z[cbind(seq_len(nrow(p)), m)] = TRUE
       }
     }else {
       if(control@classify=="weighted")
@@ -249,11 +258,11 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
         z = matrix(FALSE,  nrow=nrow(p), ncol=n)       
         if(control@classify %in% c("CEM", "hard")) {
           m = max.col(p)
-          z[cbind(1:nrow(p), m)] = TRUE
+          z[cbind(seq_len(nrow(p)), m)] = TRUE
           z <- z * weights
         }
         else if(control@classify %in% c("SEM", "random")) 
-          z = t(sapply(1:nrow(p), function(i) table(factor(sample(N, size=weights[i], prob=p[i,], replace=TRUE), N))))
+          z = t(sapply(seq_len(nrow(p)), function(i) table(factor(sample(N, size=weights[i], prob=p[i,], replace=TRUE), N))))
         else stop("Unknown classification method")
       }
     }
@@ -393,7 +402,7 @@ initPosteriors <- function(k, cluster, N, groups) {
       if(is.null(k))
         stop("either k or cluster must be specified")
       else
-        cluster <- ungroupPriors(as.matrix(sample(1:k, size = sum(groups$groupfirst), replace=TRUE)),
+        cluster <- ungroupPriors(as.matrix(sample(seq_len(k), size = sum(groups$groupfirst), replace=TRUE)),
                                            groups$group, groups$groupfirst)
     }
     else{
@@ -402,7 +411,7 @@ initPosteriors <- function(k, cluster, N, groups) {
       k <- max(cluster)
     }
     postunscaled <- matrix(0.1, nrow=N, ncol=k)
-    for(K in 1:k){
+    for(K in seq_len(k)){
       postunscaled[cluster==K, K] <- 0.9
     }
   }
@@ -415,12 +424,12 @@ setMethod("predict", signature(object="FLXdist"),
 function(object, newdata=list(), aggregate=FALSE, ...){
     if (missing(newdata)) return(fitted(object, aggregate=aggregate, drop=FALSE))
     x = list()
-    for(m in 1:length(object@model)) {
+    for(m in seq_along(object@model)) {
       comp <- lapply(object@components, "[[", m)
       x[[m]] <- predict(object@model[[m]], newdata, comp, ...)
     }
     if (aggregate) {
-      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(1:object@k, function(K) z[[K]] * object@prior[K]), ncol = object@k)),
+      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(seq_len(object@k), function(K) z[[K]] * object@prior[K]), ncol = object@k)),
                                         nrow = nrow(z[[1]])))
     }
     else {
@@ -428,7 +437,7 @@ function(object, newdata=list(), aggregate=FALSE, ...){
       for (k in seq_len(object@k)) {
         z[[k]] <- do.call("cbind", lapply(x, "[[", k))
       }
-      names(z) <- paste("Comp", 1:object@k, sep=".")
+      names(z) <- paste("Comp", seq_len(object@k), sep=".")
     }
     z
 })
@@ -440,8 +449,8 @@ function(object, component=NULL, model=NULL, which = c("model", "concomitant"),
          simplify=TRUE, drop=TRUE)
 {
     which <- match.arg(which)
-    if (is.null(component)) component <- 1:object@k
-    if (is.null(model)) model <- 1:length(object@model)
+    if (is.null(component)) component <- seq_len(object@k)
+    if (is.null(model)) model <- seq_along(object@model)
 
     if (which == "model") {
       if (simplify) {
@@ -479,17 +488,15 @@ setMethod("posterior", signature(object="FLXdist", newdata="listOrdata.frame"),
           function(object, newdata, unscaled=FALSE,...) {
             comp <- lapply(object@components, "[[", 1)
             postunscaled <- posterior(object@model[[1]], newdata, comp, ...)
-            if (length(object@model) > 1) {
-              for (m in 2:length(object@model)) {
-                comp <- lapply(object@components, "[[", m)
-                postunscaled <- postunscaled + posterior(object@model[[m]], newdata, comp, 
-                                                         ...)
-              }
+            for (m in seq_along(object@model)[-1]) {
+              comp <- lapply(object@components, "[[", m)
+              postunscaled <- postunscaled + posterior(object@model[[m]], newdata, comp, 
+                                                       ...)
             }
             groups <- .FLXgetGrouping(object@formula, newdata)
             if(length(groups$group)>0)
               postunscaled <- groupPosteriors(postunscaled, groups$group)
-            for(m in 1:object@k)
+            for(m in seq_len(object@k))
               postunscaled[,m] <- object@prior[m] * exp(postunscaled[,m])
             if (unscaled) return(postunscaled)
             else return(postunscaled/rowSums(postunscaled))
@@ -525,7 +532,7 @@ function(object, eps=1e-4, ...){
 
     TAB <- data.frame(prior=object@prior,
                       size=object@size)
-    rownames(TAB) <- paste("Comp.", 1:nrow(TAB), sep="")
+    rownames(TAB) <- paste("Comp.", seq_len(nrow(TAB)), sep="")
     TAB[["post>0"]] <- colSums(object@posterior$scaled > eps)
     TAB[["ratio"]] <- TAB[["size"]]/TAB[["post>0"]]
     

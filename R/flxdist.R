@@ -63,7 +63,7 @@ function(object){
     cat("\nCall:", deparse(object@call,0.75*getOption("width")),
         sep="\n")
     cat("\nPriors:\n")
-    names(object@prior) <- paste("Comp.", 1:length(object@prior), sep="")
+    names(object@prior) <- paste("Comp.", seq_along(object@prior), sep="")
     print(object@prior)
     cat("\n")
 })

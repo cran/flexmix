@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 4493 2009-12-21 16:12:54Z gruen $
+#  $Id: allClasses.R 4556 2010-05-14 13:20:36Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -15,7 +15,10 @@ setClass("FLXcontrol",
                    tolerance=10e-7,
                    verbose=0,
                    classify="auto",
-                   nrep=1))
+                   nrep=1),
+         validity=function(object) {
+           (object@iter.max > 0)
+         })
 
 setAs("list", "FLXcontrol",
 function(from, to){
@@ -229,15 +232,34 @@ function(object, model = 1, which = c("model", "concomitant"), ...) {
 setMethod("summary", signature(object = "FLXRmstep"),
 function(object, model = 1, which = c("model", "concomitant"), ...) {
   which <- match.arg(which)
-  z <- if (which == "model") object@components[[model]] else object@concomitant
-  if (!is.null(z)) lapply(seq_along(z), function(k) {
-    cat(paste("$", names(z)[k], "\n", sep = ""))
-    printCoefmat(coef(summary(z[[k]])))
-    cat("\n")
-  })
+  if (which == "model") {
+    z <- object@components[[model]] 
+    if (!is.null(z)) lapply(seq_along(z), function(k) {
+      cat(paste("$", names(z)[k], "\n", sep = ""))
+      printCoefmat(coef(summary(z[[k]])))
+      cat("\n")
+    })
+  } else {
+    z <- object@concomitant
+    class(z) <- c("multinom", "nnet")
+    fitted.summary <- summary(z)
+    k <- nrow(coef(fitted.summary)) + 1
+    coefs <- lapply(2:k, function(n) {
+      coef.p <- fitted.summary$coefficients[n - 1, , drop = FALSE]
+      s.err <- fitted.summary$standard.errors[n - 1, , 
+                                              drop = FALSE]
+      tvalue <- coef.p/s.err
+      pvalue <- 2 * pnorm(-abs(tvalue))
+      coef.table <- t(rbind(coef.p, s.err, tvalue, pvalue))
+      dimnames(coef.table) <- list(colnames(coef.p), c("Estimate", 
+                                                       "Std. Error", "z value", "Pr(>|z|)"))
+      new("Coefmat", coef.table)
+    })
+    names(coefs) <- paste("Comp", 2:k, sep = ".")
+    print(coefs)
+  }
   invisible(object)
 })
-
 
 setClass("Coefmat",
          contains = "matrix")

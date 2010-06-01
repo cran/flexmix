@@ -5,9 +5,9 @@ setMethod("group", signature(object="flexmix"), function(object) {
 })
 
 setMethod("group", signature(object="FLXM"), function(object) {
-  factor(1:nrow(object@x))
+  factor(seq_len(nrow(object@x)))
 })
 
 setMethod("group", signature(object="FLXMRglmfix"), function(object) {
-  factor(1:(nrow(object@x)/sum(object@nestedformula@k)))
+  factor(seq_len(nrow(object@x)/sum(object@nestedformula@k)))
 })

@@ -6,7 +6,7 @@ setMethod("rflexmix", signature(object = "FLXdist", newdata="numeric"), function
 setMethod("rflexmix", signature(object = "FLXdist", newdata="listOrdata.frame"), function(object, newdata, ...) {
   groups <- .FLXgetGrouping(object@formula, newdata)
   object@model <- lapply(object@model, FLXgetModelmatrix, newdata, object@formula, lhs=FALSE)
-  group <- if (length(groups$group)) groups$group else factor(1:FLXgetObs(object@model[[1]]))
+  group <- if (length(groups$group)) groups$group else factor(seq_len(FLXgetObs(object@model[[1]])))
   object@concomitant <- FLXgetModelmatrix(object@concomitant, data = newdata,
                                                        groups = list(group=group,
                                                          groupfirst = groupFirst(group)))
@@ -26,12 +26,12 @@ setMethod("rflexmix", signature(object = "flexmix", newdata="missing"), function
     comp <- lapply(object@components, function(x) x[[i]])
     yi <- rFLXM(object@model[[i]], comp, class, ...)
     form <- object@model[[i]]@fullformula
-    names <- if(length(form) == 3) form[[2]] else paste("y", i, 1:ncol(yi), sep = ".")
+    names <- if(length(form) == 3) form[[2]] else paste("y", i, seq_len(ncol(yi)), sep = ".")
     if (ncol(yi) > 1) {
       if (inherits(names, "call")) 
         names <- as.character(names[-1])
       if (length(names) != ncol(yi)) {
-        if (length(names) == 1) names <- paste(as.character(names)[1], i, 1:ncol(yi), sep = ".")
+        if (length(names) == 1) names <- paste(as.character(names)[1], i, seq_len(ncol(yi)), sep = ".")
         else stop("left hand side not specified correctly")
       }
     }
@@ -84,7 +84,7 @@ function(object, nsim, seed = NULL, ...) {
     RNGstate <- structure(seed, kind = as.list(RNGkind()))
     on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
   }
-  ans <- lapply(1:nsim, function(i) rflexmix(object, ...)$y)
+  ans <- lapply(seq_len(nsim), function(i) rflexmix(object, ...)$y)
   if (all(sapply(ans, ncol) == 1)) ans <- as.data.frame(ans)
   attr(ans, "seed") <- RNGstate
   ans

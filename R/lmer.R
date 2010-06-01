@@ -16,7 +16,7 @@ defineComponent_lmer <- expression({
       llh <- vector(length=nrow(x))
       for (i in seq_len(nlevels(grouping))) {
         index1 <- which(grouping == levels(grouping)[i])
-        V <- Reduce("+", c(lapply(1:length(sigma2$Random), function(u) {
+        V <- Reduce("+", c(lapply(seq_along(sigma2$Random), function(u) {
           index2 <- rownames(z[[u]]) %in% levels(grouping)[i]
           t(z[[u]][index2,index1,drop=FALSE]) %*% sigma2$Random[[u]] %*% z[[u]][index2,index1,drop=FALSE]
         }), list(diag(length(index1)) * sigma2$Residual)))

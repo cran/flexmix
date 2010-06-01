@@ -1,3 +1,18 @@
+Changes in flexmix version 2.2-6
+ 
+  o Determination of the a-posteriori probabilities made numerically
+    more stable for small likelihoods. Thanks to Nicolas Picard for
+    the code patch.
+
+  o summary() for FLXMRmstep objects now returns similar output for
+    which = "concomitant" as for flexmix version 2.0-1.
+
+  o New demo driver FLXMCnorm1() for univariate Gaussian clustering.
+
+  o Non-postive values for the maximum number of iterations for the
+    "FLXcontrol" object are not valid. A validity check for this is
+    now included.
+
 Changes in flexmix version 2.2-5
 
   o Model class FLXMRfix introduced which is a subclass of FLXMR and a

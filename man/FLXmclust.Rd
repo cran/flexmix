@@ -1,17 +1,19 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmclust.Rd 4523 2010-02-26 10:34:22Z gruen $
+%  $Id: FLXmclust.Rd 4553 2010-05-11 10:38:06Z leisch $
 %
 \name{FLXMCmvnorm}
 \alias{FLXMCmvnorm}
+\alias{FLXMCnorm1}
 \alias{FLXmclust}
 \title{FlexMix Clustering Demo Driver}
 \description{
-  This is a demo driver for \code{\link{flexmix}} implementing
+  These are demo drivers for \code{\link{flexmix}} implementing
   model-based clustering of Gaussian data. 
 }
 \usage{
 FLXMCmvnorm(formula = . ~ ., diagonal = TRUE)
+FLXMCnorm1(formula = . ~ .)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula
@@ -25,7 +27,10 @@ FLXMCmvnorm(formula = . ~ ., diagonal = TRUE)
 }
 \details{
   This is mostly meant as a demo for FlexMix driver programming, you
-  should also look at package \pkg{mclust} for real applications. 
+  should also look at package \pkg{mclust} for real
+  applications. \code{FLXMCmvnorm} clusters multivariate data,
+  \code{FLXMCnorm1} univariate data. In the latter case smart
+  initialization is important, see the example below. 
 }
 \value{
   \code{FLXMCmvnorm} returns an object of class \code{FLXMC}.
@@ -70,4 +75,12 @@ clusters(ex2)[ok]
 \testonly{
   stopifnot(all.equal(max.col(p), clusters(ex2)[ok]))
 }
+
+
+## Now try the univariate case
+plot(density(Nclus[,1]))
+
+ex3 <- flexmix(Nclus[,1]~1, cluster=cut(Nclus[,1], 3), model=FLXMCnorm1())
+ex3
+parameters(ex3)
 }

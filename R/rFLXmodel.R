@@ -48,7 +48,7 @@ setMethod("rFLXM", signature(model = "FLXMRglmfix", components="list"),
             y <- matrix(NA, nrow = length(class), ncol = ncol(model@y))
             model.sub <- as(model, "FLXMRglm")
             for (l in seq_len(k)) {
-              rok <- (l-1)*n + 1:n
+              rok <- (l-1)*n + seq_len(n)
               model.sub@x <- model@x[rok, as.logical(model@design[l,]), drop=FALSE]
               model.sub@y <- model@y[rok,,drop=FALSE]
               yl <- as.matrix(rFLXM(model.sub, components[[l]], ...))

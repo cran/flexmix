@@ -224,9 +224,9 @@ This artificial dataset with 200 observations is given in
 \cite{flexmix:Gruen+Leisch:2006}.  The data is generated from a
 mixture of Gaussian regression models with three components. There is
 an intercept with varying effects, an independent variable $x1$, which
-is a categorical variable with two levels, with nested effects and
-another independent variable $x2$, which is a numeric variable, with
-fixed effects. The prior probabilities depend on a concomitant
+is a numeric variable, with fixed effects and another independent
+variable $x2$, which is a categorical variable with two levels, with
+nested effects. The prior probabilities depend on a concomitant
 variable $w$, which is also a categorical variable with two levels.
 Fixed effects are also assumed for the variance. The data is
 illustrated in Figure~\ref{fig:artificialData} and the true underlying
