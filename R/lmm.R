@@ -153,9 +153,10 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmm"),
   model@group <- grouping <- .FLXgetGrouping(formula, data)$group
   model@x <- matrix(lapply(unique(grouping), function(g) model@x[grouping == g, , drop = FALSE]), ncol = 1)
   if (lhs) model@y <- matrix(lapply(unique(grouping), function(g) model@y[grouping == g, , drop = FALSE]), ncol = 1)
-  z <- matrix(lapply(unique(grouping), function(g) model@z[grouping == g, , drop = FALSE]), ncol = 1)
-  model@z <- unique(z)
-  model@which <- match(z, model@z)
+  z <- lapply(unique(grouping), function(g) model@z[grouping == g, , drop = FALSE])
+  z1 <- unique(z)
+  model@which <- sapply(z, function(y) which(sapply(z1, function(x) isTRUE(all.equal(x, y)))))
+  model@z <- matrix(z1, ncol = 1)
   model
 })
 

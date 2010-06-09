@@ -1,3 +1,12 @@
+Changes in flexmix version 2.2-7
+ 
+  o Bug in the FLXgetModelmatrix() method for the "FLXMRlmm" class
+    fixed when determining identical random effects covariates for the
+    grouping.
+
+  o A new model driver for finite mixtures of linear mixed effects
+    models with left-censored observations is added.
+
 Changes in flexmix version 2.2-6
  
   o Determination of the a-posteriori probabilities made numerically
