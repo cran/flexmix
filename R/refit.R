@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4556 2010-05-14 13:20:36Z gruen $
+#  $Id: refit.R 4579 2010-08-06 10:27:30Z gruen $
 #
 ###*********************************************************
 
@@ -79,23 +79,24 @@ function(object, model = TRUE, gradient, ...) {
   list(coef = fit$par, vcov = -solve(as.matrix(fit$hessian)))
 })  
 
-setMethod("Likfun_comp", signature(object="flexmix"),
+setMethod("logLikfun_comp", signature(object="flexmix"),
 function(object) {
   postunscaled <- matrix(0, nrow = FLXgetObs(object@model[[1]]), ncol = object@k)
   for (m in seq_along(object@model))
     postunscaled <- postunscaled + FLXdeterminePostunscaled(object@model[[m]], lapply(object@components, "[[", m))
   if(length(object@group)>0)
     postunscaled <- groupPosteriors(postunscaled, object@group)
-  exp(postunscaled)
+  postunscaled
 })
 
 setMethod("FLXlogLikfun", signature(object="flexmix"),
 function(object, ...) function(parms) {
   object <- FLXreplaceParameters(object, parms)
   groupfirst <- if (length(object@group) > 1) groupFirst(object@group) else rep(TRUE, FLXgetObs(object@model[[1]]))
-  postunscaled <- getPriors(object@concomitant, object@group, groupfirst) * Likfun_comp(object)
-  if (is.null(object@weights)) return(sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))))
-  else return(sum(log(rowSums(postunscaled[groupfirst,,drop=FALSE]))*object@weights[groupfirst]))
+  logpostunscaled <- logLikfun_comp(object) +
+    log(getPriors(object@concomitant, object@group, groupfirst))
+  if (is.null(object@weights)) sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE]))
+  else sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE])*object@weights[groupfirst])
 })
 
 setMethod("getPriors", signature(object="FLXP"),
@@ -219,17 +220,24 @@ function(object, ...) {
   function(parms) {
     object <- FLXreplaceParameters(object, parms)
     groupfirst <- if (length(object@group) > 1) groupFirst(object@group) else rep(TRUE, FLXgetObs(object@model[[1]]))
-    Lik_comp <- Likfun_comp(object)
+    logLik_comp <- logLikfun_comp(object)
     Priors <- getPriors(object@concomitant, object@group, groupfirst)
-    Priors_Lik_comp <- Priors * Lik_comp
-    Lik_sep <-  rowSums(Priors_Lik_comp)
-    weights <- Priors_Lik_comp/Lik_sep
+    Priors_Lik_comp <- logLik_comp + log(Priors)
+    weights <- exp(Priors_Lik_comp - .sum_logs(Priors_Lik_comp))
+    if (object@k > 1) {
+      ConcomitantScores <- FLXgradlogLikfun(object@concomitant, Priors[groupfirst,,drop=FALSE],
+                                            weights[groupfirst,,drop=FALSE])
+      if (!is.null(object@weights)) 
+        ConcomitantScores <- lapply(ConcomitantScores, "*", object@weights[groupfirst,,drop=FALSE])
+    }
+    else ConcomitantScores <- list()
     ModelScores <- lapply(seq_along(object@model), function(m)
                           FLXgradlogLikfun(object@model[[m]],
                                            lapply(object@components, "[[", m), weights))
     ModelScores <- lapply(ModelScores, lapply, groupPosteriors, object@group)
-    ConcomitantScores <- if (object@k > 1) FLXgradlogLikfun(object@concomitant, Priors[groupfirst,,drop=FALSE], weights[groupfirst,,drop=FALSE])
-                         else list()
+    if (!is.null(object@weights)) 
+      ModelScores <- lapply(ModelScores, "*", object@weights[groupfirst,,drop=FALSE])
+
     colSums(cbind(do.call("cbind", lapply(ModelScores, function(x) do.call("cbind", x)))[groupfirst,,drop=FALSE],
                   do.call("cbind", ConcomitantScores)))
   }

@@ -1,4 +1,15 @@
-Changes in flexmix version 2.2-7
+Changes in flexmix version 2.2-8
+ 
+  o The a-posteriori probabilities are now also determined as changed
+    for FLXfit() for version 2.2-6 for refit().
+
+  o Bug fixed for FLXfillconcomitant and refit when weights and
+    grouping are present. A check was added that weights are identical
+    within groups.
+
+  o Function group() is now exported.
+
+hanges in flexmix version 2.2-7
  
   o Bug in the FLXgetModelmatrix() method for the "FLXMRlmm" class
     fixed when determining identical random effects covariates for the

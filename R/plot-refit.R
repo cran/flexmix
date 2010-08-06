@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-refit.R 4556 2010-05-14 13:20:36Z gruen $
+#  $Id: plot-refit.R 4579 2010-08-06 10:27:30Z gruen $
 #
 
 prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = TRUE, nlevels, origin = NULL, 
@@ -92,7 +92,7 @@ function(x, y, model = 1, which = c("model", "concomitant"),
     plot.data$Component <- with(plot.data, factor(Component, sort(unique(Component)), labels = paste("Comp.", sort(unique(Component)))))
     if (bycluster) {
       formula <- if (horizontal) Variable ~ Value | Component else Value ~ Variable | Component
-      plot.data$Variable <- with(plot.data, factor(Variable, levels = rev(Variable)))
+      plot.data$Variable <- with(plot.data, factor(Variable, levels = rev(unique(Variable))))
     }
     else {
       formula <- if (horizontal) Component ~ Value | Variable else Value ~ Component | Variable

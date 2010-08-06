@@ -1,8 +1,12 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4560 2010-06-01 15:07:26Z gruen $
+#  $Id: flexmix.R 4579 2010-08-06 10:27:30Z gruen $
 #
 
+.sum_logs <- function(m) {
+  M <- apply(m, 1, max)
+  M + log(rowSums(exp(m - M)))
+}
 
 ## The following two methods only fill in and rearrange the model argument
 setMethod("flexmix",
@@ -65,6 +69,12 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     ## plot,flexmix,missing-method are needed
     if (!is.null(weights) & !identical(weights, as.integer(weights)))
       stop("only integer weights allowed")
+    ## if weights and grouping is specified the weights within each
+    ## group need to be the same
+    if (!is.null(weights) & length(groups$group)>0) {
+      unequal <- tapply(weights, groups$group, function(x) length(unique(x)) > 1)
+      if (any(unequal)) stop("identical weights within groups needed")
+    }
     
     postunscaled <- initPosteriors(k, cluster, FLXgetObs(model[[1]]), groups)
     
@@ -96,10 +106,6 @@ setMethod("FLXdeterminePostunscaled", signature(model = "FLXM"), function(model,
 setMethod("FLXfit", signature(model="list"),
 function(model, concomitant, control, postunscaled=NULL, groups, weights)
 {
-  sum_logs <- function(m) {
-    M <- apply(m, 1, max)
-    M + log(rowSums(exp(m - M)))
-  }
   ### initialize
   k <- ncol(postunscaled)
   N <- nrow(postunscaled)
@@ -112,7 +118,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   if(length(group)>0) postunscaled <- groupPosteriors(postunscaled, group)
 
   logpostunscaled <- log(postunscaled)
-  postscaled <- exp(logpostunscaled - sum_logs(logpostunscaled))
+  postscaled <- exp(logpostunscaled - .sum_logs(logpostunscaled))
   
   llh <- -Inf
   if (control@classify=="random") llh.max <- -Inf
@@ -163,7 +169,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
                          else sweep(postunscaled, 2, log(prior), "+")
       logpostunscaled <- postunscaled
       postunscaled <- exp(postunscaled)
-      postscaled <- exp(logpostunscaled - sum_logs(logpostunscaled))
+      postscaled <- exp(logpostunscaled - .sum_logs(logpostunscaled))
       ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
       ## kleine postunscaled-werte hat, ist exp(-postunscaled)
       ## numerisch Null, und damit postscaled NaN
@@ -176,8 +182,8 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       }
       ### check convergence
       llh.old <- llh
-      llh <- if (is.null(weights)) sum(sum_logs(logpostunscaled[groupfirst,,drop=FALSE]))
-             else sum(sum_logs(logpostunscaled[groupfirst,,drop=FALSE])*weights[groupfirst])
+      llh <- if (is.null(weights)) sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE]))
+             else sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE])*weights[groupfirst])
       if(is.na(llh) | is.infinite(llh))
         stop(paste(formatC(iter, width=4),
                    "Log-likelihood:", llh))
@@ -217,7 +223,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   cluster <- max.col(postscaled)
   size <-  if (is.null(weights)) tabulate(cluster, nbins=k) else tabulate(rep(cluster, weights), nbins=k)
   names(size) <- seq_len(k)
-  concomitant <- FLXfillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights)
+  concomitant <- FLXfillConcomitant(concomitant, postscaled[groupfirst,,drop=FALSE], weights[groupfirst])
   df <- concomitant@df(concomitant@x, k) + sum(sapply(components, sapply, slot, "df"))
   control@nrep <- 1
   prior <- if (is.null(weights)) colMeans(postscaled[groupfirst,,drop=FALSE])

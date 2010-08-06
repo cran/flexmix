@@ -74,15 +74,15 @@ undo_weights <- function(object) {
 
 setMethod("simulate", signature("FLXdist"),
 function(object, nsim, seed = NULL, ...) {
-  if (!exists(".Random.seed", envir = .GlobalEnv)) 
+  if (!exists(".Random.seed", envir = .GlobalEnv, inherits = FALSE)) 
     runif(1)
   if (is.null(seed)) 
-    RNGstate <- .Random.seed
+    RNGstate <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
   else {
-    R.seed <- .Random.seed
+    R.seed <- get(".Random.seed", envir = .GlobalEnv, inherits = FALSE)
     set.seed(seed)
     RNGstate <- structure(seed, kind = as.list(RNGkind()))
-    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv))
+    on.exit(assign(".Random.seed", R.seed, envir = .GlobalEnv, inherits = FALSE))
   }
   ans <- lapply(seq_len(nsim), function(i) rflexmix(object, ...)$y)
   if (all(sapply(ans, ncol) == 1)) ans <- as.data.frame(ans)

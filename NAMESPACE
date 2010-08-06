@@ -27,6 +27,7 @@ export(
        FLXMRrobglm,
        FLXMRziglm,
        flexmix,
+       group,
        plotEll,
        relabel,
        stepFlexmix,
