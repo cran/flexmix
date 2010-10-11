@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix-internal.Rd 4493 2009-12-21 16:12:54Z gruen $
+%  $Id: flexmix-internal.Rd 4616 2010-10-11 06:08:09Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -16,6 +16,7 @@
 \alias{FLXgetModelmatrix}
 \alias{FLXgetModelmatrix,FLXM-method}
 \alias{FLXgetModelmatrix,FLXMRfix-method}
+\alias{FLXgetModelmatrix,FLXMRmgcv-method}
 \alias{FLXgetModelmatrix,FLXMRrobglm-method}
 \alias{FLXgetModelmatrix,FLXMRziglm-method}
 \alias{FLXgetModelmatrix,FLXP-method}
@@ -25,6 +26,7 @@
 \alias{FLXmstep}       
 \alias{FLXmstep,FLXM-method}
 \alias{FLXmstep,FLXMRfix-method}
+\alias{FLXmstep,FLXMRmgcv-method}
 \alias{FLXmstep,FLXMRrobglm-method}
 \alias{FLXmstep,FLXMRziglm-method}
 \alias{FLXremoveComponent}
@@ -45,6 +47,30 @@
 \alias{fitted,FLXMRglmfix-method}
 \alias{summary,FLXRMRglmfix-method}
 \alias{listOrdata.frame-class}
+\alias{refit_optim}
+\alias{refit_optim,FLXM-method}
+\alias{refit_optim,FLXMC-method}
+\alias{refit_optim,FLXMRglm-method}
+\alias{refit_optim,FLXMRziglm-method}
+\alias{refit_optim,FLXP-method}
+\alias{FLXreplaceParameters}
+\alias{FLXreplaceParameters,FLXdist-method}
+\alias{FLXreplaceParameters,FLXM-method}
+\alias{FLXreplaceParameters,FLXMC-method}
+\alias{FLXreplaceParameters,FLXMRglm-method}
+\alias{FLXreplaceParameters,FLXP-method}
+\alias{FLXreplaceParameters,FLXPmultinom-method}
+\alias{FLXgradlogLikfun}
+\alias{FLXgradlogLikfun,flexmix-method}
+\alias{FLXgradlogLikfun,FLXM-method}
+\alias{FLXgradlogLikfun,FLXMRglm-method}
+\alias{FLXgradlogLikfun,FLXP-method}
+\alias{existGradient}
+\alias{existGradient,FLXM-method}
+\alias{existGradient,FLXMRglm-method}
+\alias{existGradient,FLXMRglmfix-method}
+\alias{existGradient,FLXP-method}
+
 \title{Internal FlexMix functions}
 \description{
   Internal flexmix functions, methods and classes.

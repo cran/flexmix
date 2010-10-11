@@ -6,10 +6,12 @@ importFrom(stats, fitted, predict, simulate)
 importFrom(stats4, AIC, BIC, logLik, plot, summary)
 
 export(
+       existGradient,
        ExLinear,
        ExNPreg,
        ExNclus,
        FLXdist,
+       FLXgradlogLikfun,
        FLXMCfactanal,
        FLXMCmvbinary,
        FLXMCmvcombi,
@@ -19,24 +21,27 @@ export(
        FLXMCnorm1,
        FLXPconstant,
        FLXfit,
-       FLXMRglm,
-       FLXMRglmfix,
-       FLXMRlmer,
-       FLXMRlmm,
-       FLXMRlmmc,
-       FLXMRrobglm,
-       FLXMRziglm,
-       flexmix,
-       group,
-       plotEll,
-       relabel,
-       stepFlexmix,
        FLXglm,
        FLXglmFix,
        FLXbclust,
        FLXmclust,
        FLXconstant,
-       FLXmultinom
+       FLXmultinom,
+       FLXMRglm,
+       FLXMRglmfix,
+       FLXMRlmer,
+       FLXMRlmm,
+       FLXMRlmmc,
+       FLXMRmgcv,
+       FLXMRrobglm,
+       FLXMRziglm,
+       FLXreplaceParameters,
+       flexmix,
+       group,
+       plotEll,
+       refit_optim,
+       relabel,
+       stepFlexmix
        )
 
 

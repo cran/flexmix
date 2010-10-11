@@ -1,3 +1,11 @@
+Changes in flexmix version 2.2-9
+ 
+  o A new model driver FLXMRmgcv() is added which allows to fit
+    regularized linear models in the components.
+
+  o More generics and methods exported to allow extending flexmix in
+    other packages.
+
 Changes in flexmix version 2.2-8
  
   o The a-posteriori probabilities are now also determined as changed

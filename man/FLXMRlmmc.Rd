@@ -27,8 +27,7 @@ FLXMRlmmc(formula = . ~ ., random, censored, varFix, eps = 10^-6, ...)
   \item{formula}{A formula which is interpreted relative to the formula
     specified in the call to \code{flexmix} using
     \code{\link{update.formula}}. Default is to use the original
-    \code{flexmix} model
-    formula.}
+    \code{flexmix} model formula.}
   \item{random}{A formula for specifying the random effects. If missing
     no random effects are fitted.}
   \item{varFix}{If random effects are specified a named logical vector
@@ -38,8 +37,8 @@ FLXMRlmmc(formula = . ~ ., random, censored, varFix, eps = 10^-6, ...)
     components.}
   \item{censored}{A formula for specifying the censoring variable.}
   \item{eps}{Observations with an a-posteriori probability smaller or
-    equal to eps are omitted in the M-step.}
-  \item{\dots}{Additional arguments to be passed to \code{smooth.spline}.}
+    equal to \code{eps} are omitted in the M-step.}
+  \item{\dots}{Additional arguments to be passed to \code{lm.wfit}.}
 }
 \value{
   Returns an object of class \code{FLXMRlmmc}, \code{FLXMRlmmcfix},
