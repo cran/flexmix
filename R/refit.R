@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4579 2010-08-06 10:27:30Z gruen $
+#  $Id: refit.R 4629 2010-11-02 09:19:26Z gruen $
 #
 ###*********************************************************
 
@@ -70,12 +70,13 @@ function(object, ...) {
 })  
 
 setMethod("VarianceCovariance", signature(object="flexmix"),
-function(object, model = TRUE, gradient, ...) {
+function(object, model = TRUE, gradient, optim_control = list(), ...) {
   if (object@control@classify != "weighted") stop("Only for weighted ML estimation possible.")
   if (length(getParameters(object)) != object@df) stop("not implemented yet for restricted parameters.")
   if (missing(gradient)) gradient <- FLXgradlogLikfun(object)
+  optim_control$fnscale <- -1
   fit <- optim(fn = FLXlogLikfun(object), par = getParameters(object), gr = gradient,
-               hessian = TRUE, method = "BFGS", control = list(fnscale = -1), ...)
+               hessian = TRUE, method = "BFGS", control = optim_control, ...)
   list(coef = fit$par, vcov = -solve(as.matrix(fit$hessian)))
 })  
 
@@ -228,7 +229,7 @@ function(object, ...) {
       ConcomitantScores <- FLXgradlogLikfun(object@concomitant, Priors[groupfirst,,drop=FALSE],
                                             weights[groupfirst,,drop=FALSE])
       if (!is.null(object@weights)) 
-        ConcomitantScores <- lapply(ConcomitantScores, "*", object@weights[groupfirst,,drop=FALSE])
+        ConcomitantScores <- lapply(ConcomitantScores, "*", object@weights[groupfirst])
     }
     else ConcomitantScores <- list()
     ModelScores <- lapply(seq_along(object@model), function(m)
@@ -236,7 +237,7 @@ function(object, ...) {
                                            lapply(object@components, "[[", m), weights))
     ModelScores <- lapply(ModelScores, lapply, groupPosteriors, object@group)
     if (!is.null(object@weights)) 
-      ModelScores <- lapply(ModelScores, "*", object@weights[groupfirst,,drop=FALSE])
+      ModelScores <- lapply(ModelScores, lapply, "*", object@weights)
 
     colSums(cbind(do.call("cbind", lapply(ModelScores, function(x) do.call("cbind", x)))[groupfirst,,drop=FALSE],
                   do.call("cbind", ConcomitantScores)))

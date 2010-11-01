@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 4556 2010-05-14 13:20:36Z gruen $
+#  $Id: flexmixFix.R 4624 2010-10-25 13:27:32Z gruen $
 #
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {
@@ -94,14 +94,14 @@ modelMatrix <- function(random, fixed, nested, data=list(), lhs)
   mf.random <- model.frame(random, data=data, na.action = NULL)
   response <- if (lhs) as.matrix(model.response(mf.random)) else NULL
   mm.random <- model.matrix(attr(mf.random, "terms"), data=mf.random)
-  randomfixed <- if(identical(deparse(fixed), "~0")) random
-                 else update(random, paste("~.+", deparse(fixed[[length(fixed)]])))
+  randomfixed <- if(identical(paste(deparse(fixed), collapse = ""), "~0")) random
+                 else update(random, paste("~.+", paste(deparse(fixed[[length(fixed)]]), collapse = "")))
   mm.randomfixed <- model.matrix(terms(randomfixed, data=data), data=data)
   mm.fixed <- mm.randomfixed[,!colnames(mm.randomfixed) %in% colnames(mm.random), drop=FALSE]
   all <- mm.all <- mm.nested <- list()
   for (l in seq_along(nested)) {
-    all[[l]] <- if (identical(deparse(nested[[l]]), "~0")) randomfixed
-    else update(randomfixed, paste("~.+", deparse(nested[[l]][[length(nested[[l]])]])))
+    all[[l]] <- if (identical(paste(deparse(nested[[l]]), collapse = ""), "~0")) randomfixed
+    else update(randomfixed, paste("~.+", paste(deparse(nested[[l]][[length(nested[[l]])]]), collapse = "")))
     mm.all[[l]] <- model.matrix(terms(all[[l]], data=data), data=data)
     mm.nested[[l]] <- mm.all[[l]][,!colnames(mm.all[[l]]) %in% colnames(mm.randomfixed),drop=FALSE]
   }

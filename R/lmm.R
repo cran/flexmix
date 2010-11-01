@@ -17,7 +17,7 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
   if (length(varFix) != 2 || is.null(names(varFix)) || any(is.na(pmatch(names(varFix), c("Random", "Residual"))))) 
     stop("varFix has to be a named vector of length two")
   else names(varFix) <- c("Random", "Residual")[pmatch(names(varFix), c("Random", "Residual"))]
-  random <- if (length(random) == 3) random else formula(paste(".", deparse(random)))
+  random <- if (length(random) == 3) random else formula(paste(".", paste(deparse(random), collapse = "")))
   object <- new("FLXMRlmm", formula = formula, random = random, 
                 weighted = TRUE, family = family, name = "FLXMRlmm:gaussian")
   if (any(varFix)) object <- new("FLXMRlmmfix", object)
@@ -143,7 +143,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmm"),
           function(model, data, formula, lhs=TRUE, ...)
 {
   formula_nogrouping <- RemoveGrouping(formula)
-  if (identical(deparse(formula_nogrouping), deparse(formula))) stop("please specify a grouping variable")
+  if (identical(paste(deparse(formula_nogrouping), collapse = ""), paste(deparse(formula), collapse = ""))) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   model@fullformula <- update(model@fullformula,
                               paste(".~. |", .FLXgetGroupingVar(formula)))

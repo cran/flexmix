@@ -1,3 +1,10 @@
+Changes in flexmix version 2.2-10
+
+  o For long formulas FLXMRglmfix() did not work properly due to the
+    splitting of the formula into several parts by deparse(). This is
+    fixed by pasting them together again. Thanks to Dustin Tingley for
+    the bug report.
+
 Changes in flexmix version 2.2-9
  
   o A new model driver FLXMRmgcv() is added which allows to fit

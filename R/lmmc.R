@@ -196,7 +196,7 @@ moments_truncated <- function(mu, Sigma, T, ...) {
 FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ...)
 {
   family <- "gaussian"
-  censored <- if (length(censored) == 3) censored else formula(paste(".", deparse(censored)))
+  censored <- if (length(censored) == 3) censored else formula(paste(".", paste(deparse(censored), collapse = "")))
   if (missing(random)) {
     if (missing(varFix)) varFix <- FALSE
     else if ((length(varFix) > 1) || (is.na(as.logical(varFix)))) stop("varFix has to be a logical vector of length one")
@@ -324,7 +324,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
     else if (length(varFix) != 2 || is.null(names(varFix)) || any(is.na(pmatch(names(varFix), c("Random", "Residual"))))) 
       stop("varFix has to be a named vector of length two")
     else names(varFix) <- c("Random", "Residual")[pmatch(names(varFix), c("Random", "Residual"))]
-    random <- if (length(random) == 3) random else formula(paste(".", deparse(random)))
+    random <- if (length(random) == 3) random else formula(paste(".", paste(deparse(random), collapse = "")))
     object <- new("FLXMRlmmc", formula = formula, random = random, censored = censored,
                   weighted = TRUE, family = family, name = "FLXMRlmmc:gaussian")
     if (any(varFix)) object <- new("FLXMRlmmcfix", object)

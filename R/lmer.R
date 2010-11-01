@@ -37,7 +37,7 @@ FLXMRlmer <- function(formula = . ~ ., random, weighted = FALSE,
   mc <- match.call()
   mc$weights <- as.symbol("w")
   require("lme4")
-  random <- if (length(random) == 3) random else formula(paste(".", deparse(random)))
+  random <- if (length(random) == 3) random else formula(paste(".", paste(deparse(random), collapse = "")))
   object <- new("FLXMRlmer", formula = formula, random = random,
                 family = "gaussian", weighted = weighted, name = "FLXMRlmer:gaussian")
   cv <- do.call(lme4:::lmerControl, control)
@@ -115,14 +115,14 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmer"),
 {
   mc <- match.call()
   formula_nogrouping <- RemoveGrouping(formula)
-  if (identical(deparse(formula_nogrouping), deparse(formula))) stop("please specify a grouping variable")
+  if (identical(paste(deparse(formula_nogrouping), collapse = ""), paste(deparse(formula), collapse = ""))) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   random_formula <- update(model@random,
                            paste(".~. |", .FLXgetGroupingVar(formula)))
   fullformula <- model@fullformula
   if (!lhs) fullformula <- fullformula[c(1,3)]
   fullformula <- update(fullformula,
-                        paste(ifelse(lhs, ".", ""), "~. + ", deparse(random_formula[[3]])))
+                        paste(ifelse(lhs, ".", ""), "~. + ", paste(deparse(random_formula[[3]]), collapse = "")))
   model@fullformula <- update(model@fullformula,
                               paste(ifelse(lhs, ".", ""), "~. |", .FLXgetGroupingVar(formula)))
   fr <- lme4:::lmerFrames(mc, fullformula, contrasts)

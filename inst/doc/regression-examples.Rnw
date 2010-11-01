@@ -12,7 +12,7 @@
 library("flexmix")
 @ 
 \author{Bettina Gr{\"u}n\\
-  Wirtschaftsuniversit{\"a}t Wien \And
+  Johannes Kepler Universit{\"at} Linz \And
   Friedrich Leisch\\
   Ludwig-Maximilians-Universit{\"a}t M{\"u}nchen} 
 
@@ -20,12 +20,11 @@ library("flexmix")
 
 \Address{
   Bettina Gr\"un\\
-  Institute for Statistics and Mathematics\\
-  WU Wirtschaftsuniversit\"at Wien\\
-  Augasse 2--6\\
-  1090 Wien, Austria\\
-  E-mail: \email{Bettina.Gruen@wu.ac.at}\\
-  URL: \url{http://statmath.wu.ac.at/~gruen/}
+  Institut f\"ur Angewandte Statistik / IFAS\\
+  Johannes Kepler Universit{\"at} Linz\\
+  Freist\"adter Stra\ss{}e 315\\
+  4040 Linz, Austria\\
+  E-mail: \email{Bettina.Gruen@jku.at}\\
 
   Friedrich Leisch\\
   Institut f\"ur Statistik\\
