@@ -1,3 +1,8 @@
+Changes in flexmix version 2.2-11
+
+  o More generics and methods exported to use the refit method when
+    extending flexmix in other packages.
+  
 Changes in flexmix version 2.2-10
 
   o For long formulas FLXMRglmfix() did not work properly due to the

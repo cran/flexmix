@@ -1,10 +1,10 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4579 2010-08-06 10:27:30Z gruen $
+#  $Id: flexmix.R 4638 2010-11-22 14:01:52Z gruen $
 #
 
-.sum_logs <- function(m) {
-  M <- apply(m, 1, max)
+log_row_sums <- function(m) {
+  M <- m[cbind(seq_len(nrow(m)), max.col(m))]
   M + log(rowSums(exp(m - M)))
 }
 
@@ -118,7 +118,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   if(length(group)>0) postunscaled <- groupPosteriors(postunscaled, group)
 
   logpostunscaled <- log(postunscaled)
-  postscaled <- exp(logpostunscaled - .sum_logs(logpostunscaled))
+  postscaled <- exp(logpostunscaled - log_row_sums(logpostunscaled))
   
   llh <- -Inf
   if (control@classify=="random") llh.max <- -Inf
@@ -169,7 +169,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
                          else sweep(postunscaled, 2, log(prior), "+")
       logpostunscaled <- postunscaled
       postunscaled <- exp(postunscaled)
-      postscaled <- exp(logpostunscaled - .sum_logs(logpostunscaled))
+      postscaled <- exp(logpostunscaled - log_row_sums(logpostunscaled))
       ##<FIXME>: wenn eine beobachtung in allen Komonenten extrem
       ## kleine postunscaled-werte hat, ist exp(-postunscaled)
       ## numerisch Null, und damit postscaled NaN
@@ -182,8 +182,8 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       }
       ### check convergence
       llh.old <- llh
-      llh <- if (is.null(weights)) sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE]))
-             else sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE])*weights[groupfirst])
+      llh <- if (is.null(weights)) sum(log_row_sums(logpostunscaled[groupfirst,,drop=FALSE]))
+             else sum(log_row_sums(logpostunscaled[groupfirst,,drop=FALSE])*weights[groupfirst])
       if(is.na(llh) | is.infinite(llh))
         stop(paste(formatC(iter, width=4),
                    "Log-likelihood:", llh))

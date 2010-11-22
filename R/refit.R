@@ -1,26 +1,26 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4629 2010-11-02 09:19:26Z gruen $
+#  $Id: refit.R 4638 2010-11-22 14:01:52Z gruen $
 #
 ###*********************************************************
 
-setMethod("getParameters", signature(object="FLXdist"),
+setMethod("FLXgetParameters", signature(object="FLXdist"),
 function(object, model) {
   if (missing(model)) model <- seq_along(object@model)
   coefficients <- unlist(lapply(model, function(m) {
-    Model <- unlist(getParameters(object@model[[m]], lapply(object@components, "[[", m)))
+    Model <- unlist(FLXgetParameters(object@model[[m]], lapply(object@components, "[[", m)))
     names(Model) <- paste("model.", m, "_", names(Model), sep = "")
     Model
   }))
-  c(coefficients, getParameters(object@concomitant))
+  c(coefficients, FLXgetParameters(object@concomitant))
 })
 
-setMethod("getParameters", signature(object="FLXM"),
+setMethod("FLXgetParameters", signature(object="FLXM"),
 function(object, components, ...) {
   lapply(components, function(x) unlist(slot(x, "parameters")))
 })
 
-setMethod("getParameters", signature(object="FLXMC"),
+setMethod("FLXgetParameters", signature(object="FLXMC"),
 function(object, components, ...) {
   if (object@dist == "mvnorm") {
     return(lapply(components, function(x) {
@@ -31,7 +31,7 @@ function(object, components, ...) {
   } else return(lapply(components, function(x) unlist(slot(x, "parameters"))))
 })
 
-setMethod("getParameters", signature(object="FLXMRglm"),
+setMethod("FLXgetParameters", signature(object="FLXMRglm"),
 function(object, components, ...) {
   parms <- lapply(components, function(x) unlist(slot(x, "parameters")))
   Design <- FLXgetDesign(object, components)
@@ -49,7 +49,7 @@ function(object, components, ...) {
   parms_unique
 })
 
-setMethod("getParameters", signature(object="FLXP"),
+setMethod("FLXgetParameters", signature(object="FLXP"),
 function(object, ...) {
   if (length(object@coef) == 1) return(NULL) 
   alpha <- log(object@coef[-1]) - log(object@coef[1])
@@ -57,7 +57,7 @@ function(object, ...) {
   return(alpha)
 })  
 
-setMethod("getParameters", signature(object="FLXPmultinom"),
+setMethod("FLXgetParameters", signature(object="FLXPmultinom"),
 function(object, ...) {
   coefficients <- object@coef[,-1,drop=FALSE]
   if (ncol(coefficients) > 0) {
@@ -72,10 +72,10 @@ function(object, ...) {
 setMethod("VarianceCovariance", signature(object="flexmix"),
 function(object, model = TRUE, gradient, optim_control = list(), ...) {
   if (object@control@classify != "weighted") stop("Only for weighted ML estimation possible.")
-  if (length(getParameters(object)) != object@df) stop("not implemented yet for restricted parameters.")
+  if (length(FLXgetParameters(object)) != object@df) stop("not implemented yet for restricted parameters.")
   if (missing(gradient)) gradient <- FLXgradlogLikfun(object)
   optim_control$fnscale <- -1
-  fit <- optim(fn = FLXlogLikfun(object), par = getParameters(object), gr = gradient,
+  fit <- optim(fn = FLXlogLikfun(object), par = FLXgetParameters(object), gr = gradient,
                hessian = TRUE, method = "BFGS", control = optim_control, ...)
   list(coef = fit$par, vcov = -solve(as.matrix(fit$hessian)))
 })  
@@ -96,8 +96,8 @@ function(object, ...) function(parms) {
   groupfirst <- if (length(object@group) > 1) groupFirst(object@group) else rep(TRUE, FLXgetObs(object@model[[1]]))
   logpostunscaled <- logLikfun_comp(object) +
     log(getPriors(object@concomitant, object@group, groupfirst))
-  if (is.null(object@weights)) sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE]))
-  else sum(.sum_logs(logpostunscaled[groupfirst,,drop=FALSE])*object@weights[groupfirst])
+  if (is.null(object@weights)) sum(log_row_sums(logpostunscaled[groupfirst,,drop=FALSE]))
+  else sum(log_row_sums(logpostunscaled[groupfirst,,drop=FALSE])*object@weights[groupfirst])
 })
 
 setMethod("getPriors", signature(object="FLXP"),
@@ -224,7 +224,7 @@ function(object, ...) {
     logLik_comp <- logLikfun_comp(object)
     Priors <- getPriors(object@concomitant, object@group, groupfirst)
     Priors_Lik_comp <- logLik_comp + log(Priors)
-    weights <- exp(Priors_Lik_comp - .sum_logs(Priors_Lik_comp))
+    weights <- exp(Priors_Lik_comp - log_row_sums(Priors_Lik_comp))
     if (object@k > 1) {
       ConcomitantScores <- FLXgradlogLikfun(object@concomitant, Priors[groupfirst,,drop=FALSE],
                                             weights[groupfirst,,drop=FALSE])

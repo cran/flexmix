@@ -35,6 +35,8 @@ export(
        FLXMRmgcv,
        FLXMRrobglm,
        FLXMRziglm,
+       FLXgetDesign,
+       FLXgetParameters,
        FLXreplaceParameters,
        flexmix,
        group,

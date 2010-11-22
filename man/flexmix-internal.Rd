@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix-internal.Rd 4616 2010-10-11 06:08:09Z gruen $
+%  $Id: flexmix-internal.Rd 4638 2010-11-22 14:01:52Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -53,6 +53,17 @@
 \alias{refit_optim,FLXMRglm-method}
 \alias{refit_optim,FLXMRziglm-method}
 \alias{refit_optim,FLXP-method}
+\alias{FLXgetDesign}
+\alias{FLXgetDesign,FLXM-method}
+\alias{FLXgetDesign,FLXMRglmfix-method}
+\alias{FLXgetDesign,FLXMRziglm-method}
+\alias{FLXgetParameters}
+\alias{FLXgetParameters,FLXdist-method}
+\alias{FLXgetParameters,FLXM-method}
+\alias{FLXgetParameters,FLXMC-method}
+\alias{FLXgetParameters,FLXMRglm-method}
+\alias{FLXgetParameters,FLXP-method}
+\alias{FLXgetParameters,FLXPmultinom-method}
 \alias{FLXreplaceParameters}
 \alias{FLXreplaceParameters,FLXdist-method}
 \alias{FLXreplaceParameters,FLXM-method}

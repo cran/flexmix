@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: allGenerics.R 4579 2010-08-06 10:27:30Z gruen $
+#  $Id: allGenerics.R 4638 2010-11-22 14:01:52Z gruen $
 #
 
 setGeneric("flexmix",
@@ -55,7 +55,7 @@ setGeneric("FLXgradlogLikfun", function(object, ...) standardGeneric("FLXgradlog
 
 setGeneric("VarianceCovariance", function(object, ...) standardGeneric("VarianceCovariance"))
 
-setGeneric("getParameters", function(object, ...) standardGeneric("getParameters"))
+setGeneric("FLXgetParameters", function(object, ...) standardGeneric("FLXgetParameters"))
 
 setGeneric("logLikfun_comp", function(object, ...) standardGeneric("logLikfun_comp"))
 

@@ -1,12 +1,11 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRziglm.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  $Id: FLXMRziglm.Rd 4638 2010-11-22 14:01:52Z gruen $
 %
 \name{FLXMRziglm}
 \alias{FLXMRziglm}
 \alias{FLXMRziglm-class}
 \alias{refit,FLXMRziglm-method}
-\alias{FLXgetDesign,FLXMRziglm-method}
 \alias{FLXreplaceParameters,FLXMRziglm-method}
 \alias{FLXgradlogLikfun,FLXMRziglm-method}
 \title{FlexMix Interface to Zero Inflated Generalized Linear Models}
