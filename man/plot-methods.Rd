@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: plot-methods.Rd 3935 2008-03-26 09:59:04Z gruen $
+%  $Id: plot-methods.Rd 4652 2010-12-17 10:45:41Z gruen $
 %
 \name{plot-methods}
 \docType{methods}
@@ -33,12 +33,12 @@
   \item{xlab}{Label of x-axis.}
   \item{ylab}{Label of y-axis.}
   \item{as.table}{Logical that controls the order in which panels
-    should be plotted: if 'FALSE' (the default), panels are
+    should be plotted: if \code{FALSE} (the default), panels are
     drawn left to right, bottom to top (as in a graph); if
-    'TRUE', left to right, top to bottom.}
+    \code{TRUE}, left to right, top to bottom.}
   \item{endpoints}{Vector of length 2 indicating the range of x-values that is
     to be covered by the histogram.  This applies only when
-    'breaks' is unspecified. In 'do.breaks', this specifies the interval
+    \code{breaks} is unspecified. In \code{do.breaks}, this specifies the interval
     that is to be divided up.}
   \item{...}{Further graphical parameters for the lattice function
     histogram.}

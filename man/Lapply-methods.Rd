@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: Lapply-methods.Rd 3934 2008-03-26 08:36:26Z gruen $
+%  $Id: Lapply-methods.Rd 4652 2010-12-17 10:45:41Z gruen $
 %
 \name{Lapply-methods}
 \docType{methods}
@@ -16,7 +16,7 @@
   \item{model}{The model (for a multivariate response) that shall be
     used.}
   \item{component}{Index vector for selecting the components.}
-  \item{\dots}{Optional arguments to 'FUN'.}
+  \item{\dots}{Optional arguments to \code{FUN}.}
 }
 \section{Methods}{
   \describe{
@@ -25,14 +25,14 @@
   }  
 }
 \details{
-  'FUN' is found by a call to 'match.fun' and typically is specified
+  \code{FUN} is found by a call to \code{match.fun} and typically is specified
   as a function or a symbol (e.g. a backquoted name) or a character
   string specifying a function to be searched for from the
-  environment of the call to 'Lapply'.
+  environment of the call to \code{Lapply}.
 }
 \value{
   A list of the length equal to the number of components specified is
-  returned, each element of which is the result of applying 'FUN' to the
+  returned, each element of which is the result of applying \code{FUN} to the
   specified component of the refitted mixture model.
 }
 \keyword{methods}

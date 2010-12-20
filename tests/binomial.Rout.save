@@ -1,7 +1,8 @@
 
-R version 2.9.0 (2009-04-17)
-Copyright (C) 2009 The R Foundation for Statistical Computing
+R version 2.12.0 (2010-10-15)
+Copyright (C) 2010 The R Foundation for Statistical Computing
 ISBN 3-900051-07-0
+Platform: x86_64-pc-linux-gnu (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -21,6 +22,8 @@ Loading required package: modeltools
 Loading required package: stats4
 Loading required package: multcomp
 Loading required package: mvtnorm
+Loading required package: survival
+Loading required package: splines
 > 
 > set.seed(123)
 > 

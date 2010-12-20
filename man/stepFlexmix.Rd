@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 4523 2010-02-26 10:34:22Z gruen $
+%  $Id: stepFlexmix.Rd 4652 2010-12-17 10:45:41Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -40,7 +40,6 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     object.}
   \item{unique}{If \code{TRUE}, then \code{unique()} is called on the
     result, see below.}
-
   \item{x, object}{An object of class \code{"stepFlexmix"}.}
   \item{y}{Not used.}
   \item{what}{Character vector naming information criteria to
@@ -53,10 +52,9 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     \code{\link{legend}} for details.}
   \item{which}{Number of model to get. If character, interpreted as
     number of components or name of an information criterion.}
-
-  \item{incomparables}{A vector of values that cannot be compared. Currently,
-          'FALSE' is the only possible value, meaning that all values
-          can be compared.}
+  \item{incomparables}{A vector of values that cannot be
+          compared. Currently, \code{FALSE} is the only possible value,
+          meaning that all values can be compared.}
 }
 \value{
   An object of class \code{"stepFlexmix"} containing the best models

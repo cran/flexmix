@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 4411 2009-09-23 15:03:19Z gruen $
+%  $Id: flexmix.Rd 4652 2010-12-17 10:45:41Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -37,7 +37,7 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     algorithm. Default is random assignment into \code{k}
     clusters.}
   \item{weights}{An optional vector of weights to be used in the fitting
-    process.  Should be 'NULL', a numeric vector or a formula.}
+    process.  Should be \code{NULL}, a numeric vector or a formula.}
   \item{model}{Object of class \code{FLXM} or list of \code{FLXM}
     objects. Default is the object returned by calling
     \code{\link{FLXMRglm}()}.}

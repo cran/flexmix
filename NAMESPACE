@@ -6,7 +6,6 @@ importFrom(stats, fitted, predict, simulate)
 importFrom(stats4, AIC, BIC, logLik, plot, summary)
 
 export(
-       existGradient,
        ExLinear,
        ExNPreg,
        ExNclus,
@@ -38,8 +37,11 @@ export(
        FLXgetDesign,
        FLXgetParameters,
        FLXreplaceParameters,
+       boot,
+       existGradient,
        flexmix,
        group,
+       LR_test,
        plotEll,
        refit_optim,
        relabel,

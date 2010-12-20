@@ -1,3 +1,7 @@
+Changes in flexmix version 2.3-1
+
+  o Functionality for bootstrapping finite mixture models added.
+
 Changes in flexmix version 2.2-11
 
   o More generics and methods exported to use the refit method when
@@ -29,7 +33,7 @@ Changes in flexmix version 2.2-8
 
   o Function group() is now exported.
 
-hanges in flexmix version 2.2-7
+Changes in flexmix version 2.2-7
  
   o Bug in the FLXgetModelmatrix() method for the "FLXMRlmm" class
     fixed when determining identical random effects covariates for the
