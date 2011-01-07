@@ -52,7 +52,7 @@ setGeneric("determinePrior", function(prior, concomitant, group)
            standardGeneric("determinePrior"))
 
 setMethod("determinePrior", signature(concomitant="FLXPmultinom"), function(prior, concomitant, group) {
-  exps <- exp(concomitant@x %*% t(concomitant@coef))
+  exps <- exp(concomitant@x %*% concomitant@coef)
   exps/rowSums(exps)
 })
 

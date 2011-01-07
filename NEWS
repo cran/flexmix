@@ -1,3 +1,9 @@
+Changes in flexmix version 2.3-2
+
+  o A bug for rflexmix() fixed for "flexmix" objects with a
+    concomitant variable model. Thanks to Greg Petroski for pointing
+    this out.
+
 Changes in flexmix version 2.3-1
 
   o Functionality for bootstrapping finite mixture models added.
