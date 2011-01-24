@@ -21,7 +21,7 @@ setMethod("rflexmix", signature(object = "flexmix", newdata="missing"), function
   class <- apply(prior, 1, function(x) stats::rmultinom(1, size = 1, prob = x))
   class <- if (is.matrix(class)) t(class) else as.matrix(class)
   class <- max.col(class)[group]
-  y <- list()
+  y <- vector("list", N)
   for (i in seq_len(N)) {
     comp <- lapply(object@components, function(x) x[[i]])
     yi <- rFLXM(object@model[[i]], comp, class, ...)
@@ -37,7 +37,7 @@ setMethod("rflexmix", signature(object = "flexmix", newdata="missing"), function
     }
     else if (inherits(names, "call")) names <- deparse(names)
     colnames(yi) <- as.character(names)
-    y <- c(y, list(yi))
+    y[[i]] <- yi
   }
   list(y = y, group=group, class = class)
 })

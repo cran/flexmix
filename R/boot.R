@@ -55,6 +55,7 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
   logLik <- ks <- converged <- matrix(nrow=R, ncol = length(k), dimnames = list(BS = seq_len(R), k = k))
   for (iter in seq_len(R)) {
     new <- object
+    newgroups <- groups
     if(verbose && !(iter%%verbose)) cat("* ")
     if (iter > 1) {
       if (sim == "parametric") {
@@ -64,17 +65,22 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
       } else {
         n <- sum(groups$groupfirst)
         indices <- sample(seq_len(n), n, replace = TRUE)
-        indices_grouped <- if (length(groups$group) > 0) as.vector(sapply(groups$group[groups$groupfirst][indices],
-                                                                      function(x) which(x == groups$group)))
-                           else indices
+        if (length(groups$group) > 0) {
+          obs_groups <- lapply(groups$group[groups$groupfirst][indices],
+                               function(x) which(x == groups$group))
+          indices_grouped <- unlist(obs_groups)
+          newgroups$group <- factor(rep(seq_along(obs_groups), sapply(obs_groups, length)))
+          newgroups$groupfirst <- !duplicated(newgroups$group)
+        } else {
+          indices_grouped <- indices
+        }
         for (i in seq_len(m)) {
           new@model[[i]]@y <- object@model[[i]]@y[indices_grouped,,drop=FALSE]
           new@model[[i]]@x <- object@model[[i]]@x[indices_grouped,,drop=FALSE]
-          new@concomitant@x <- new@concomitant@x[indices,,drop=FALSE]
         }
+        new@concomitant@x <- new@concomitant@x[indices,,drop=FALSE]
       }
     }
-    newgroups <- groups
     if (has_weights & !length(groups$group) > 0) {
       new <- generate_weights(new)
       newgroups$groupfirst <- rep(TRUE, FLXgetObs(new@model[[1]]))

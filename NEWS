@@ -1,3 +1,8 @@
+Changes in flexmix version 2.3-3
+
+  o A bug for boot() fixed for "flexmix" objects with an unbalanced 
+    grouping variable. Thanks to Laszlo Sandor for pointing this out.
+
 Changes in flexmix version 2.3-2
 
   o A bug for rflexmix() fixed for "flexmix" objects with a
