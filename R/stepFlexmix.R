@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 4556 2010-05-14 13:20:36Z gruen $
+#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+#  $Id: stepFlexmix.R 4666 2011-02-23 15:52:35Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -134,16 +134,23 @@ function(object)
     print(z, na.string="")
 })
 
-setMethod("AIC", "stepFlexmix",
-function(object, ..., k = 2)
-{
-   sapply(object@models, function(x) AIC(x))
+setMethod("nobs", signature(object="stepFlexmix"),
+function(object, ...) {          
+  sapply(object@models, nobs)
 })
 
-setMethod("BIC", "stepFlexmix",
-function(object, ...)
+
+setMethod("logLik", "stepFlexmix",
+function(object, ..., k = 2)
 {
-   sapply(object@models, function(x) BIC(x, ...))
+  ll <- lapply(object@models, function(x) logLik(x))
+  df <- sapply(ll, attr, "df")
+  nobs <- sapply(ll, attr, "nobs")
+  ll <- unlist(ll)
+  attr(ll, "df") <- df
+  attr(ll, "nobs") <- nobs
+  class(ll) <- "logLik"
+  ll
 })
 
 setMethod("ICL", "stepFlexmix",

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXdist-class.Rd 4616 2010-10-11 06:08:09Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXdist-class.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{FLXdist-class}
 \docType{class}

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: Lapply-methods.Rd 4652 2010-12-17 10:45:41Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: Lapply-methods.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{Lapply-methods}
 \docType{methods}

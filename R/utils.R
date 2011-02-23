@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: utils.R 4294 2009-03-03 05:23:40Z leisch $
+#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+#  $Id: utils.R 4666 2011-02-23 15:52:35Z gruen $
 #
 
 list2object = function(from, to){

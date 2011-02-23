@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: KLdiv.Rd 3912 2008-03-13 15:10:24Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: KLdiv.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{KLdiv}
 \alias{KLdiv,matrix-method}

@@ -3,7 +3,11 @@ import(modeltools)
 import(multcomp)
 
 importFrom(stats, fitted, predict, simulate)
-importFrom(stats4, AIC, BIC, logLik, plot, summary)
+if (getRversion() >= "2.13.0") {
+  importFrom(stats4, logLik, plot, nobs, summary)
+} else {
+  importFrom(stats4, logLik, plot, summary)
+}
 
 export(
        ExLinear,
@@ -82,8 +86,6 @@ exportClasses(
 
 
 exportMethods(
-              AIC,
-              BIC,
               EIC,
               FLXcheckComponent,
               FLXdeterminePostunscaled,

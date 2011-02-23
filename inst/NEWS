@@ -1,3 +1,11 @@
+Changes in flexmix version 2.3-4
+
+  o A generic method for nobs() is introduced in stats4 for R
+    2.13.0. flexmix now does not define this generic function and
+    logLik, AIC and BIC methods were modified to better exploit
+    already available methods. Thanks to Prof. Brian D. Ripley for
+    suggesting the modification.
+
 Changes in flexmix version 2.3-3
 
   o A bug for boot() fixed for "flexmix" objects with an unbalanced 

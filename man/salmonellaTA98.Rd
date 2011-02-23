@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: salmonellaTA98.Rd 4411 2009-09-23 15:03:19Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: salmonellaTA98.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{salmonellaTA98}
 \alias{salmonellaTA98}

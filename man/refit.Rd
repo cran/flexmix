@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: refit.Rd 4344 2009-05-11 11:54:25Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: refit.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{refit-methods}
 \alias{refit,flexmix-method}

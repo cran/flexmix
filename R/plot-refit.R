@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-refit.R 4579 2010-08-06 10:27:30Z gruen $
+#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+#  $Id: plot-refit.R 4666 2011-02-23 15:52:35Z gruen $
 #
 
 prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = TRUE, nlevels, origin = NULL, 

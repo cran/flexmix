@@ -1,5 +1,5 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
 %  $Id: posterior.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{relabel}

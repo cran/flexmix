@@ -1,6 +1,6 @@
 Package: flexmix
-Version: 2.3-3
-Date: 2011-01-24
+Version: 2.3-4
+Date: 2011-02-23
 Author: Friedrich Leisch and Bettina Gruen
 Maintainer: Bettina Gruen <Bettina.Gruen@jku.at>
 Title: Flexible Mixture Modeling
@@ -17,6 +17,6 @@ Description: FlexMix implements a general framework for finite mixtures
 License: GPL (>= 2)
 URL: http://www.aasc.or.at/mixtures
 LazyLoad: yes
-Packaged: 2011-01-24 10:35:21 UTC; gruen
+Packaged: 2011-02-28 09:38:11 UTC; gruen
 Repository: CRAN
-Date/Publication: 2011-01-24 18:31:45
+Date/Publication: 2011-02-28 10:31:09

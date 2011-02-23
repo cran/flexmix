@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: bioChemists.Rd 4467 2009-12-07 17:53:00Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: bioChemists.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{bioChemists}
 \alias{bioChemists}

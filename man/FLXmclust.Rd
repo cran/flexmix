@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmclust.Rd 4553 2010-05-11 10:38:06Z leisch $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXmclust.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{FLXMCmvnorm}
 \alias{FLXMCmvnorm}

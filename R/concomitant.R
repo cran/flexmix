@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 4556 2010-05-14 13:20:36Z gruen $
+#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+#  $Id: concomitant.R 4666 2011-02-23 15:52:35Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {

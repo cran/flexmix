@@ -1,9 +1,11 @@
 #
-#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: infocrit.R 4556 2010-05-14 13:20:36Z gruen $
+#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+#  $Id: infocrit.R 4666 2011-02-23 15:52:35Z gruen $
 #
 
-setGeneric("nobs", function(object, ...) standardGeneric("nobs"))
+if (!getRversion() >= "2.13.0") {
+  setGeneric("nobs", function(object, ...) standardGeneric("nobs"))
+}
 
 setMethod("nobs", signature(object="flexmix"),
 function(object, ...) {          
@@ -17,16 +19,6 @@ function(object, ...){
     attr(z, "nobs") <- nobs(object)
     class(z) <- "logLik"
     z
-})
-
-setMethod("AIC", signature(object="flexmix"),
-function(object, ..., k=2){
-    -2 * object@logLik + object@df * k
-})
-
-setMethod("BIC", signature(object="flexmix"),
-function(object, ...){
-    -2 * object@logLik + object@df * log(nobs(object))
 })
 
 setMethod("ICL", signature(object="flexmix"),

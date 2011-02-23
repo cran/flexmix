@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: posterior.Rd 3937 2008-03-28 14:56:01Z leisch $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: posterior.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{posterior}
 \alias{clusters,flexmix,missing-method}

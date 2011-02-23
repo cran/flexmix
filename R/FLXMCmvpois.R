@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-#  $Id: flxmcmvpois.R 4211 2008-12-15 12:19:50Z gruen $
+#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+#  $Id: flxmcmvpois.R 4666 2011-02-23 15:52:35Z gruen $
 #
 
 FLXMCmvpois <- function(formula=.~.)

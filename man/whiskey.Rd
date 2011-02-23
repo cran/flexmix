@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2008 Friedrich Leisch and Bettina Gruen
-%  $Id: whiskey.Rd 3914 2008-03-13 15:52:54Z gruen $
+%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  $Id: whiskey.Rd 4666 2011-02-23 15:52:35Z gruen $
 %
 \name{whiskey}
 \alias{whiskey}
