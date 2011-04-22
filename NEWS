@@ -1,3 +1,12 @@
+Changes in flexmix version 2.3-5
+
+  o A bug fixed in posterior(). Fixed priors were always used, also if
+    a concomitant variable model was present.
+
+  o A method added for prior() such that if newdata is supplied and
+    the object is of class "flexmix" the prior class probabilities for
+    each observation are returned.
+    
 Changes in flexmix version 2.3-4
 
   o A generic method for nobs() is introduced in stats4 for R

@@ -1,12 +1,13 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: flexmix.Rd 4674 2011-04-21 16:11:02Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
 \alias{flexmix,formula,ANY,ANY,ANY,missing-method}
 \alias{flexmix,formula,ANY,ANY,ANY,list-method}
 \alias{flexmix,formula,ANY,ANY,ANY,FLXM-method}
+\alias{prior,flexmix-method}
 \alias{show,flexmix-method}
 \alias{summary,flexmix-method}
 \alias{show,summary.flexmix-method}

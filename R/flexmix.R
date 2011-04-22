@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: flexmix.R 4674 2011-04-21 16:11:02Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -483,6 +483,25 @@ function(object)
   object@prior
 })
 
+setMethod("prior", signature(object="flexmix"),
+function(object, newdata, ...) {
+  if (missing(newdata)) prior <- callNextMethod()
+  else {
+    groups <- .FLXgetGrouping(object@formula, newdata)
+    nobs <- if (is(newdata, "data.frame")) nrow(newdata)
+            else min(sapply(newdata, function(x) {
+              if (is(x, "matrix")) nrow(x) else length(x)
+            }))
+    group <- if (length(groups$group)) groups$group else factor(seq_len(nobs))
+    object@concomitant <- FLXgetModelmatrix(object@concomitant, data = newdata,
+                                            groups = list(group=group,
+                                              groupfirst = groupFirst(group)))
+    prior <- determinePrior(object@prior, object@concomitant, group)[as.integer(group),]
+  }
+  prior
+})
+
+
 setMethod("posterior", signature(object="flexmix", newdata="missing"),
 function(object, newdata, unscaled = FALSE, ...)
 {
@@ -500,12 +519,16 @@ setMethod("posterior", signature(object="FLXdist", newdata="listOrdata.frame"),
                                                        ...)
             }
             groups <- .FLXgetGrouping(object@formula, newdata)
+            group <- if (length(groups$group)) groups$group else factor(seq_len(nrow(postunscaled)))
+            object@concomitant <- FLXgetModelmatrix(object@concomitant, data = newdata,
+                                                    groups = list(group=group,
+                                                      groupfirst = groupFirst(group)))
+            prior <- determinePrior(object@prior, object@concomitant, group)[as.integer(group),]
             if(length(groups$group)>0)
               postunscaled <- groupPosteriors(postunscaled, groups$group)
-            for(m in seq_len(object@k))
-              postunscaled[,m] <- object@prior[m] * exp(postunscaled[,m])
-            if (unscaled) return(postunscaled)
-            else return(postunscaled/rowSums(postunscaled))
+            postunscaled <- postunscaled + log(prior)
+            if (unscaled) return(exp(postunscaled))
+            else return(exp(postunscaled - log_row_sums(postunscaled)))
 })            
 
 setMethod("posterior", signature(object="FLXM", newdata="listOrdata.frame"),
