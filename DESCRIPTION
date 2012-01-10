@@ -1,6 +1,6 @@
 Package: flexmix
-Version: 2.3-5
-Date: 2011-04-22
+Version: 2.3-6
+Date: 2012-01-10
 Author: Friedrich Leisch and Bettina Gruen
 Maintainer: Bettina Gruen <Bettina.Gruen@jku.at>
 Title: Flexible Mixture Modeling
@@ -9,7 +9,7 @@ Imports: methods, stats, stats4
 Suggests: MASS, codetools, diptest, ellipse, gclus, grid, lme4, mgcv
         (>= 1.6-1), mlbench, mvtnorm, nnet
 Description: FlexMix implements a general framework for finite mixtures
-        of regression models using the EM algorithm. FlexMix provides
+        of regression models using the EM algorithm.  FlexMix provides
         the E-step and all data handling, while the M-step can be
         supplied by the user to easily define new models. Existing
         drivers implement mixtures of standard linear models,
@@ -17,6 +17,6 @@ Description: FlexMix implements a general framework for finite mixtures
 License: GPL (>= 2)
 URL: http://www.aasc.or.at/mixtures
 LazyLoad: yes
-Packaged: 2011-04-22 11:39:25 UTC; gruen
+Packaged: 2012-01-12 09:16:58 UTC; gruen
 Repository: CRAN
-Date/Publication: 2011-04-24 06:07:58
+Date/Publication: 2012-01-12 10:04:36

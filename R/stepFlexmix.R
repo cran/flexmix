@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: stepFlexmix.R 4685 2011-05-26 08:51:50Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -59,8 +59,9 @@ stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
             if(verbose) cat("\n")
         }
     }
-    
+    logLiks <- logLiks[is.finite(sapply(z, logLik)),,drop=FALSE]
     z <- z[is.finite(sapply(z, logLik))]
+    rownames(logLiks) <- names(z)
     if (!length(z)) stop("no convergence to a suitable mixture")
     
     if(drop & (length(z)==1)){
@@ -86,18 +87,19 @@ function(x, incomparables=FALSE, ...)
     z <- list()
     K <- sapply(x@models, function(x) x@k)
     logLiks <- x@logLiks
+    keep <- rep(TRUE, nrow(logLiks))
     
     for(k in sort(unique(K))){
         n <- which(k==K)
         if(length(n)>1){
             l <- sapply(x@models[n], logLik)
             z[as.character(k)] <- x@models[n][which.max(l)]
-            is.na(logLiks[n[-which.max(l)],]) <- TRUE
+            keep[n[-which.max(l)]] <- FALSE
           }
         else
             z[as.character(k)] <- x@models[n]
     }
-    logLiks <- na.omit(logLiks)
+    logLiks <- logLiks[keep,,drop=FALSE]
     rownames(logLiks) <- names(z)
     attr(logLiks, "na.action") <- NULL
     mycall <- x@call

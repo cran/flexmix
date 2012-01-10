@@ -13,17 +13,19 @@
 \alias{FLXgetObs,FLXMRlmm-method}
 \alias{FLXmstep,FLXMRlmmfix-method}
 \alias{predict,FLXMRlmm-method}
+\alias{rFLXM,FLXMRlmm,FLXcomponent-method}
+\alias{rFLXM,FLXMRlmm,list-method}
 \title{FlexMix Interface to Linear Mixed Models}
 \description{
   This is a driver which allows fitting of mixtures of linear models
   with random effects.
 }
 \usage{
-FLXMRlmer(formula = . ~ ., random, weighted = FALSE,
-          control = list(), eps = .Machine$double.eps)
 FLXMRlmm(formula = . ~ ., random, lm.fit = c("lm.wfit",
           "smooth.spline"), varFix = c(Random = FALSE, Residual =
           FALSE), \dots)
+FLXMRlmer(formula = . ~ ., random, weighted = FALSE,
+          control = list(), eps = .Machine$double.eps)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula
@@ -71,7 +73,7 @@ sample <- data.frame(y = rep(rnorm(unique(id)/2, 0, c(5, 2)), each = 10) +
                          rep(c(0, 3), each = 10) * x,
                      x = x,
                      id = factor(id))
-fitted <- flexmix(.~.|id, k = 2, model = FLXMRlmer(y ~ x, random = ~ 1),
+fitted <- flexmix(.~.|id, k = 2, model = FLXMRlmm(y ~ x, random = ~ 1),
                   data = sample)
 parameters(fitted)
 xyplot(y ~ x | clusters(fitted), groups = id, data = sample, type = "l")

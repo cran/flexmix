@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: betablocker.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: betablocker.Rd 4701 2011-07-20 08:58:44Z gruen $
 %
 \name{betablocker}
 \alias{betablocker}
@@ -30,7 +30,7 @@
 \references{
   M. Aitkin (1999): Meta-analysis by random effect modelling in
   generalized linear models.
-  Statistics in medicine 18, pages 2343-2351.
+  Statistics in Medicine 18, pages 2343-2351.
 
   S. Yusuf, R. Peto, J. Lewis, R. Collins and P. Sleight (1985): Beta
   blockade during and after myocardial infarction: an overview of the

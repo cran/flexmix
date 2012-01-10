@@ -69,6 +69,7 @@ exportClasses(
               FLXMRlmc,
               FLXMRlmmcfix,
               FLXMRlmcfix,
+              FLXMRmgcv,
               FLXMRrobglm,
               FLXMRziglm,
               FLXM,

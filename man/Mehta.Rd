@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: Mehta.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: Mehta.Rd 4701 2011-07-20 08:58:44Z gruen $
 %
 \name{Mehta}
 \alias{Mehta}
@@ -25,7 +25,7 @@
 \source{
   M. Aitkin (1999): Meta-analysis by random effect modelling in
   generalized linear models.
-  Statistics in medicine 18, pages 2343-2351.
+  Statistics in Medicine 18, pages 2343-2351.
 }
 
 \references{

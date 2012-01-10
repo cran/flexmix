@@ -1,3 +1,7 @@
+setClass("FLXcomponentlmm",
+         representation(random="list"),
+         contains = "FLXcomponent")
+
 setClass("FLXMRlmm",
          representation(family = "character",
                         random = "formula",
@@ -65,17 +69,20 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
                     mvtnorm::dmvnorm(t(y[[i]]), mean = mu[[i]], sigma = V[[which[i]]], log=TRUE)/nrow(V[[which[i]]]))
       as.vector(ungroupPriors(matrix(llh), group, !duplicated(group)))
     }
+    new("FLXcomponentlmm",
+        parameters = list(coef = coef, sigma2 = sigma2),
+        random = list(),
+        logLik = logLik, predict = predict,
+        df = df)
+  })
+
+  determineRandom <- function(mu, y, z, which, sigma2) {
     Sigma <- lapply(z, function(Z)
                     solve(crossprod(Z) / sigma2$Residual + solve(sigma2$Random)))
     Sigma_tilde <-  lapply(seq_along(z), function(i) (tcrossprod(Sigma[[i]], z[[i]])/sigma2$Residual))
-    mu <- predict(x)
     beta <- lapply(seq_along(which), function(i) Sigma_tilde[[which[i]]] %*% (y[[i]] - mu[[i]]))
-    new("FLXcomponent",
-        parameters=list(coef=coef, sigma2=sigma2,
-          random = list(beta = beta, Sigma = Sigma)),
-        logLik=logLik, predict=predict,
-        df=df)
-  })
+    list(beta = beta, Sigma = Sigma)
+  }
   
   object@fit <- if (any(varFix)) {
     function(x, y, w, z, which, random) {
@@ -91,20 +98,25 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
         for (i in seq_along(fit)) fit[[i]]$sigma2$Residual <- Residual
       }
       n <- nrow(fit[[1]]$sigma2$Random)
-      lapply(fit, function(Z) with(list(coef = coef(Z),
-                                        df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) +
-                                             ifelse(varFix["Residual"], ncol(w), 1),
-                                        sigma2 =  Z$sigma2),
-                                   eval(object@defineComponent)))
+      lapply(fit, function(Z) {
+        comp <- with(list(coef = coef(Z),
+                          sigma2 =  Z$sigma2,
+                          df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], ncol(w), 1),
+                          eval(object@defineComponent)))
+        comp@random <- determineRandom(comp@predict(x), y, z, which, comp@parameters$sigma2)
+        comp
+      })
     }
   } else {
     function(x, y, w, z, which, random){
       fit <- lmm.wfit(x, y, w, z, which, random)
       n <- nrow(fit$sigma2$Random)
-      with(list(coef = coef(fit),
-                df = fit$df + n*(n+1)/2 + 1,
-                sigma2 =  fit$sigma2),
-           eval(object@defineComponent))
+      comp <- with(list(coef = coef(fit),
+                        df = fit$df + n*(n+1)/2 + 1,
+                        sigma2 =  fit$sigma2),
+                   eval(object@defineComponent))
+      comp@random <- determineRandom(comp@predict(x), y, z, which, comp@parameters$sigma2)
+      comp
     }
   }
   object
@@ -122,7 +134,7 @@ setMethod("FLXmstep", signature(model = "FLXMRlmm"),
  }else {
    return(sapply(seq_len(ncol(weights)),
                  function(k) model@fit(model@x, model@y, weights[,k], model@z, model@which, 
-                                       components[[k]]@parameters$random)))
+                                       components[[k]]@random)))
  }
 })
 
@@ -135,7 +147,7 @@ setMethod("FLXmstep", signature(model = "FLXMRlmmfix"),
                             Sigma = lapply(model@z, function(x) diag(ncol(x))))), ncol(weights))
     return(model@fit(model@x, model@y, weights, model@z, model@which, random))
   }else 
-   return(model@fit(model@x, model@y, weights, model@z, model@which, lapply(components, function(x) x@parameters$random)))
+   return(model@fit(model@x, model@y, weights, model@z, model@which, lapply(components, function(x) x@random)))
 })
 
 
@@ -170,5 +182,38 @@ setMethod("predict", signature(object="FLXMRlmm"), function(object, newdata, com
 {
   object <- FLXgetModelmatrix(object, newdata, formula = object@fullformula, lhs = FALSE)
   lapply(components, function(comp) unlist(comp@predict(object@x, ...)))
+})
+
+setMethod("rFLXM", signature(model="FLXMRlmm", components="list"),
+          function(model, components, class, group, ...) {
+            class <- class[!duplicated(group)]
+            y <- NULL
+            for (l in seq_along(components)) {
+              yl <- as.matrix(rFLXM(model, components[[l]], ...))
+              if (is.null(y))  y <- matrix(NA, nrow = length(class), ncol = ncol(yl))
+              y[class == l,] <- yl[class==l,,drop=FALSE]
+              y <- matrix(y, ncol = ncol(yl))
+            }
+            y 
+          })
+
+setMethod("rFLXM", signature(model = "FLXMRlmm", components = "FLXcomponent"),
+          function(model, components, ...) {
+            sigma2 <- components@parameters$sigma2
+            V <- lapply(model@z, function(Z) tcrossprod(tcrossprod(Z, sigma2$Random), Z) + diag(nrow(Z)) * sigma2$Residual)
+            mu <- components@predict(model@x)
+            matrix(lapply(seq_along(model@x), function(i) 
+                          t(mvtnorm::rmvnorm(1, mean = mu[[i]], sigma = V[[model@which[i]]]))), ncol = 1)
+                 })
+
+setMethod("FLXgetNewModelmatrix", "FLXMRlmm", function(object, model, indices, groups) {
+  object@y <- model@y[indices,,drop=FALSE]
+  object@x <- model@x[indices,,drop=FALSE]
+  object@which <- model@which[indices]
+  if (length(unique(object@which)) < length(object@z)) {
+    object@z <- model@z[sort(unique(object@which)),,drop=FALSE]
+    object@which <- match(object@which, sort(unique(object@which)))
+  }
+  object
 })
 

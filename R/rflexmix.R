@@ -24,7 +24,7 @@ setMethod("rflexmix", signature(object = "flexmix", newdata="missing"), function
   y <- vector("list", N)
   for (i in seq_len(N)) {
     comp <- lapply(object@components, function(x) x[[i]])
-    yi <- rFLXM(object@model[[i]], comp, class, ...)
+    yi <- rFLXM(object@model[[i]], comp, class, group, ...)
     form <- object@model[[i]]@fullformula
     names <- if(length(form) == 3) form[[2]] else paste("y", i, seq_len(ncol(yi)), sep = ".")
     if (ncol(yi) > 1) {

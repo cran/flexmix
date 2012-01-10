@@ -86,19 +86,25 @@ confidence.panel.boot <- function(x, y, z, subscripts, lwd = 1, SD = NULL, ..., 
 }
 
 setMethod("plot", signature(x = "FLXboot", y = "missing"), function(x, y, ordering = NULL, range = c(0, 1),
-                                             ci = TRUE, varnames = colnames(pars), strip_name = NULL, ...) {
+                                             ci = FALSE, varnames = colnames(pars), strip_name = NULL, ...) {
   k <- x@object@k
   pars <- parameters(x)
-  inv.logit <- function(x) exp(x)/(1 + exp(x))
   if (ci) {
     x_refit <- refit(x@object)
     sd <- sqrt(diag(x_refit@vcov))
     CI <- x_refit@coef + qnorm(0.975) * cbind(-sd, 0, sd)
     indices_prior <- grep("alpha$", names(x_refit@coef))
-    z <- rmvnorm(10000, x_refit@coef[indices_prior,drop=FALSE], x_refit@vcov[indices_prior,indices_prior,drop=FALSE])
-    Priors <- t(apply(cbind(1, exp(z))/rowSums(cbind(1, exp(z))), 2, quantile, c(0.025, 0.5, 0.975)))
-    indices <- sapply(seq_len(k), function(i) grep(paste("_Comp.", i, sep = ""), names(x_refit@coef[-indices_prior])))
-    SD <- lapply(seq_len(k), function(i) rbind(CI[indices[,i], ], prior = Priors[i,]))
+    if (length(indices_prior)) {
+      z <- rmvnorm(10000, x_refit@coef[indices_prior,drop=FALSE], x_refit@vcov[indices_prior,indices_prior,drop=FALSE])
+      Priors <- t(apply(cbind(1, exp(z))/rowSums(cbind(1, exp(z))), 2, quantile, c(0.025, 0.5, 0.975)))
+      indices <- lapply(seq_len(k), function(i) grep(paste("_Comp.", i, sep = ""), names(x_refit@coef[-indices_prior])))
+      SD <- lapply(seq_len(k), function(i) rbind(CI[indices[[i]], ], prior = Priors[i,]))
+    } else {
+      indices <- lapply(seq_len(k), function(i) grep(paste("_Comp.", i, sep = ""), names(x_refit@coef)))
+      SD <- lapply(seq_len(k), function(i) CI[indices[[i]], ])
+      mnrow <- max(sapply(SD, nrow))
+      SD <- lapply(SD, function(x) if (nrow(x) <  mnrow) do.call("rbind", c(list(x), as.list(rep(0, mnrow - nrow(x))))) else x)
+    }
     if (any("gaussian" %in% sapply(x@object@model, function(x) if (is(x, "FLXMRglm")) x@family else ""))) {
       i <- grep("sigma$", colnames(pars))
       pars[,i] <- log(pars[,i])
@@ -114,6 +120,9 @@ setMethod("plot", signature(x = "FLXboot", y = "missing"), function(x, y, orderi
     on.exit(options(opt.old))
     formula <- as.formula(paste("~ pars | ", sQuote(strip_name)))
   }
+  pars <- na.omit(pars)
+  if (!is.null(attr(pars, "na.action"))) 
+    Ordering <- Ordering[-attr(na.omit(pars), "na.action")]
   parallel.plot <- parallel(formula, groups = Ordering, default.scales = list(y = list(at = c(0, 1), labels = range_name),
                               x = list(alternating = FALSE, axs = "i", tck = 0, at = seq_len(ncol(pars)))), range = range,
                             panel = confidence.panel.boot, prepanel = prepanel.parallel.horizontal, SD = SD, ...)

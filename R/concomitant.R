@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: concomitant.R 4709 2011-07-29 07:13:40Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {
@@ -15,9 +15,10 @@ FLXPmultinom <- function(formula=~1) {
                  skip = TRUE, softmax = TRUE, censored = FALSE, 
                  rang = 0, trace=FALSE,...)
   }
-  z@fit <- function(x, y, w, ...) multinom.fit(x,y, w, ...)$fitted.values
+  z@fit <- function(x, y, w, ...) multinom.fit(x, y, w, ...)$fitted.values
   z@refit <- function(x, y, w, ...) {
     if (missing(w) || is.null(w)) w <- rep(1, nrow(y))
+    colnames(y) <- NULL
     fit <- multinom.fit(x, y, w, ...)
     fit$coefnames <- colnames(x)
     fit$weights <- w

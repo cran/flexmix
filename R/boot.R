@@ -5,6 +5,7 @@ setClass("FLXboot",
          representation(call="call",
                         object="flexmix",
                         parameters="list",
+                        concomitant="list",
                         priors="list",
                         logLik="matrix",
                         k="matrix",
@@ -19,8 +20,8 @@ function(object) {
 })       
 
 generate_weights <- function(object) {
-  if(is.null(object@weights)) {
-    X <- do.call("cbind", lapply(object@model, function(z) cbind(z@y, z@x)))
+  if(is.null(object@weights) & is(object@model, "FLXMC")) {
+    X <- do.call("cbind", lapply(object@model, function(z) z@y))
     x <- apply(X, 1, paste, collapse = "")
     x <- as.integer(factor(x, unique(x)))
     object@weights <- as.vector(table(x))
@@ -34,9 +35,27 @@ generate_weights <- function(object) {
   object
 }
 
+setGeneric("FLXgetNewModelmatrix", function(object, ...) standardGeneric("FLXgetNewModelmatrix"))
+
+setMethod("FLXgetNewModelmatrix", "FLXM", function(object, model, indices, groups) {
+  if (length(groups$group) > 0) {
+    obs_groups <- lapply(groups$group[groups$groupfirst][indices],
+                         function(x) which(x == groups$group))
+    indices_grouped <- unlist(obs_groups)
+    newgroups$group <- factor(rep(seq_along(obs_groups), sapply(obs_groups, length)))
+    newgroups$groupfirst <- !duplicated(newgroups$group)
+  } else {
+    indices_grouped <- indices
+  }
+  object@y <- model@y[indices_grouped,,drop=FALSE]
+  object@x <- model@x[indices_grouped,,drop=FALSE]
+  object
+})
+
 boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric"), initialize_solution = FALSE,
          keep_weights = FALSE, keep_groups = TRUE, verbose = 0, control, k, model = FALSE, ...) {
   sim <- match.arg(sim)
+  if (missing(R)) stop("R needs to be specified")
   if (!missing(control)) object@control <- do.call("new", c(list(Class = "FLXcontrol", object@control), control))
   if (missing(k)) k <- object@k
   m <- length(object@model)
@@ -51,7 +70,7 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
   groups$groupfirst <- if (length(groups$group) > 0) groupFirst(groups$group)
                        else rep(TRUE, FLXgetObs(object@model[[1]]))
 
-  parameters <- priors <- models <- weights <- vector("list", R)
+  concomitant <- parameters <- priors <- models <- weights <- vector("list", R)
   logLik <- ks <- converged <- matrix(nrow=R, ncol = length(k), dimnames = list(BS = seq_len(R), k = k))
   for (iter in seq_len(R)) {
     new <- object
@@ -61,22 +80,15 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
       if (sim == "parametric") {
         y <- rflexmix(object, ...)$y
         for (i in seq_len(m))
-          new@model[[i]]@y <- y[[i]]
+          new@model[[i]]@y <- matrix(as.vector(t(y[[i]])),
+                                     nrow = nrow(new@model[[i]]@x),
+                                     ncol = ncol(y[[i]]), byrow = TRUE)
       } else {
         n <- sum(groups$groupfirst)
         indices <- sample(seq_len(n), n, replace = TRUE)
-        if (length(groups$group) > 0) {
-          obs_groups <- lapply(groups$group[groups$groupfirst][indices],
-                               function(x) which(x == groups$group))
-          indices_grouped <- unlist(obs_groups)
-          newgroups$group <- factor(rep(seq_along(obs_groups), sapply(obs_groups, length)))
-          newgroups$groupfirst <- !duplicated(newgroups$group)
-        } else {
-          indices_grouped <- indices
-        }
         for (i in seq_len(m)) {
-          new@model[[i]]@y <- object@model[[i]]@y[indices_grouped,,drop=FALSE]
-          new@model[[i]]@x <- object@model[[i]]@x[indices_grouped,,drop=FALSE]
+          new@model[[i]] <- FLXgetNewModelmatrix(new@model[[i]], object@model[[i]],
+                                                 indices, groups)
         }
         new@concomitant@x <- new@concomitant@x[indices,,drop=FALSE]
       }
@@ -85,7 +97,7 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
       new <- generate_weights(new)
       newgroups$groupfirst <- rep(TRUE, FLXgetObs(new@model[[1]]))
     }
-    parameters[[iter]] <- priors[[iter]] <- list()
+    parameters[[iter]] <- concomitant[[iter]] <- priors[[iter]] <- list()
     NREP <- rep(object@control@nrep, length(k))
     if (initialize_solution & object@k %in% k) NREP[k == object@k] <- 1L
     for (K in seq_along(k)) {
@@ -93,18 +105,16 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
       for (nrep in seq_len(NREP[K])) {
         if (k[K] != object@k | !initialize_solution)  {
           postunscaled <- initPosteriors(k[K], NULL, FLXgetObs(new@model[[1]]), newgroups)
-        }else {
+        } else {
           postunscaled <- matrix(0, nrow = FLXgetObs(new@model[[1]]), ncol = k[K])
-          for (i in seq_len(m)) {
-            postunscaled <- postunscaled +
-              matrix(sapply(new@components,
-                            function(z) z[[i]]@logLik(new@model[[i]]@x, new@model[[i]]@y, ...)),
-                     nrow = nrow(new@model[[i]]@y))
-          }
+          for (i in seq_len(m)) 
+            postunscaled <- postunscaled + FLXdeterminePostunscaled(new@model[[i]], lapply(new@components, function(x) x[[i]]))
           if(length(newgroups$group)>0)
             postunscaled <- groupPosteriors(postunscaled, newgroups$group)
-          for(i in seq_len(k[K]))
-            postunscaled[,i] <- new@prior[i] * exp(postunscaled[,i])
+          prior <- evalPrior(new@prior, new@concomitant)
+          postunscaled <- if (is(prior, "matrix")) postunscaled + log(prior)
+                          else sweep(postunscaled, 2, log(prior), "+")
+          postunscaled <- exp(postunscaled)
         }
         x <- try(FLXfit(new@model, new@concomitant, new@control, postunscaled, newgroups, weights = new@weights))
         if (!is(x, "try-error")) {
@@ -113,7 +123,8 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
         }
       }
       if (is.finite(logLik(fit))) {
-        parameters[[iter]][[paste(k[K])]] <- parameters(fit, simplify = FALSE, drop = FALSE)
+        parameters[[iter]][paste(k[K])] <- list(parameters(fit, simplify = FALSE, drop = FALSE))
+        concomitant[[iter]][paste(k[K])] <- list(parameters(fit, which = "concomitant"))
         priors[[iter]][[paste(k[K])]] <- prior(fit)
         logLik[iter, paste(k[K])] <- logLik(fit)
         ks[iter, paste(k[K])] <- fit@k
@@ -122,12 +133,15 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
           models[[iter]] <- fit@model
           weights[[iter]] <- fit@weights
         }
+      } else {
+        parameters[[iter]][[paste(k[K])]] <- concomitant[[iter]][[paste(k[K])]] <- priors[[iter]][[paste(k[K])]] <- NULL
       }
     }
   }
   if(verbose) cat("\n")
-  new("FLXboot", call = sys.call(-1), object = object, parameters = parameters, priors = priors,
-      logLik = logLik, k = ks, converged = converged, models = models, weights = weights)
+  new("FLXboot", call = sys.call(-1), object = object, parameters = parameters,
+      concomitant = concomitant, priors = priors, logLik = logLik, k = ks,
+      converged = converged, models = models, weights = weights)
 }
 
 setMethod("boot", signature(object="flexmix"), boot_flexmix)
@@ -163,16 +177,20 @@ function(object, R, alternative = c("greater", "less"), control, ...) {
 setMethod("parameters", "FLXboot", function(object, k, ...) {
   if (missing(k)) k <- object@object@k
   Coefs <- lapply(seq_along(object@parameters), function(i) 
-                  do.call("cbind", lapply(seq_len(object@k[i]), function(j) 
-                         unlist(sapply(seq_along(object@object@model), function(m) 
-                                       FLXgetParameters(object@object@model[[m]],
-                                                        list(with(c(object@parameters[[i]][[paste(k)]][[m]][[j]],
-                                                                    list(df = object@object@components[[j]][[m]]@df)),
-                                                                  eval(object@object@model[[m]]@defineComponent)))))))))
+                  if (is.na(object@k[i])) NULL
+                  else do.call("cbind", c(lapply(seq_len(object@k[i]), function(j) 
+                                                 unlist(sapply(seq_along(object@object@model), function(m) 
+                                                               FLXgetParameters(as(object@object@model[[m]], "FLXMR"),
+                                                                                list(with(c(object@parameters[[i]][[paste(k)]][[m]][[j]],
+                                                                                            list(df = object@object@components[[j]][[m]]@df)),
+                                                                                          eval(object@object@model[[m]]@defineComponent))))))),
+                                          as.list(rep(NA, k - object@k[i])))))
   Coefs <- t(do.call("cbind", Coefs))
   colnames(Coefs) <- gsub("Comp.1_", "", colnames(Coefs))
-  cbind(Coefs, 
-        prior = unlist(lapply(object@priors, "[[", paste(k))))
+  Prior <- t(do.call("cbind", lapply(object@concomitant,
+                                     function(x) do.call("cbind", c(list(x[[paste(k)]]),
+                                                                    as.list(rep(NA, k - ifelse(length(x), ncol(x[[paste(k)]]), k))))))))
+  cbind(Coefs, Prior)
 })
 
 setMethod("clusters", signature(object = "FLXboot", newdata = "listOrdata.frame"), function(object, newdata, k, ...) {

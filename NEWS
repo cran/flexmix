@@ -1,3 +1,25 @@
+Changes in flexmix version 2.3-6
+
+  o Vignettes moved from /inst/doc to /vignettes.
+
+  o stepFlexmix() can now be called with a concomitant variable model
+    FLXPmultinom() for k starting with 1 without getting an error. The
+    concomitant variable model is internally replaced by
+    FLXPconstant().
+
+  o The boot() method for "flexmix" objects is extended to mixture
+    models with concomitant variables and mixtures of linear mixed
+    models.
+	
+  o A bug fixed in the summary() method for "flexmix" objects. The
+    column post > 0 did not give the correct results if weights were
+    used for fitting the mixture.
+
+  o A bug fixed in the unique() method for "stepFlexmix" objects. This
+    only occurred if components were dropped as well as if the EM
+    algorithm did not converge for all repetitions. Thanks to
+    Sebastian Meyer for pointing this out.
+
 Changes in flexmix version 2.3-5
 
   o A bug fixed in posterior(). Fixed priors were always used, also if

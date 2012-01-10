@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4674 2011-04-21 16:11:02Z gruen $
+#  $Id: flexmix.R 4744 2011-10-02 21:08:19Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -50,15 +50,12 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     model <- lapply(model, FLXcheckComponent, k, cluster)
     k <- unique(unlist(sapply(model, FLXgetK, k)))
     if (length(k) > 1) stop("number of clusters not specified correctly")
-    
+
     model <- lapply(model, FLXgetModelmatrix, data, formula)
     
     groups$groupfirst <-
         if (length(groups$group)) groupFirst(groups$group)
         else rep(TRUE, FLXgetObs(model[[1]]))
-    
-    concomitant <- FLXgetModelmatrix(concomitant, data = data,
-                                     groups = groups)
     
     if (is(weights, "formula")) {
       weights <- model.frame(weights, data = data, na.action = NULL)[,1]
@@ -77,7 +74,14 @@ function(formula, data=list(), k=NULL, cluster=NULL,
     }
     
     postunscaled <- initPosteriors(k, cluster, FLXgetObs(model[[1]]), groups)
+
+    if (ncol(postunscaled) == 1L)
+      concomitant <- FLXPconstant()
+  
+    concomitant <- FLXgetModelmatrix(concomitant, data = data,
+                                     groups = groups)
     
+
     z <- FLXfit(model=model, concomitant=concomitant, control=control,
                 postunscaled=postunscaled, groups=groups, weights = weights)
     
@@ -207,7 +211,6 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       if(control@verbose && (iter%%control@verbose==0))
         printIter(iter, llh)
     }
-
   ### Construct return object
   if (control@classify=="random") {
     components <- components.max
@@ -308,7 +311,7 @@ RemoveGrouping <- function(formula) {
   group <- factor(integer(0))
   formula1 <- RemoveGrouping(formula)
   if (!identical(formula1, formula))
-    group <- as.factor(eval(.FLXgetGroupingVar(formula), data))
+    group <- factor(eval(.FLXgetGroupingVar(formula), data))
   return(list(group=group, formula=formula1))
 }
 
@@ -562,7 +565,8 @@ function(object, eps=1e-4, ...){
     TAB <- data.frame(prior=object@prior,
                       size=object@size)
     rownames(TAB) <- paste("Comp.", seq_len(nrow(TAB)), sep="")
-    TAB[["post>0"]] <- colSums(object@posterior$scaled > eps)
+    TAB[["post>0"]] <- if (is.null(object@weights)) colSums(object@posterior$scaled > eps)
+                       else colSums((object@posterior$scaled > eps) * object@weights)
     TAB[["ratio"]] <- TAB[["size"]]/TAB[["post>0"]]
     
     z@comptab = TAB

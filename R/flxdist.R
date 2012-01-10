@@ -75,6 +75,6 @@ evalPrior <- function(prior, concomitant) prior
 setGeneric("evalPrior", function(prior, concomitant) standardGeneric("evalPrior"))
 
 setMethod("evalPrior", signature(concomitant="FLXPmultinom"), function(prior, concomitant) {
-  exps <- exp(concomitant@coef[1,])
-  exps/sum(exps)
+  exps <- exp(concomitant@x %*% concomitant@coef)
+  exps/rowSums(exps)
 })

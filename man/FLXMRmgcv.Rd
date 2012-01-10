@@ -1,5 +1,6 @@
 \name{FLXMRmgcv}
 \alias{FLXMRmgcv}
+\alias{FLXMRmgcv-class}
 
 \title{FlexMix Interface to GAMs}
 \description{

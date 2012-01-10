@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: refit.R 4755 2011-10-18 15:02:26Z gruen $
 #
 ###*********************************************************
 
@@ -386,6 +386,7 @@ function(object, components, ...) {
 
 setMethod("FLXgetDesign", signature(object = "FLXMRglmfix"),
 function(object, components, ...) {
+  if (length(components) == 1) return(callNextMethod(object, components, ...))
   Design <- object@design
   if (object@family == "gaussian") {
     cumSum <- cumsum(c(0, object@variance))
