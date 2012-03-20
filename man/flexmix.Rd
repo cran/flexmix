@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 4674 2011-04-21 16:11:02Z gruen $
+%  $Id: flexmix.Rd 4801 2012-02-22 16:41:21Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -37,8 +37,9 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
     assignments of observations at the start of the EM
     algorithm. Default is random assignment into \code{k}
     clusters.}
-  \item{weights}{An optional vector of weights to be used in the fitting
-    process.  Should be \code{NULL}, a numeric vector or a formula.}
+  \item{weights}{An optional vector of replication weights to be used in
+    the fitting process.  Should be \code{NULL}, an integer vector or a
+    formula.}
   \item{model}{Object of class \code{FLXM} or list of \code{FLXM}
     objects. Default is the object returned by calling
     \code{\link{FLXMRglm}()}.}

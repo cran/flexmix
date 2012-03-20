@@ -1,3 +1,13 @@
+Changes in flexmix version 2.3-7
+
+  o A bug fixed in predict() and fitted() if a concomitant variable
+    model is specified and aggregate = TRUE. Thanks to Julia Schiffner
+    for pointing this out.
+
+  o A bug fixed in FLXMRmgcv() if observations were removed in the
+    M-step because their a-posterior probabilities were smaller than
+    eps. Thanks to Ghislain Geniaux for pointing the problem out.
+
 Changes in flexmix version 2.3-6
 
   o Vignettes moved from /inst/doc to /vignettes.

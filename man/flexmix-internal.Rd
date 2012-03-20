@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix-internal.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: flexmix-internal.Rd 4802 2012-03-20 14:21:15Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -71,6 +71,8 @@
 \alias{FLXreplaceParameters,FLXMRglm-method}
 \alias{FLXreplaceParameters,FLXP-method}
 \alias{FLXreplaceParameters,FLXPmultinom-method}
+\alias{FLXlogLikfun}
+\alias{FLXlogLikfun,flexmix-method}
 \alias{FLXgradlogLikfun}
 \alias{FLXgradlogLikfun,flexmix-method}
 \alias{FLXgradlogLikfun,FLXM-method}

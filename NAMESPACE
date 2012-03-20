@@ -15,6 +15,7 @@ export(
        ExNclus,
        FLXdist,
        FLXgradlogLikfun,
+       FLXlogLikfun,
        FLXMCfactanal,
        FLXMCmvbinary,
        FLXMCmvcombi,

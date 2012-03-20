@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4755 2011-10-18 15:02:26Z gruen $
+#  $Id: refit.R 4803 2012-03-20 15:57:23Z gruen $
 #
 ###*********************************************************
 
@@ -438,8 +438,9 @@ function(object, drop=TRUE, aggregate = FALSE, ...)
       x[[m]] <- fitted(object@model[[m]], comp, ...)
     }
     if (aggregate) {
-      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(seq_len(object@k),
-                                                              function(K) z[[K]] * object@prior[K]), ncol = object@k)),
+      group <- group(object)
+      prior_weights <- determinePrior(object@prior, object@concomitant, group)[as.integer(group),]
+      z <- lapply(x, function(z) matrix(rowSums(do.call("cbind", z) * prior_weights),
                                         nrow = nrow(z[[1]])))
       if(drop && all(lapply(z, ncol)==1)){
         z <- sapply(z, unlist)

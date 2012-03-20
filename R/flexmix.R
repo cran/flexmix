@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4744 2011-10-02 21:08:19Z gruen $
+#  $Id: flexmix.R 4803 2012-03-20 15:57:23Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -438,8 +438,8 @@ function(object, newdata=list(), aggregate=FALSE, ...){
       x[[m]] <- predict(object@model[[m]], newdata, comp, ...)
     }
     if (aggregate) {
-      z <- lapply(x, function(z) matrix(rowSums(matrix(sapply(seq_len(object@k), function(K) z[[K]] * object@prior[K]), ncol = object@k)),
-                                        nrow = nrow(z[[1]])))
+      prior_weights <- prior(object, newdata)
+      z <- lapply(x, function(z) matrix(rowSums(do.call("cbind", z) * prior_weights), nrow = nrow(z[[1]])))
     }
     else {
       z <- list()
@@ -522,11 +522,7 @@ setMethod("posterior", signature(object="FLXdist", newdata="listOrdata.frame"),
                                                        ...)
             }
             groups <- .FLXgetGrouping(object@formula, newdata)
-            group <- if (length(groups$group)) groups$group else factor(seq_len(nrow(postunscaled)))
-            object@concomitant <- FLXgetModelmatrix(object@concomitant, data = newdata,
-                                                    groups = list(group=group,
-                                                      groupfirst = groupFirst(group)))
-            prior <- determinePrior(object@prior, object@concomitant, group)[as.integer(group),]
+            prior <- prior(object, newdata = newdata)
             if(length(groups$group)>0)
               postunscaled <- groupPosteriors(postunscaled, groups$group)
             postunscaled <- postunscaled + log(prior)

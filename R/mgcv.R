@@ -29,15 +29,7 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
     if (zero_weights) {
       ok <- w >= eps
       w <- w[ok]
-      dup <- duplicated(G$X[,-seq_len(length(G$assign))])
       G$X <- G$X[ok,,drop=FALSE]
-      dup2 <- duplicated(G$X[,-seq_len(length(G$assign))])
-      if (sum(!dup) != sum(!dup2)){
-        for (i in seq_along(G$smooth)) {
-          G$smooth[[i]]$UZ <- G$smooth[[i]]$UZ[-which(!which(!dup) %in% which(ok & !dup)),,drop=FALSE]
-          G$smooth[[i]]$Xu <- G$smooth[[i]]$Xu[which(!dup) %in% which(ok & !dup),,drop=FALSE]
-        }
-      }
       if (is.matrix(G$y)) G$y <- G$y[ok,,drop=FALSE] else G$y <- G$y[ok]
       G$mf <- G$mf[ok,,drop=FALSE]
       G$w <- G$w[ok]
