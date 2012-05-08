@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRrobglm.Rd 4142 2008-10-01 13:19:19Z leisch $
+%  $Id: FLXMRrobglm.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{FLXMRrobglm}
 \alias{FLXMRrobglm}
@@ -40,13 +40,13 @@ FLXMRrobglm(formula = . ~ ., family = c("gaussian", "poisson"),
 \references{
   Friedrich Leisch. Modelling background noise in finite mixtures of
   generalized linear regression models. In Paula Brito, editor, Compstat
-  2008-Proceedings in Computational Statistics, pages 385-396. Physica
+  2008-Proceedings in Computational Statistics, 385--396. Physica
   Verlag, Heidelberg, Germany, 2008.
   Preprint available at http://epub.ub.uni-muenchen.de/6332/.
 }
 \examples{
 ## Example from Compstat paper, see paper for detailed explanation:
-data("NPreg")
+data("NPreg", package = "flexmix")
 DATA <- NPreg[,1:2]
 set.seed(3)
 DATA2 <- rbind(DATA, cbind(x=-runif(3), yn=50+runif(3)))

@@ -9,7 +9,7 @@ FLXMCfactanal <- function(formula=.~., factors = 1, ...)
              dist = "mvnorm", name="mixtures of factor analyzers")
     require("mvtnorm")
     
-    z@fit <- function(x, y, w){
+    z@fit <- function(x, y, w, ...){
       cov.weighted <- cov.wt(y, wt = w)[c("center","cov")]
       cov <- cov.weighted$cov; center <- cov.weighted$center
       fa <- factanal(covmat = cov, factors = factors, ...)

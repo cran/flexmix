@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: patent.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: patent.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{patent}
 \alias{patent}
@@ -24,19 +24,20 @@
   The data is taken from the National Bureau of Economic Research R\&D Masterfile.
 }
 \source{
-  P. Wang, I.M. Cockburn and M.L. Puterman (1998): Analysis of Patent
+  P. Wang, I.M. Cockburn and M.L. Puterman. Analysis of Patent
   Data - A Mixed-Poisson-Regression-Model Approach.
-  Journal of Business \& Economic Statistics 16 (1), pages 27-41.
+  \emph{Journal of Business & Economic Statistics}, \bold{16}(1),
+  27--41, 1998.
 }
 \references{
-  B.H. Hall, C. Cummins, E. Laderman and J. Mundy (1988): The R\&D Master
+  B.H. Hall, C. Cummins, E. Laderman and J. Mundy. The R&D Master
   File Documentation.
   Technical Working Paper 72, National Bureau of Economic
-  Research. Cambridge, MA.
+  Research, 1988. Cambridge, MA.
 }
 \examples{
-data("patent")
-patentMix <- stepFlexmix(Patents ~ lgRD, k=3,
+data("patent", package = "flexmix")
+patentMix <- initFlexmix(Patents ~ lgRD, k=3,
                       model=FLXMRglm(family="poisson"),
                       concomitant=FLXPmultinom(~RDS),
                       nrep=5, data=patent)

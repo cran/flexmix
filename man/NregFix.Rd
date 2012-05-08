@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: NregFix.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: NregFix.Rd 4811 2012-05-08 15:35:52Z gruen $
 %  
 \name{NregFix}
 \alias{NregFix}
@@ -26,12 +26,12 @@ data("NregFix")
   }
 }
 \examples{
-data("NregFix")
+data("NregFix", package = "flexmix")
 library("lattice")
 xyplot(y ~ x1 | x2*w, data = NregFix, groups = class)
 Model <- FLXMRglmfix(~1, fixed = ~x2, 
                    nested = list(k = c(2,1), formula = c(~x1, ~0)))
-fittedModel <- stepFlexmix(y ~ 1, model = Model, data = NregFix, k = 3,
+fittedModel <- initFlexmix(y ~ 1, model = Model, data = NregFix, k = 3,
                           concomitant = FLXPmultinom(~ w), nrep=5)
 fittedModel
 summary(refit(fittedModel))

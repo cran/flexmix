@@ -24,13 +24,14 @@ setMethod("FLXremoveComponent", signature(model = "FLXMRziglm"),
 })
 
 setMethod("FLXmstep", signature(model = "FLXMRziglm"),
-          function(model, weights, ...)
+          function(model, weights, components, ...)
 {
   coef <- c(-Inf, rep(0, ncol(model@x)-1))
   names(coef) <- colnames(model@x)
   comp.1 <- with(list(coef = coef, df = 0, offset = NULL,
                  family = model@family), eval(model@defineComponent))
   c(list(comp.1),
-    FLXmstep(as(model, "FLXMRglm"), weights[, -1, drop=FALSE]))
+    FLXmstep(as(model, "FLXMRglm"), weights[, -1, drop=FALSE],
+             components[-1]))
 })
 

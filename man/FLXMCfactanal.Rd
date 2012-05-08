@@ -24,7 +24,7 @@ FLXMCfactanal(formula = . ~ ., factors = 1, ...)
   \code{FLXMCfactanal} returns an object of class \code{FLXM}.
 }
 \references{
-  G. McLachlan and D. Peel (2000): Finite Mixture Models.
+  G. McLachlan and D. Peel. \emph{Finite Mixture Models}, 2000.
   John Wiley and Sons Inc.
 }
 \author{Bettina Gruen}
@@ -45,7 +45,7 @@ if (require("gclus")) {
   data("wine", package = "gclus")
   wine_data <- as.matrix(wine[,-1])
   set.seed(123)
-  wine_fl_diag <- stepFlexmix(wine_data ~ 1, k = 3, nrep = 10,
+  wine_fl_diag <- initFlexmix(wine_data ~ 1, k = 3, nrep = 10,
                               model = FLXMCmvnorm(diagonal = TRUE))
   wine_fl_fact <- lapply(1:8, function(q) flexmix(wine_data ~ 1, model =
                           FLXMCfactanal(factors = q, nstart = 3),
@@ -53,7 +53,7 @@ if (require("gclus")) {
   sapply(wine_fl_fact, logLik)
   ## FULL
   set.seed(123)
-  wine_full <- stepFlexmix(wine_data ~ 1, k = 3, nrep = 10,
+  wine_full <- initFlexmix(wine_data ~ 1, k = 3, nrep = 10,
                            model = FLXMCmvnorm(diagonal = FALSE))
   logLik(wine_full)
   ## TRUE

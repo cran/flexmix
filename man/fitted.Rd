@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: fitted.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: fitted.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{fitted-methods}
 \docType{methods}
@@ -28,7 +28,7 @@
 \keyword{methods}
 \author{Friedrich Leisch and Bettina Gruen}
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
 matplot(NPreg$x, fitted(ex1), pch=16, type="p")
 points(NPreg$x, NPreg$yn)

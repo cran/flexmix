@@ -123,7 +123,7 @@ setMethod("plot", signature(x = "FLXboot", y = "missing"), function(x, y, orderi
   pars <- na.omit(pars)
   if (!is.null(attr(pars, "na.action"))) 
     Ordering <- Ordering[-attr(na.omit(pars), "na.action")]
-  parallel.plot <- parallel(formula, groups = Ordering, default.scales = list(y = list(at = c(0, 1), labels = range_name),
+  parallel.plot <- parallelplot(formula, groups = Ordering, default.scales = list(y = list(at = c(0, 1), labels = range_name),
                               x = list(alternating = FALSE, axs = "i", tck = 0, at = seq_len(ncol(pars)))), range = range,
                             panel = confidence.panel.boot, prepanel = prepanel.parallel.horizontal, SD = SD, ...)
   parallel.plot$x.scales$labels <- varnames

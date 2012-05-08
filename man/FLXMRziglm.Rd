@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRziglm.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: FLXMRziglm.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{FLXMRziglm}
 \alias{FLXMRziglm}
@@ -36,7 +36,7 @@ FLXMRziglm(formula = . ~ ., family = c("binomial", "poisson"), ...)
   zero for the first component.
 }
 \examples{
-  data("dmft")
+  data("dmft", package = "flexmix")
   Model <- FLXMRziglm(family = "poisson")
   Fitted <- flexmix(End ~ log(Begin + 0.5) + Gender + Ethnic + Treatment, 
   model = Model, k =2 , data = dmft, 

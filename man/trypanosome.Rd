@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: trypanosome.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: trypanosome.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{trypanosome}
 \alias{trypanosome}
@@ -29,19 +29,19 @@
   the number showing the quantal response were both random variables.
 }
 \source{
-  R. Ashford and P.J. Walker (1972): Quantal Response Analysis for a
-  Mixture of Populations. Biometrics 28, pages 981-988.
+  R. Ashford and P.J. Walker. Quantal Response Analysis for a
+  Mixture of Populations. \emph{Biometrics}, \bold{28}, 981--988, 1972.
 }
 
 \references{
-  D.A. Follmann and D. Lambert (1989): Generalizing Logistic
-  Regression by Nonparametric Mixing. Journal of the American
-  Statistical Association 84(405), pages 195-300.
+  D.A. Follmann and D. Lambert. Generalizing Logistic
+  Regression by Nonparametric Mixing. \emph{Journal of the American
+  Statistical Association}, \bold{84}(405), 195--300, 1989.
 }
 
 \examples{
-data("trypanosome")
-trypMix <- stepFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, 
+data("trypanosome", package = "flexmix")
+trypMix <- initFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, 
 	               nrep=5, data = trypanosome,
 	               model = FLXMRglmfix(family = "binomial",
                            fixed = ~log(Dose)))

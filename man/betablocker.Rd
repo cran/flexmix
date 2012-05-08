@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: betablocker.Rd 4701 2011-07-20 08:58:44Z gruen $
+%  $Id: betablocker.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{betablocker}
 \alias{betablocker}
@@ -22,24 +22,25 @@
 }
   
 \source{
-  G. McLachlan and D. Peel (2000): Finite Mixture Models.
+  G. McLachlan and D. Peel. \emph{Finite Mixture Models}, 2000.
   John Wiley and Sons Inc.
   \url{http://www.maths.uq.edu.au/~gjm/DATA/mmdata.html}
 }
 
 \references{
-  M. Aitkin (1999): Meta-analysis by random effect modelling in
+  M. Aitkin. Meta-analysis by random effect modelling in
   generalized linear models.
-  Statistics in Medicine 18, pages 2343-2351.
+  \emph{Statistics in Medicine}, \bold{18}, 2343--2351, 1999.
 
-  S. Yusuf, R. Peto, J. Lewis, R. Collins and P. Sleight (1985): Beta
+  S. Yusuf, R. Peto, J. Lewis, R. Collins and P. Sleight. Beta
   blockade during and after myocardial infarction: an overview of the
   randomized trials.
-  Progress in Cardiovascular Diseases 27, pages 335-371.
+  \emph{Progress in Cardiovascular Diseases}, \bold{27}, 335--371,
+  1985. 
 }
 \examples{
-data("betablocker")
-betaMix <- stepFlexmix(cbind(Deaths, Total-Deaths) ~ 1 | Center,
+data("betablocker", package = "flexmix")
+betaMix <- initFlexmix(cbind(Deaths, Total-Deaths) ~ 1 | Center,
                        data=betablocker, k=3, nrep=5,
                        model=FLXMRglmfix(family="binomial",
                          fixed=~Treatment)) 

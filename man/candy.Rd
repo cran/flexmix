@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: candy.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: candy.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{candy}
 \alias{candy}
@@ -19,21 +19,23 @@
   }
 }
 \source{
-  D. Boehning, E. Dietz, P. Schlattmann (1998): Recent Developments in
-  Computer-Assisted Analysis of Mixtures. Biometrics 54(2), 525--536.
+  D. Boehning, E. Dietz and P. Schlattmann. Recent Developments in
+  Computer-Assisted Analysis of Mixtures. Biometrics 54(2), 525--536,
+  1998.
 }
 \references{  
-  J. Magidson, J. K. Vermunt (2004): Latent Class Models. In
+  J. Magidson and J. K. Vermunt. Latent Class Models. In
   D. W. Kaplan (ed.), The Sage Handbook of Quantitative Methodology for
-  the Social Sciences, 175--198. Thousand Oakes: Sage Publications.
+  the Social Sciences, 175--198, 2004. Thousand Oakes: Sage Publications.
 
-  D. Boehning, E. Dietz, P. Schlattmann (1998): Recent Developments in
-  Computer-Assisted Analysis of Mixtures. Biometrics 54(2), 525--536.
+  D. Boehning, E. Dietz and P. Schlattmann. Recent Developments in
+  Computer-Assisted Analysis of Mixtures. \emph{Biometrics},
+  \bold{54}(2), 525--536, 1998.
 
-  W. R. Dillon, A. Kumar (1994): Latent structure and other mixture
+  W. R. Dillon and A. Kumar. Latent structure and other mixture
   models in marketing: An integrative survey and overview. In
   R. P. Bagozzi (ed.), Advanced methods of marketing research,
-  352--388. Cambridge, UK: Blackwell.
+  352--388, 1994. Cambridge, UK: Blackwell.
 }
 
 \keyword{datasets}

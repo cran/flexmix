@@ -16,7 +16,7 @@ mymclust <- function (formula = .~., diagonal = TRUE)
             parameters = list(center = center, cov = cov),
             df = df, logLik = logLik, predict = predict)
     })
-    retval@fit <- function(x, y, w) {
+    retval@fit <- function(x, y, w, ...) {
         
         para <- cov.wt(y, wt = w)[c("center", "cov")]
         df <- (3 * ncol(y) + ncol(y)^2)/2

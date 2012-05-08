@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: salmonellaTA98.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: salmonellaTA98.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{salmonellaTA98}
 \alias{salmonellaTA98}
@@ -26,23 +26,23 @@
 }
 
 \source{
-  Margolin, B.J., Kaplan, N. and Zeiger, E. (1981) Statistical
+  Margolin, B.J., Kaplan, N. and Zeiger, E. Statistical
   analysis of the Ames Salmonella/microsome test,
-  \emph{Proc. Natl. Acad. Sci. USA}, \bold{76}, 3779--3783.
+  \emph{Proc. Natl. Acad. Sci. USA}, \bold{76}, 3779--3783, 1981.
 }
 
 \references{
-  Breslow, N.E. (1984), Extra-Poisson variation in log-linear
-  models, \emph{Applied Statistics}, \bold{33}, 38--44.
+  Breslow, N.E. Extra-Poisson variation in log-linear
+  models, \emph{Applied Statistics}, \bold{33}, 38--44, 1984.
 
-  Wang, P., Puterman, M.L., Cockburn, I.M., and Le, N.D. (1996) Mixed
+  Wang, P., Puterman, M.L., Cockburn, I.M., and Le, N.D. Mixed
   Poisson regression models with covariate dependent rates,
-  \emph{Biometrics}, \bold{52}, 381--400.
+  \emph{Biometrics}, \bold{52}, 381--400, 1996.
 }
 
 \examples{
-data("salmonellaTA98")
-salmonMix <- stepFlexmix(y ~ 1,
+data("salmonellaTA98", package = "flexmix")
+salmonMix <- initFlexmix(y ~ 1,
                          data = salmonellaTA98, 
                          model = FLXMRglmfix(family = "poisson", 
                            fixed = ~ x + log(x + 10)),                        

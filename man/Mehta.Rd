@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: Mehta.Rd 4701 2011-07-20 08:58:44Z gruen $
+%  $Id: Mehta.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{Mehta}
 \alias{Mehta}
@@ -23,19 +23,20 @@
   }
 }
 \source{
-  M. Aitkin (1999): Meta-analysis by random effect modelling in
+  M. Aitkin. Meta-analysis by random effect modelling in
   generalized linear models.
-  Statistics in Medicine 18, pages 2343-2351.
+  \emph{Statistics in Medicine}, \bold{18}, 2343--2351, 1999.
 }
 
 \references{
-  C.R. Mehta, N.R. Patel and P. Senchaudhuri (1988): Importance sampling
+  C.R. Mehta, N.R. Patel and P. Senchaudhuri. Importance sampling
   for estimating exact probabilities in permutational inference.
-  Journal of the American Statistical Association 83, pages 999-1005.
+  \emph{Journal of the American Statistical Association}, \emph{83},
+  999--1005, 1988.
 }
 \examples{
-data("Mehta")
-mehtaMix <- stepFlexmix(cbind(Response, Total-Response) ~ 1|Site, 
+data("Mehta", package = "flexmix")
+mehtaMix <- initFlexmix(cbind(Response, Total-Response) ~ 1|Site, 
                      data=Mehta, nrep=5, k=3,
                      model=FLXMRglmfix(family="binomial",
                        fixed=~ Drug), 

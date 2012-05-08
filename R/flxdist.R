@@ -8,7 +8,8 @@ FLXdist <- function(formula, k = NULL, model=FLXMRglm(), components, concomitant
     prior <- k/sum(k)
   }
 
-  prior <- evalPrior(prior, concomitant)
+  concomitant@x <- matrix(c(1, rep(0, ncol(concomitant@coef))[-1]), nrow = 1)
+  prior <- as.vector(evalPrior(prior, concomitant))
   
   lf <- length(formula)
   formula1 <- formula

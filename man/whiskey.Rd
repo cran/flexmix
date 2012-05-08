@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: whiskey.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: whiskey.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{whiskey}
 \alias{whiskey}
@@ -34,12 +34,12 @@
   The dataset is taken from the \pkg{bayesm} package. 
 }
 \source{
-  Peter Rossi and Rob McCulloch. (2006). bayesm: Bayesian Inference for
-  Marketing/Micro-econometrics. R package version 2.0-8.
+  Peter Rossi and Rob McCulloch. bayesm: Bayesian Inference for
+  Marketing/Micro-econometrics. R package version 2.0-8, 2006.
   http://gsbwww.uchicago.edu/fac/peter.rossi/research/bsm.html
 }
 \references{
-  Edwards, Y. and G. Allenby (2003), "Multivariate Analysis of
-  Multiple Response Data," \emph{JMR} 40, 321-334.
+  Edwards, Y. and G. Allenby. Multivariate Analysis of Multiple Response
+  Data, \emph{Journal of Marketing Research}, \bold{40}, 321--334, 2003.
 }
 \keyword{datasets}

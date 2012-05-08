@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: refit.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: refit.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{refit-methods}
 \alias{refit,flexmix-method}
@@ -85,8 +85,8 @@
 \author{Friedrich Leisch and Bettina Gruen}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
-  models and latent class regression in R. Journal of Statistical
-  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+  models and latent class regression in R. \emph{Journal of Statistical
+  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
 }
 \section{Warning}{
   For \code{method = "mstep"} the standard deviations are determined
@@ -106,7 +106,7 @@
   component which can significantly increase the object size.
 }
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
 ex1r <- refit(ex1)
 

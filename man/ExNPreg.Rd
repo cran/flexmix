@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: ExNPreg.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: ExNPreg.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{ExNPreg}
 \alias{ExNPreg}
@@ -25,7 +25,7 @@ data("NPreg")
   simplicity of examples only.
 }
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 plot(yn~x, data=NPreg, col=class)
 plot(yp~x, data=NPreg, col=class)
 plot(yb~x, data=NPreg, col=class)

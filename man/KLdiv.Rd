@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: KLdiv.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: KLdiv.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{KLdiv}
 \alias{KLdiv,matrix-method}
@@ -51,12 +51,12 @@
 \keyword{methods}
 \author{Friedrich Leisch and Bettina Gruen}
 \references{
-  S. Kullback and R. A. Leibler. On information and sufficiency. The
-  Annals of Mathematical Statistics 22(1), pages 79-86, 1951.
+  S. Kullback and R. A. Leibler. On information and sufficiency.\emph{The
+  Annals of Mathematical Statistics}, \bold{22}(1), 79--86, 1951.
   
   Friedrich Leisch. Exploring the structure of mixture model
   components. In Jaromir Antoch, editor, Compstat 2004 - Proceedings in
-  Computational Statistics, pages 1405-1412. Physika Verlag, Heidelberg,
+  Computational Statistics, 1405--1412. Physika Verlag, Heidelberg,
   Germany, 2004. ISBN 3-7908-1554-3.
 }
 \examples{

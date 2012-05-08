@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: ICL.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: ICL.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{ICL}
 \alias{ICL,flexmix-method}
@@ -31,12 +31,12 @@
 \author{Friedrich Leisch and Bettina Gruen}
 \references{
   C. Biernacki, G. Celeux, and G. Govaert. Assessing a mixture model
-  for clustering with the integrated completed likelihood. IEEE
-  Transactions on Pattern Analysis and Machine Intelligence 22(7),
-  pages 719-725, 2000.
+  for clustering with the integrated completed likelihood. \emph{IEEE
+  Transactions on Pattern Analysis and Machine Intelligence},
+  \emph{22}(7), 719--725, 2000.
 }
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
 ICL(ex1)
 }

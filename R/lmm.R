@@ -126,7 +126,7 @@ setMethod("FLXmstep", signature(model = "FLXMRlmm"),
           function(model, weights, components)
 {
   weights <- weights[!duplicated(model@group),,drop=FALSE]
-  if (is.null(components)) {
+  if (!is(components[[1]], "FLXcomponentlmm")) {
     random <- list(beta = lapply(model@which, function(i) rep(0, ncol(model@z[[i]]))),
                    Sigma = lapply(model@z, function(x) diag(ncol(x))))
     return(sapply(seq_len(ncol(weights)),

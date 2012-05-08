@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4803 2012-03-20 15:57:23Z gruen $
+#  $Id: flexmix.R 4808 2012-05-03 08:26:47Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -98,8 +98,11 @@ setMethod("FLXgetObs", signature(model = "FLXM"), function(model) nrow(model@x))
 setMethod("FLXcheckComponent", signature(model = "FLXM"), function(model, ...) model)
 setMethod("FLXremoveComponent", signature(model = "FLXM"), function(model, ...) model)
 
-setMethod("FLXmstep", signature(model = "FLXM"), function(model, weights, ...) {
-  apply(weights, 2, function(w) model@fit(model@x, model@y, w))
+setMethod("FLXmstep", signature(model = "FLXM"), function(model, weights, components, ...) {
+  if ("component" %in% names(formals(model@fit)))
+    sapply(seq_len(ncol(weights)), function(k) model@fit(model@x, model@y, weights[,k], component = components[[k]]))
+  else
+    sapply(seq_len(ncol(weights)), function(k) model@fit(model@x, model@y, weights[,k]))
 })
 
 setMethod("FLXdeterminePostunscaled", signature(model = "FLXM"), function(model, components, ...) {
@@ -127,7 +130,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   llh <- -Inf
   if (control@classify=="random") llh.max <- -Inf
   converged <- FALSE
-  components <- NULL
+  components <- rep(list(rep(list(new("FLXcomponent")), k)), length(model))
   ### EM
   for(iter in seq_len(control@iter.max)) {
       ### M-Step
@@ -481,14 +484,9 @@ function(object, component=NULL, model=NULL, which = c("model", "concomitant"),
 })
 
 setMethod("prior", signature(object="FLXdist"),
-function(object)
-{
-  object@prior
-})
-
-setMethod("prior", signature(object="flexmix"),
 function(object, newdata, ...) {
-  if (missing(newdata)) prior <- callNextMethod()
+  if (missing(newdata))
+    prior <- object@prior
   else {
     groups <- .FLXgetGrouping(object@formula, newdata)
     nobs <- if (is(newdata, "data.frame")) nrow(newdata)

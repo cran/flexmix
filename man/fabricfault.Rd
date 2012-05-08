@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: fabricfault.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: fabricfault.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{fabricfault}
 \alias{fabricfault}
@@ -18,22 +18,22 @@
   }
 }
 \source{
-  G. McLachlan and D. Peel (2000): Finite Mixture Models.
+  G. McLachlan and D. Peel. \emph{Finite Mixture Models}, 2000,
   John Wiley and Sons Inc.
   \url{http://www.maths.uq.edu.au/~gjm/DATA/mmdata.html}
 }
 \references{
-  A. F. Bissell (1972):
+  A. F. Bissell.
   A Negative Binomial Model with Varying Element Sizes
-  Biometrika 59, pages 435-441.
+  \emph{Biometrika}, \bold{59}, 435--441, 1972.
   
-  M. Aitkin (1996): A general maximum likelihood analysis of
+  M. Aitkin. A general maximum likelihood analysis of
   overdispersion in generalized linear models.
-  Statistics and Computing 6, pages 251-262.
+  \emph{Statistics and Computing}, \bold{6}, 251--262, 1996. 
 }
 \examples{
-data("fabricfault")
-fabricMix <- stepFlexmix(Faults ~ 1, data=fabricfault, k=2,
+data("fabricfault", package = "flexmix")
+fabricMix <- initFlexmix(Faults ~ 1, data=fabricfault, k=2,
                          model=FLXMRglmfix(family="poisson",
                            fixed=~ log(Length)), 
                          nrep=5)

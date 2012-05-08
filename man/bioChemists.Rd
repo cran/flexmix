@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: bioChemists.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: bioChemists.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{bioChemists}
 \alias{bioChemists}
@@ -32,10 +32,11 @@ data("bioChemists")
   \url{http://www.indiana.edu/~jslsoc/stata/socdata/couart2.dta}
 }
 \references{
-  Long, J. Scott (1990).  "The origins of sex difference in
-  science". \emph{Social Forces}. 68:1297-1315.
+  Long, J. Scott. The origins of sex difference in
+  science. \emph{Social Forces}, \bold{68}, 1297--1315, 1990.
   
-  Long, J. Scott (1997).  \emph{Regression Models for Categorical and
-    Limited Dependent Variables}. Thousand Oaks, California: Sage.
+  Long, J. Scott.  \emph{Regression Models for Categorical and
+  Limited Dependent Variables}, 1997. Thousand Oaks, California:
+  Sage. 
 }
 \keyword{datasets}

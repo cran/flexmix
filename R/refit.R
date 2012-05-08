@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4803 2012-03-20 15:57:23Z gruen $
+#  $Id: refit.R 4805 2012-04-05 16:15:44Z gruen $
 #
 ###*********************************************************
 
@@ -407,7 +407,7 @@ function(object, newdata, weights, ...)
   lapply(seq_len(ncol(weights)), function(k) 
          object@fit(object@x,
                     object@y,
-                    weights[,k])@parameters)
+                    weights[,k], ...)@parameters)
 })
 
 setMethod("refit_mstep", signature(object="FLXMRglm"),
@@ -416,7 +416,7 @@ function(object, newdata, weights, ...)
   lapply(seq_len(ncol(weights)), function(k) {
     fit <- object@refit(object@x,
                         object@y,
-                        weights[,k])
+                        weights[,k], ...)
     fit <- c(fit,
              list(formula = object@fullformula,
                   terms = object@terms,

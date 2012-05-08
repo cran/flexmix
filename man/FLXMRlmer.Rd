@@ -57,7 +57,7 @@ FLXMRlmer(formula = . ~ ., random, weighted = FALSE,
 \value{
   Returns an object of class \code{FLXMRlmer} and \code{FLXMRlmm}.
 }
-\section{warning}{
+\section{Warning}{
   For \code{FLXMRlmer} the weighted ML estimation is only correct if the
   covariate matrix of the random effects is the same for each
   observation. By default non-weighted ML estimation is made. If this is

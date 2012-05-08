@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: dmft.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: dmft.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{dmft}
 \alias{dmft}
@@ -39,15 +39,15 @@
 }
 
 \source{
-  D. Boehning, E. Dietz, P. Schlattmann, L. Mendonca and U. Kirchner
-  (1999): The zero-inflated Poisson model and the decayed, missing and
-  filled teeth index in dental epidemiology. Journal of the Royal
-  Statistical Society A 162(2), pages 195-209.
+  D. Boehning, E. Dietz, P. Schlattmann, L. Mendonca and U. Kirchner.
+  The zero-inflated Poisson model and the decayed, missing and
+  filled teeth index in dental epidemiology. \emph{Journal of the Royal
+  Statistical Society A}, \bold{162}(2), 195--209, 1999.
 }
 
 \examples{
-data("dmft")
-dmft.flx <- stepFlexmix(End ~ 1, data = dmft, k = 2,
+data("dmft", package = "flexmix")
+dmft_flx <- initFlexmix(End ~ 1, data = dmft, k = 2,
                         model = FLXMRglmfix(family = "poisson", 
                         fixed = ~ Gender + Ethnic + Treatment))
 }

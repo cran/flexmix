@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: plot-methods.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: plot-methods.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{plot-methods}
 \docType{methods}
@@ -65,17 +65,17 @@
 }
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
-  models and latent class regression in R. Journal of Statistical
-  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+  models and latent class regression in R. \emph{Journal of Statistical
+  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
 
   Jeremy Tantrum, Alejandro Murua and Werner Stuetzle. Assessment and
   pruning of hierarchical model based clustering. Proceedings of the
   9th ACM SIGKDD international conference on Knowledge Discovery and
-  Data Mining, pages 197-205. ACM Press, New York, NY, USA, 2003.
+  Data Mining, 197--205. ACM Press, New York, NY, USA, 2003.
 
   Friedrich Leisch. Exploring the structure of mixture model
   components. In Jaromir Antoch, editor, Compstat 2004 - Proceedings in
-  Computational Statistics, pages 1405-1412. Physika Verlag, Heidelberg,
+  Computational Statistics, 1405--1412. Physika Verlag, Heidelberg,
   Germany, 2004. ISBN 3-7908-1554-3.
 }
 \author{Friedrich Leisch and Bettina Gruen}

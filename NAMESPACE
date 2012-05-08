@@ -46,6 +46,7 @@ export(
        existGradient,
        flexmix,
        group,
+       initFlexmix,
        LR_test,
        plotEll,
        refit_optim,

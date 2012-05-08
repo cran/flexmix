@@ -1,10 +1,13 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: stepFlexmix.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
+\alias{initFlexmix}
+\alias{initMethod}
 \alias{stepFlexmix-class}
+\alias{initMethod-class}
 \alias{plot,stepFlexmix,missing-method}
 \alias{show,stepFlexmix-method}
 \alias{getModel,stepFlexmix-method}
@@ -15,6 +18,12 @@
   the maximum likelihood solution for each.
 }
 \usage{
+initFlexmix(..., k, init = list(), control = list(), nrep = 3L,
+            verbose = TRUE, drop = TRUE, unique = FALSE)
+initMethod(name = c("tol.em", "cem.em", "sem.em"),
+           step1 = list(tolerance = 10^-2),
+           step2 = list(), control = list(), nrep = 3L)
+
 stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
             unique=FALSE)
 
@@ -30,9 +39,28 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     in the \code{plot} method).}
   \item{k}{A vector of integers passed in turn to the \code{k} argument
     of \code{\link{flexmix}}.}
+  \item{init}{An object of class \code{"initMethod"} or a named list
+    where \code{initMethod} is called with it as arguments in addition
+    to the \code{control} argument}.
+  \item{name}{A character string indication which initialization
+    strategy should be employed: short runs of EM followed by a long
+    (\code{"tol.em"}), short runs of CEM followed by a long EM run
+    (\code{"cem.em"}), short runs of SEM followed by a long EM run
+    (\code{"sem.em"}).}
+  \item{step1}{A named list which combined with the \code{control}
+    argument is coercable to a \code{"FLXcontrol"} object. This control
+    setting is used for the short runs.}
+  \item{step2}{A named list which combined with the \code{control}
+    argument is coercable to a \code{"FLXcontrol"} object. This control
+    setting is used for the long run.}
+  \item{control}{A named list which combined with the \code{step1} or
+    the \code{step2} argument is coercable to a \code{"FLXcontrol"}
+    object.}  
   \item{nrep}{For each value of \code{k} run \code{\link{flexmix}}
     \code{nrep} times and keep only the solution with maximum
-    likelihood.}
+    likelihood. If \code{nrep} is set for the long run, it is ignored,
+    because the EM algorithm is deterministic using the best solution
+    discovered in the short runs for initialization.}
   \item{verbose}{If \code{TRUE}, show progress information during
     computations.}
   \item{drop}{If \code{TRUE} and \code{k} is of length 1, then a single
@@ -75,19 +103,30 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
 \author{Friedrich Leisch and Bettina Gruen}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
-  models and latent class regression kin R. Journal of Statistical
-  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+  models and latent class regression in R. \emph{Journal of Statistical
+  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
+
+  Christophe Biernacki, Gilles Celeux and Gerard Govaert. Choosing
+  starting values for the EM algorithm for getting the highest
+  likelihood in multivariate Gaussian mixture models. \emph{Computational
+  Statistics & Data Analysis}, \bold{41}(3-4), 561--575, 2003.
+
+  Theresa Scharl, Bettina Gruen and Friedrch Leisch.  Mixtures of
+  regression models for time-course gene expression data: Evaluation of
+  initialization and random effects. \emph{Bioinformatics},
+  \bold{26}(3), 370--377, 2010.
 }
 \examples{
-data("Nclus")
-set.seed(511)
+data("Nclus", package = "flexmix")
 
 ## try 5 times for k=4
-ex1 <- stepFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diagonal=FALSE), nrep=5)
+set.seed(511)
+ex1 <- initFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diagonal=FALSE),
+                   nrep = 5)
 ex1
 
 ## now 3 times each for k=2:6, specify control parameter
-ex2 <- stepFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
+ex2 <- initFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
                    control=list(minprior=0), nrep=3)
 ex2
 plot(ex2)
@@ -105,7 +144,7 @@ getModel(ex2, which="3")
 getModel(ex2, which="ICL")
 
 ## now 1 time each for k=2:6, with larger minimum prior
-ex3 <- stepFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
+ex3 <- initFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
                    control=list(minprior=0.1), nrep=1)
 ex3
 

@@ -1,3 +1,16 @@
+Changes in flexmix version 2.3-8
+
+  o The fit function in the M-step by default now is called with an
+    argument containing the fitted component. This allows to use the
+    parameter estimates from the previous step for initialization. Fit
+    functions which do not require this now need a ... argument.
+    Thanks to Hannah Frick and Achim Zeileis for requesting this
+    feature.
+
+  o Function initFlexmix() was added which is an alternative to
+    stepFlexmix() where first several short runs of EM, SEM or CEM are
+    performed followed by a long run of EM. 
+
 Changes in flexmix version 2.3-7
 
   o A bug fixed in predict() and fitted() if a concomitant variable

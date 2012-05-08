@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 4801 2012-02-22 16:41:21Z gruen $
+%  $Id: flexmix.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -71,14 +71,14 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
 \seealso{\code{\link[flexmix]{plot-methods}}}
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
-  models and latent class regression in R. Journal of Statistical
-  Software, 11(8), 2004. http://www.jstatsoft.org/v11/i08/
+  models and latent class regression in R. \emph{Journal of Statistical
+  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
 }
 \keyword{regression}
 \keyword{cluster}
 \examples{
 
-data("NPreg")
+data("NPreg", package = "flexmix")
 
 ## mixture of two linear regression models. Note that control parameters
 ## can be specified as named list and abbreviated if unique.
@@ -118,11 +118,11 @@ ex4 <- flexmix(yp~x|id1, data=NPreg, k=2,
 ## And now a binomial example. Mixtures of binomials are not generically
 ## identified, here the grouping variable is necessary:
 set.seed(1234)
-ex5 <- stepFlexmix(cbind(yb,1-yb)~x, data=NPreg, k=2,
+ex5 <- initFlexmix(cbind(yb,1-yb)~x, data=NPreg, k=2,
                    model=FLXMRglm(family="binomial"), nrep=5)
 table(NPreg$class, clusters(ex5))
 
-ex6 <- stepFlexmix(cbind(yb,1-yb)~x|id2, data=NPreg, k=2,
+ex6 <- initFlexmix(cbind(yb,1-yb)~x|id2, data=NPreg, k=2,
                    model=FLXMRglm(family="binomial"), nrep=5)
 table(NPreg$class, clusters(ex6))
 

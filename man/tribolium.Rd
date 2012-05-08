@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: tribolium.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: tribolium.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{tribolium}
 \alias{tribolium}
@@ -36,13 +36,13 @@
   which the experiment was conducted.
 }
 \source{
-  P. Wang and M.L. Puterman (1998): Mixed Logistic Regression Models.
-  Journal of Agricultural, Biological, and Environmental Statistics 3
-  (2), pages 175-200,
+  P. Wang and M.L. Puterman. Mixed Logistic Regression Models.
+  \emph{Journal of Agricultural, Biological, and Environmental Statistics}, \bold{3}
+  (2), 175--200, 1998.
 }
 \examples{
-data("tribolium")
-tribMix <- stepFlexmix(cbind(Remaining, Total - Remaining) ~ Species, 
+data("tribolium", package = "flexmix")
+tribMix <- initFlexmix(cbind(Remaining, Total - Remaining) ~ Species, 
                    k = 2, nrep=5, data = tribolium,
                    model = FLXMRglm(family = "binomial"))
 }

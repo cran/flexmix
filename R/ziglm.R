@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: ziglm.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: ziglm.R 4805 2012-04-05 16:15:44Z gruen $
 #
 
 setClass("FLXMRziglm", contains = "FLXMRglm")
@@ -25,13 +25,13 @@ setMethod("FLXremoveComponent", signature(model = "FLXMRziglm"),
           if (1 %in% nok) as(model, "FLXMRglm") else model)
 
 setMethod("FLXmstep", signature(model = "FLXMRziglm"),
-          function(model, weights, ...) {
+          function(model, weights, components, ...) {
   coef <- c(-Inf, rep(0, ncol(model@x)-1))
   names(coef) <- colnames(model@x)
   comp.1 <- with(list(coef = coef, df = 0, offset = NULL,
                  family = model@family), eval(model@defineComponent))
   c(list(comp.1),
-    FLXmstep(as(model, "FLXMRglm"), weights[, -1, drop=FALSE]))
+    FLXmstep(as(model, "FLXMRglm"), weights[, -1, drop=FALSE], components[-1]))
 })
 
 setMethod("FLXgetDesign", signature(object = "FLXMRziglm"),

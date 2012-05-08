@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flxmcmvpois.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: flxmcmvpois.R 4805 2012-04-05 16:15:44Z gruen $
 #
 
 FLXMCmvpois <- function(formula=.~.)
@@ -28,7 +28,7 @@ FLXMCmvpois <- function(formula=.~.)
     new("FLXcomponent", parameters=list(lambda=lambda), df=df,
         logLik=logLik, predict=predict)
   })
-  z@fit <- function(x, y, w){
+  z@fit <- function(x, y, w, ...){
     with(list(lambda = colSums(w*y)/sum(w), df = ncol(y)),
          eval(z@defineComponent))
   }

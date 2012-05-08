@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: seizure.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: seizure.Rd 4811 2012-05-08 15:35:52Z gruen $
 %
 \name{seizure}
 \alias{seizure}
@@ -24,18 +24,18 @@
   }
 }
 \source{
-  P. Wang, M. Puterman, I. Cockburn, and N. Le (1996): Mixed poisson
+  P. Wang, M. Puterman, I. Cockburn, and N. Le. Mixed poisson
   regression models with covariate dependent rates.
-  Biometrics 52, pages 381-400.
+  \emph{Biometrics}, \bold{52}, 381--400, 1996.
 }
 \references{
-  B. Gruen and F. Leisch (2004): Bootstrapping finite mixture models.
+  B. Gruen and F. Leisch. Bootstrapping finite mixture models.
   In J. Antoch, editor, Compstat 2004 - Proceedings in Computational
-  Statistics, pages 1115-1122. Physika Verlag, Heidelberg, Germany,
+  Statistics, 1115--1122. Physika Verlag, Heidelberg, Germany, 2004.
   ISBN 3-7908-1554-3.
 }
 \examples{
-data("seizure")
+data("seizure", package = "flexmix")
 plot(Seizures/Hours~Day, col=as.integer(Treatment),
      pch=as.integer(Treatment), data=seizure)
 abline(v=27.5, lty=2, col="grey")

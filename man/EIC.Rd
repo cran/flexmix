@@ -33,10 +33,10 @@
 \references{
   V. Ramaswamy, W. S. DeSarbo, D. J. Reibstein, and W. T. Robinson. An
   empirical pooling approach for estimating marketing mix elasticities
-  with PIMS data. Marketing Science 12(1), pages 103-124, 1993.
+  with PIMS data. \emph{Marketing Science}, \bold{12}(1), 103--124, 1993.
 }
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
 EIC(ex1)
 }

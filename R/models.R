@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4666 2011-02-23 15:52:35Z gruen $
+#  $Id: models.R 4808 2012-05-03 08:26:47Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -48,7 +48,7 @@ FLXMRglm <- function(formula=.~.,
             df=df)
       })
 
-      z@fit <- function(x, y, w){
+      z@fit <- function(x, y, w, component){
         fit <- lm.wfit(x, y, w=w, offset=offset)
         with(list(coef = coef(fit), df = ncol(x)+1,
                   sigma =  sqrt(sum(fit$weights * fit$residuals^2 /
@@ -82,8 +82,8 @@ FLXMRglm <- function(formula=.~.,
             df=df)
       })
 
-      z@fit <- function(x, y, w){
-        fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset)
+      z@fit <- function(x, y, w, component){
+        fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset, start=component@parameters$coef)
         with(list(coef = coef(fit), df = ncol(x)),
              eval(z@defineComponent))
       }
@@ -106,8 +106,8 @@ FLXMRglm <- function(formula=.~.,
             df=df)
       })
           
-      z@fit <- function(x, y, w){
-        fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset)
+      z@fit <- function(x, y, w, component){
+        fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset, start=component@parameters$coef)
         with(list(coef = coef(fit), df = ncol(x)),
              eval(z@defineComponent))
       }
@@ -130,8 +130,8 @@ FLXMRglm <- function(formula=.~.,
             df = df)
       })
 
-      z@fit <- function(x, y, w){
-        fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset)
+      z@fit <- function(x, y, w, component){
+        fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset, start=component@parameters$coef)
         with(list(coef = coef(fit), df = ncol(x)+1,
                   shape = sum(fit$prior.weights)/fit$deviance),
              eval(z@defineComponent))
@@ -160,7 +160,7 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
           df=df, logLik=logLik, predict=predict)
     })
     
-    z@fit <- function(x, y, w){
+    z@fit <- function(x, y, w, ...){
       para <- cov.wt(y, wt=w)[c("center","cov")]
       para$df <- (3*ncol(y) + ncol(y)^2)/2
       if(diagonal){
@@ -190,7 +190,7 @@ FLXMCnorm1 <- function(formula=.~.)
           df=df, logLik=logLik, predict=predict)
     })
     
-    z@fit <- function(x, y, w){
+    z@fit <- function(x, y, w, ...){
       para <- cov.wt(as.matrix(y), wt=w)[c("center","cov")]
       para$df <- 2
       with(para, eval(z@defineComponent))
@@ -234,7 +234,7 @@ MCmvbinary <- function(formula=.~.)
           logLik=logLik, predict=predict)
     })
 
-    z@fit <- function(x, y, w)
+    z@fit <- function(x, y, w, ...)
       with(list(center = colSums(w*y)/sum(w), df = ncol(y)),
            eval(z@defineComponent))
     
@@ -277,7 +277,7 @@ MCmvbinary_truncated <- function(formula=.~.)
       new("FLXcomponent", parameters = list(center = center), df = df, 
           logLik = logLik, predict = predict)
     })
-    z@fit <- function(x, y, w){
+    z@fit <- function(x, y, w, ...){
       with(list(center = binary_truncated(y, w), df = ncol(y)),
            eval(z@defineComponent))
     }   
@@ -332,7 +332,7 @@ FLXMCmvcombi <- function(formula=.~.)
           logLik=logLik, predict=predict)
     })
 
-    z@fit <- function(x, y, w){
+    z@fit <- function(x, y, w, ...){
       para <- cov.wt(y, wt=w)[c("center","cov")]
       para$var <- diag(para$cov)
       para$var <- pmax(para$var, sqrt(.Machine$double.eps))
