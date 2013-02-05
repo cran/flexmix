@@ -30,10 +30,14 @@ initFlexmix <- function(..., k, init = list(), control = list(), nrep = 3L, verb
   names(MYCALL1) <- paste(k)
   STEP1 <- stepFlexmix(..., k = k, verbose = verbose, drop = FALSE, unique = FALSE,
                        nrep = init@step1@nrep, control = init@step1)
-  models <- lapply(k, function(K) new("flexmix",
-                                      flexmix(..., control = init@step2,
-                                              cluster = posterior(getModel(STEP1, paste(K)))),
-                                      k0 = as.integer(K), call = MYCALL1[[paste(K)]]))
+  models <- lapply(k, function(K) {
+    if (length(k) > 1 && verbose) cat("* ")
+    new("flexmix",
+        flexmix(..., control = init@step2,
+                cluster = posterior(getModel(STEP1, paste(K)))),
+        k0 = as.integer(K), call = MYCALL1[[paste(K)]])
+  })
+  if (length(k) > 1 && verbose) cat("\n")
   names(models) <- paste(k)
   if (drop & length(models) == 1) {
     return(models[[1]])

@@ -1,8 +1,7 @@
 import(methods)
 import(modeltools)
-import(multcomp)
-
 importFrom(stats, fitted, predict, simulate)
+
 if (getRversion() >= "2.13.0") {
   importFrom(stats4, logLik, plot, nobs, summary)
 } else {
@@ -31,12 +30,14 @@ export(
        FLXmclust,
        FLXconstant,
        FLXmultinom,
+       FLXMRcondlogit,
        FLXMRglm,
        FLXMRglmfix,
        FLXMRlmer,
        FLXMRlmm,
        FLXMRlmmc,
        FLXMRmgcv,
+       FLXMRmultinom,
        FLXMRrobglm,
        FLXMRziglm,
        FLXgetDesign,

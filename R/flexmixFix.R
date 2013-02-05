@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 4666 2011-02-23 15:52:35Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmixFix.R 4834 2012-08-02 10:17:09Z gruen $
 #
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {

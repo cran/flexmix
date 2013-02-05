@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4808 2012-05-03 08:26:47Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: models.R 4859 2012-12-18 08:42:33Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -24,6 +24,7 @@ FLXMRglm <- function(formula=.~.,
              name=paste("FLXMRglm", family, sep=":"), offset = offset,
              family=family, refit=glmrefit)
     z@preproc.y <- function(x){
+      x <- as.matrix(x)
       if (ncol(x) > 1)
         stop(paste("for the", family, "family y must be univariate"))
       x
@@ -58,6 +59,7 @@ FLXMRglm <- function(formula=.~.,
     }
     else if(family=="binomial"){
       z@preproc.y <- function(x){
+        x <- as.matrix(x)
         if (ncol(x) != 2)
           stop("for the binomial family, y must be a 2 column matrix\n",
                "where col 1 is no. successes and col 2 is no. failures")
@@ -148,10 +150,9 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
     z <- new("FLXMC", weighted=TRUE, formula=formula,
              dist = "mvnorm", name="model-based Gaussian clustering")
 
-    require("mvtnorm")
     z@defineComponent <- expression({
       logLik <- function(x, y)
-        dmvnorm(y, mean=center, sigma=cov, log=TRUE)
+        mvtnorm::dmvnorm(y, mean=center, sigma=cov, log=TRUE)
     
       predict <-  function(x, ...)
         matrix(center, nrow=nrow(x), ncol=length(center),
@@ -321,9 +322,9 @@ FLXMCmvcombi <- function(formula=.~.)
                            mean=center[!BINARY], sd=sqrt(var[!BINARY]),
                            log=TRUE)
           else
-            z <- z + dmvnorm(y[,!BINARY,drop=FALSE],
-                             mean=center[!BINARY], sigma=diag(var[!BINARY]),
-                             log=TRUE)
+            z <- z + mvtnorm::dmvnorm(y[,!BINARY,drop=FALSE],
+                                      mean=center[!BINARY], sigma=diag(var[!BINARY]),
+                                      log=TRUE)
         }
         z
       }

@@ -25,18 +25,19 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
   object <- new("FLXMRlmm", formula = formula, random = random, 
                 weighted = TRUE, family = family, name = "FLXMRlmm:gaussian")
   if (any(varFix)) object <- new("FLXMRlmmfix", object)
+  object@preproc.y <- function(x){
+    x <- as.matrix(x)
+    if (ncol(x) > 1)
+      stop(paste("y must be univariate"))
+    x
+  }
   if (lm.fit == "smooth.spline") {
-    object@preproc.y <- function(x){
-      if (ncol(x) > 1)
-        stop(paste("y must be univariate"))
-      x
-    }
     object@preproc.x <- function(x){
       if (ncol(x) > 1)
         stop(paste("x must be univariate"))
       x
     }
-  }
+  } 
   add <- function(x) Reduce("+", x)
   lmm.wfit <- function(x, y, w, z, which, random) {
     effect <- lapply(seq_along(which), function(i) z[[which[i]]] %*% random$beta[[i]])
@@ -101,8 +102,8 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
       lapply(fit, function(Z) {
         comp <- with(list(coef = coef(Z),
                           sigma2 =  Z$sigma2,
-                          df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], ncol(w), 1),
-                          eval(object@defineComponent)))
+                          df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], ncol(w), 1)),
+                     eval(object@defineComponent))
         comp@random <- determineRandom(comp@predict(x), y, z, which, comp@parameters$sigma2)
         comp
       })
@@ -142,11 +143,11 @@ setMethod("FLXmstep", signature(model = "FLXMRlmmfix"),
           function(model, weights, components)
 {
   weights <- weights[!duplicated(model@group),,drop=FALSE]
-  if (is.null(components)) {
+  if (!is(components[[1]], "FLXcomponentlmm")) {
     random <- rep(list(list(beta = lapply(model@which, function(i) rep(0, ncol(model@z[[i]]))),
                             Sigma = lapply(model@z, function(x) diag(ncol(x))))), ncol(weights))
     return(model@fit(model@x, model@y, weights, model@z, model@which, random))
-  }else 
+  }else
    return(model@fit(model@x, model@y, weights, model@z, model@which, lapply(components, function(x) x@random)))
 })
 

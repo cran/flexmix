@@ -7,7 +7,6 @@ FLXMCfactanal <- function(formula=.~., factors = 1, ...)
 {
     z <- new("FLXMCfactanal", weighted=TRUE, formula=formula,
              dist = "mvnorm", name="mixtures of factor analyzers")
-    require("mvtnorm")
     
     z@fit <- function(x, y, w, ...){
       cov.weighted <- cov.wt(y, wt = w)[c("center","cov")]
@@ -22,7 +21,7 @@ FLXMCfactanal <- function(formula=.~., factors = 1, ...)
       
       logLik <- function(x, y){
         sds <- sqrt(diag(cov))
-        dmvnorm(y, mean = center, sigma = Sigma * (sds %o% sds), log = TRUE)
+        mvtnorm::dmvnorm(y, mean = center, sigma = Sigma * (sds %o% sds), log = TRUE)
       }
       
       new("FLXcomponent", parameters=list(mu = center,

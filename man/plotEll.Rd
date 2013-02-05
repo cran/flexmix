@@ -1,12 +1,12 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: plotEll.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: plotEll.Rd 4846 2012-09-28 15:22:11Z leisch $
 %
 \name{plotEll}
 \alias{plotEll}
 \title{Plot Confidence Ellipses for FLXMCmvnorm Results}
 \description{
-  Plot confidence ellipses for mixtures of Gaussians fitted using
+  Plot 50\% and 95\% confidence ellipses for mixtures of Gaussians fitted using
   \code{\link{FLXMCmvnorm}}.
 }
 \usage{

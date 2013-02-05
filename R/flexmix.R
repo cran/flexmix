@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4808 2012-05-03 08:26:47Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmix.R 4834 2012-08-02 10:17:09Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -335,8 +335,7 @@ function(model, data, formula, lhs=TRUE, ...)
   if (lhs) {
     mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL) else model.frame(model@terms, data=data, na.action = NULL)
     model@terms <- attr(mf, "terms")
-    model@y <- as.matrix(model.response(mf))
-    model@y <- model@preproc.y(model@y)
+    model@y <- model@preproc.y(model.response(mf))
   }
   else {
     mt1 <- if (is.null(model@terms)) terms(model@fullformula, data=data) else model@terms
@@ -348,8 +347,7 @@ function(model, data, formula, lhs=TRUE, ...)
   }
   X <- model.matrix(model@terms, data=mf)
   model@contrasts <- attr(X, "contrasts")
-  model@x <- X
-  model@x <- model@preproc.x(model@x)
+  model@x <- model@preproc.x(X)
   model@xlevels <- .getXlevels(model@terms, mf)
   model
 })

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 4708 2011-07-28 18:58:38Z gruen $
+%  $Id: flexmix-intro.Rnw 4827 2012-07-19 06:57:34Z gruen $
 %
 \documentclass[nojss]{jss}
 
@@ -100,6 +100,8 @@ with the expectation-maximization (EM) algorithm within a maximum
 likelihood framework \citep{flexmix:Dempster+Laird+Rubin:1977} and with
 MCMC sampling \citep{flexmix:Diebolt+Robert:1994} within a Bayesian
 framework.
+
+\newpage
 
 The \R{} environment for statistical computing \citep{flexmix:R-Core:2004}
 features several packages for finite mixture models, including

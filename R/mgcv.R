@@ -8,9 +8,8 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
                       offset = NULL, control = NULL, optimizer = c("outer", "newton"),
                       in.out = NULL, eps = .Machine$double.eps, ...)
 {
-  require("mgcv")
   s <- mgcv::s
-  if (is.null(control)) control <- gam.control()
+  if (is.null(control)) control <- mgcv::gam.control()
   family <- match.arg(family)
 
   am <- if (family == "gaussian" && get(family)()$link == "identity") TRUE else FALSE
@@ -97,6 +96,7 @@ setMethod("FLXmstep", signature(model = "FLXMRmgcv"), function(model, weights, .
 setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, data, formula, lhs=TRUE,
                                            paraPen = list(), ...)
 {
+  require("mgcv")
   formula <- RemoveGrouping(formula)
   
   if (length(grep("\\|", deparse(model@formula)))) stop("no grouping variable allowed in the model")
@@ -106,7 +106,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, dat
   s <- mgcv::s
   model@fullformula <- update(terms(formula, data=data), model@formula)
 
-  gp <- interpret.gam(model@fullformula)
+  gp <- mgcv::interpret.gam(model@fullformula)
   if (lhs) {
     model@terms <- terms(gp$fake.formula, data = data)   
     mf <- model.frame(model@terms, data=data, na.action = NULL, drop.unused.levels = TRUE)
@@ -158,7 +158,7 @@ setMethod("predict", signature(object="FLXMRmgcv"), function(object, newdata, co
       X[, 1:object$nsdf] <- Xp
     if (n.smooth) 
       for (k in 1:n.smooth) {
-        Xfrag <- PredictMat(object$smooth[[k]], newdata)
+        Xfrag <- mgcv::PredictMat(object$smooth[[k]], newdata)
         X[, object$smooth[[k]]$first.para:object$smooth[[k]]$last.para] <- Xfrag
         Xfrag.off <- attr(Xfrag, "offset")
         if (!is.null(Xfrag.off)) {

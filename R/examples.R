@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: examples.R 4666 2011-02-23 15:52:35Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: examples.R 4859 2012-12-18 08:42:33Z gruen $
 #
 
 ExNPreg = function(n)
@@ -26,12 +26,10 @@ ExNclus = function(n=100)
 {
     if(n %% 2 != 0) stop("n must be even")
 
-    require("mvtnorm")
-    
-    rbind(rmvnorm(n, mean=rep(0,2)),
-          rmvnorm(n, mean=c(8,0), sigma=diag(1:2)),
-          rmvnorm(1.5*n, mean=c(-2,6), sigma=diag(2:1)),
-          rmvnorm(2*n, mean=c(4,4), sigma=matrix(c(1,.9,.9,1), 2)))
+    rbind(mvtnorm::rmvnorm(n, mean=rep(0,2)),
+          mvtnorm::rmvnorm(n, mean=c(8,0), sigma=diag(1:2)),
+          mvtnorm::rmvnorm(1.5*n, mean=c(-2,6), sigma=diag(2:1)),
+          mvtnorm::rmvnorm(2*n, mean=c(4,4), sigma=matrix(c(1,.9,.9,1), 2)))
 }
 
     

@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: ziglm.R 4805 2012-04-05 16:15:44Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: ziglm.R 4834 2012-08-02 10:17:09Z gruen $
 #
 
 setClass("FLXMRziglm", contains = "FLXMRglm")

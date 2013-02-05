@@ -20,7 +20,7 @@ defineComponent_lmer <- expression({
           index2 <- rownames(z[[u]]) %in% levels(grouping)[i]
           t(z[[u]][index2,index1,drop=FALSE]) %*% sigma2$Random[[u]] %*% z[[u]][index2,index1,drop=FALSE]
         }), list(diag(length(index1)) * sigma2$Residual)))
-        llh[index1] <- dmvnorm(y[index1,], mean=predict(x[index1,,drop=FALSE], ...), sigma = V, log=TRUE)/length(index1)
+        llh[index1] <- mvtnorm::dmvnorm(y[index1,], mean=predict(x[index1,,drop=FALSE], ...), sigma = V, log=TRUE)/length(index1)
       }
       llh
     }
@@ -36,12 +36,10 @@ FLXMRlmer <- function(formula = . ~ ., random, weighted = FALSE,
 {
   mc <- match.call()
   mc$weights <- as.symbol("w")
-  require("lme4")
   random <- if (length(random) == 3) random else formula(paste(".", paste(deparse(random), collapse = "")))
   object <- new("FLXMRlmer", formula = formula, random = random,
                 family = "gaussian", weighted = weighted, name = "FLXMRlmer:gaussian")
   cv <- do.call(lme4:::lmerControl, control)
-  require("mvtnorm")
   if (weighted) object@preproc.z <- function(FL, x) { 
     if (length(unique(names(FL[["fl"]]))) != 1) stop("only a single variable for random effects is allowed")
     for (i in seq_along(FL[["fl"]])) {

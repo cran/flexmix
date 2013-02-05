@@ -126,7 +126,6 @@ update.latent.random <- function(x, y, z, C, which, fit) {
 }
 
 moments_truncated <- function(mu, Sigma, T, ...) {
-  require("mvtnorm")
   Sigma <- as.matrix(Sigma)
   mu <- as.vector(mu)
   T <- as.vector(T)
@@ -140,7 +139,7 @@ moments_truncated <- function(mu, Sigma, T, ...) {
   } else {
     R <- S * Sigma * rep(S, each = ncol(Sigma))
     diag(R) <- 1L
-    alpha <- pmvnorm(upper = T1, sigma = R, ...)
+    alpha <- mvtnorm::pmvnorm(upper = T1, sigma = R, ...)
     rq <- lapply(seq_along(T1), function(q) (R - tcrossprod(R[,q])))
     R2 <- R^2
     Vq <- 1 - R2
@@ -148,7 +147,7 @@ moments_truncated <- function(mu, Sigma, T, ...) {
     Rq <- lapply(seq_along(T1), function(q) rq[[q]]/(tcrossprod(Sq[,q])))
     Tq <- lapply(seq_along(T1), function(q) (T1 - R[,q] * T1[q])/Sq[,q])
     Phiq <- if (length(mu) == 1) 1 else
-    sapply(seq_along(Rq), function(q) pmvnorm(upper = Tq[[q]][-q], sigma = Rq[[q]][-q,-q], ...))
+    sapply(seq_along(Rq), function(q) mvtnorm::pmvnorm(upper = Tq[[q]][-q], sigma = Rq[[q]][-q,-q], ...))
     phi_Phiq <- dnorm(T1) * Phiq
     Ex <- - (R %*% phi_Phiq)/alpha
     T2_entries <- lapply(seq_along(T1),
@@ -179,7 +178,7 @@ moments_truncated <- function(mu, Sigma, T, ...) {
                                tcrossprod(R[q,],
                                           rowSums(sapply(seq_along(Tq)[-q], function(r)
                                                          phiqr[[q]][r] * (R[,r] - R[q,r] * R[q,]) *
-                                                         pmvnorm(upper = Tqr[[q]][[r]], sigma = Rqr[[q]][[r]], ...)))))) / alpha
+                                                         mvtnorm::pmvnorm(upper = Tqr[[q]][[r]], sigma = Rqr[[q]][[r]], ...)))))) / alpha
       Ex2 <- R - T2 / alpha + 1/2 * (T3 + t(T3))
 
     }

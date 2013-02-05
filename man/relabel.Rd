@@ -4,28 +4,31 @@
 %
 \name{relabel}
 \alias{relabel}
-\alias{relabel,flexmix,character-method}
+\alias{relabel,FLXdist,missing-method}
+\alias{relabel,FLXdist,character-method}
+\alias{relabel,FLXdist,integer-method}
 \title{Relabel the Components}
 
 \description{
-    The components are sorted by the value of one of the
-    parameters, and then one EM step is made initialized with the
-    posterior probabilities of the previous fit (because of this
-    single EM step estimates may change slightly even if EM converged
-    previously).  }
+  The components are sorted by the value of one of the parameters or
+  according to an integer vector containing the permutation of the
+  numbers from 1 to the number of components.
+}
 
 \usage{
 relabel(object, by, ...)
-\S4method{relabel}{flexmix,character}(object, by, data, ...)
+\S4method{relabel}{FLXdist,character}(object, by, which=NULL, ...)
 }
 \arguments{
-  \item{object}{An object of class "flexmix".}
-  \item{by}{Name (or unique substring) of a parameter.}
-  \item{data}{Data frame or list containing the data.  If missing, an
-              attempt is made to recover the data from the call, this
-              typically works only when used at the prompt and no
-              model contains extra variables in the model-specific
-              formula .}
+  \item{object}{An object of class \code{"flexmix"}.}
+  \item{by}{If a character vector, it needs to be one of \code{"prior"},
+    \code{"model"}, \code{"concomitant"} indicating if the parameter
+    should be from the component-specific or the concomitant variable
+    model. If an integer vector it indicates how the components should
+    be sorted.  If missing, the components are sorted by component
+    size.}
+  \item{which}{Name (or unique substring) of a parameter if \code{by} is
+    equal to "model" or "concomitant".}
   \item{\dots}{Currently not used.}
 }
 \author{Friedrich Leisch and Bettina Gruen}
@@ -48,7 +51,7 @@ relabel(object, by, ...)
     summary(abs(as.vector(betas-parameters(f1))))
 
     ## We relabel the components by sorting the coefficients of x1:
-    r1 <- relabel(f1, by="x1")
+    r1 <- relabel(f1, by="model", which="x1")
     round(parameters(r1))
 
     ## Now we can easily compare the fit with the true parameters:

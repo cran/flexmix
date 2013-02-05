@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-flexmix.R 4666 2011-02-23 15:52:35Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: plot-flexmix.R 4859 2012-12-18 08:42:33Z gruen $
 #
 
 determine_y <- function(h, root) {
@@ -15,15 +15,14 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
           lty = plot.polygon$lty, lwd = plot.polygon$lwd, subscripts, groups, mark, root = TRUE, markcol, ...) 
 {
     x <- as.numeric(x)
-    plot.polygon <- trellis.par.get("plot.polygon")
-    require("grid")
-    grid.lines(x = c(0.05, 0.95), y = unit(c(0, 0), "native"), 
-        gp = gpar(col = border, lty = lty, lwd = lwd, alpha = alpha),
+    plot.polygon <- lattice::trellis.par.get("plot.polygon")
+    grid::grid.lines(x = c(0.05, 0.95), y = grid::unit(c(0, 0), "native"), 
+                     gp = grid::gpar(col = border, lty = lty, lwd = lwd, alpha = alpha),
                default.units = "npc")
     if (length(x) > 0) {
         if (is.null(breaks)) {
             breaks <- if (equal.widths) 
-                do.breaks(range(x, finite = TRUE), nint)
+              lattice::do.breaks(range(x, finite = TRUE), nint)
             else quantile(x, 0:nint/nint, na.rm = TRUE)
         }
         h <- lattice:::hist.constructor(x, breaks = breaks, plot = FALSE, ...)
@@ -36,12 +35,12 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
         if (length(y) != nb - 1) 
             warning("problem with hist computations")
         if (nb > 1) {
-            panel.rect(x = breaks[-nb], y = 0, height = y, width = diff(breaks), 
+            lattice::panel.rect(x = breaks[-nb], y = 0, height = y, width = diff(breaks), 
                 col = col, alpha = alpha, border = border, lty = lty, 
                 lwd = lwd, just = c("left", "bottom"))
-            if (!is.null(mark)) panel.rect(x = breaks[-nb], y = 0, height = y1, width = diff(breaks),
-                                           col = markcol, alpha = alpha, border = border, lty = lty, 
-                                           lwd = lwd, just = c("left", "bottom"))
+            if (!is.null(mark)) lattice::panel.rect(x = breaks[-nb], y = 0, height = y1, width = diff(breaks),
+                                                    col = markcol, alpha = alpha, border = border, lty = lty, 
+                                                    lwd = lwd, just = c("left", "bottom"))
         }
     }
 }
@@ -61,7 +60,7 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
       x <- as.numeric(x)
     if (is.null(breaks)) {
       breaks <- if (equal.widths) 
-        do.breaks(range(x, finite = TRUE), nint)
+        lattice::do.breaks(range(x, finite = TRUE), nint)
       else quantile(x, 0:nint/nint, na.rm = TRUE)
     }
     h <- lattice:::hist.constructor(x, breaks = breaks, plot = FALSE, ...)
@@ -110,10 +109,10 @@ function(x, y, mark=NULL, markcol=NULL, col=NULL,
 
     if (is.logical(ylim)) {
       scales <- if (ylim) list() else list(y = list(relation = "free"))
-      hh <- histogram(~ posterior | component, data = z, main = main,  ylab = ylab, xlab = xlab, groups = cluster, 
-                      panel = panel, prepanel = prepanel, scales = scales, as.table = as.table, endpoints = endpoints, ...)
+      hh <- lattice::histogram(~ posterior | component, data = z, main = main,  ylab = ylab, xlab = xlab, groups = cluster, 
+                               panel = panel, prepanel = prepanel, scales = scales, as.table = as.table, endpoints = endpoints, ...)
     }
-    else hh <- histogram(~ posterior | component, data = z, main = main, ylab = ylab, xlab = xlab, groups = cluster, 
+    else hh <- lattice::histogram(~ posterior | component, data = z, main = main, ylab = ylab, xlab = xlab, groups = cluster, 
                          ylim = ylim, panel = panel, prepanel = prepanel, as.table = as.table, endpoints = endpoints, ...)
     if (root) {
       hh$yscale.components <- function (lim, packet.number = 0, packet.list = NULL, right = TRUE, ...) 

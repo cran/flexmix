@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 4666 2011-02-23 15:52:35Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: allClasses.R 4834 2012-08-02 10:17:09Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -53,8 +53,8 @@ setClass("FLXM",
                         "VIRTUAL"),
          prototype(formula=.~.,
                    fullformula=.~.,
-                   preproc.x = function(x) x,
-                   preproc.y = function(x) x))
+                   preproc.x = function(x) as.matrix(x),
+                   preproc.y = function(x) as.matrix(x)))
 
 ## model-based clustering
 setClass("FLXMC",

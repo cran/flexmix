@@ -4,15 +4,6 @@
 \alias{FLXMRlmmcfix-class}
 \alias{FLXMRlmc-class}
 \alias{FLXMRlmcfix-class}
-\alias{FLXmstep,FLXMRlmmc-method}
-\alias{FLXmstep,FLXMRlmmcfix-method}
-\alias{FLXmstep,FLXMRlmc-method}
-\alias{FLXmstep,FLXMRlmcfix-method}
-\alias{FLXgetModelmatrix,FLXMRlmmc-method}
-\alias{FLXgetModelmatrix,FLXMRlmc-method}
-\alias{FLXgetObs,FLXMRlmc-method}
-\alias{FLXdeterminePostunscaled,FLXMRlmmc-method}
-\alias{FLXdeterminePostunscaled,FLXMRlmc-method}
 \alias{predict,FLXMRlmc-method}
 \title{FlexMix Interface to Linear Mixed Models with Left-Censored
   Observations}

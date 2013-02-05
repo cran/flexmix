@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2008 Friedrich Leisch and Bettina Gruen
-#  $Id: robust.R 4142 2008-10-01 13:19:19Z leisch $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: robust.R 4834 2012-08-02 10:17:09Z gruen $
 #
 ###*********************************************************
 

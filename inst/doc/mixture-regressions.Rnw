@@ -709,7 +709,11 @@ with argument \code{which} to specify the selection criterion. The
 best model with respect to the BIC is selected with:
 <<>>=
 betaMixFix_3 <- getModel(betaMixFix, which = "BIC")
+betaMixFix_3 <- relabel(betaMixFix_3, "model", "Intercept")
 @ 
+
+The components of the selected model are ordered with respect to the
+estimated intercept values.
 
 In this case a model with three components is selected with respect to
 the BIC. The fitted values for the model with three components are
@@ -763,6 +767,7 @@ aggregated data for each center can be used.
 betaMix <- stepFlexmix(cbind(Deaths, Total - Deaths) ~ Treatment | Center,
   model = FLXMRglm(family = "binomial"), k = 3, nrep = 5, 
   data = betablocker)
+betaMix <- relabel(betaMix, "model", "Treatment")
 parameters(betaMix)
 c(BIC(betaMixFix_3), BIC(betaMix))
 @
@@ -795,7 +800,7 @@ print(plot(betaMixFix_3, nint = 10, mark = 1, col = "grey", layout = c(3, 1)))
 \begin{figure}
   \centering
 <<fig=true, echo=false, results=hide>>=
-print(plot(betaMixFix_3, nint = 10, mark = 3, col = "grey", layout = c(3, 1)))
+print(plot(betaMixFix_3, nint = 10, mark = 2, col = "grey", layout = c(3, 1)))
 @ 
 \caption{Default plot of \code{"flexmix"} objects where the observations
   assigned to the third component are marked.}\label{fig:default-2}
@@ -804,7 +809,7 @@ print(plot(betaMixFix_3, nint = 10, mark = 3, col = "grey", layout = c(3, 1)))
 The rootogram indicates that the components are well separated. In
 Figure~\ref{fig:default} it can be seen that component 1 is completely
 separated from the other two components, while
-Figure~\ref{fig:default-2} shows that component 3 has a slight overlap
+Figure~\ref{fig:default-2} shows that component 2 has a slight overlap
 with both other components.
 
 The cluster assignments using the maximum a-posteriori probabilities

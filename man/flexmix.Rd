@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  $Id: flexmix.Rd 4831 2012-07-29 20:28:08Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -72,7 +72,17 @@ flexmix(formula, data = list(), k = NULL, cluster = NULL,
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression in R. \emph{Journal of Statistical
-  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
+    Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
+
+  Bettina Gruen and Friedrich Leisch. Fitting finite mixtures of
+  generalized linear regressions in R. Computational Statistics & Data
+  Analysis, 51(11), 5247-5252, 2007. doi:10.1016/j.csda.2006.08.014
+
+  Bettina Gruen and Friedrich Leisch. FlexMix Version 2: Finite
+  mixtures with concomitant variables and varying and constant
+  parameters Journal of Statistical Software, 28(4), 1-35, 2008. URL
+  http://www.jstatsoft.org/v28/i04/
+  
 }
 \keyword{regression}
 \keyword{cluster}

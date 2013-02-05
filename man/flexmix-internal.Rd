@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix-internal.Rd 4802 2012-03-20 14:21:15Z gruen $
+%  $Id: flexmix-internal.Rd 4837 2012-08-08 18:26:26Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -10,12 +10,18 @@
 \alias{FLXdeterminePostunscaled}
 \alias{FLXdeterminePostunscaled,FLXM-method}
 \alias{FLXdeterminePostunscaled,FLXMRfix-method}
+\alias{FLXdeterminePostunscaled,FLXMRlmc-method}
+\alias{FLXdeterminePostunscaled,FLXMRlmmc-method}
+\alias{FLXdeterminePostunscaled,FLXMRcondlogit-method}
 \alias{FLXgetK}
 \alias{FLXgetK,FLXM-method}
 \alias{FLXgetK,FLXMRfix-method}
 \alias{FLXgetModelmatrix}
 \alias{FLXgetModelmatrix,FLXM-method}
+\alias{FLXgetModelmatrix,FLXMRcondlogit-method}
 \alias{FLXgetModelmatrix,FLXMRfix-method}
+\alias{FLXgetModelmatrix,FLXMRlmc-method}
+\alias{FLXgetModelmatrix,FLXMRlmmc-method}
 \alias{FLXgetModelmatrix,FLXMRmgcv-method}
 \alias{FLXgetModelmatrix,FLXMRrobglm-method}
 \alias{FLXgetModelmatrix,FLXMRziglm-method}
@@ -23,9 +29,15 @@
 \alias{FLXgetObs}
 \alias{FLXgetObs,FLXM-method}
 \alias{FLXgetObs,FLXMRfix-method}
+\alias{FLXgetObs,FLXMRlmc-method}
 \alias{FLXmstep}       
 \alias{FLXmstep,FLXM-method}
+\alias{FLXmstep,FLXMRcondlogit-method}
 \alias{FLXmstep,FLXMRfix-method}
+\alias{FLXmstep,FLXMRlmc-method}
+\alias{FLXmstep,FLXMRlmcfix-method}
+\alias{FLXmstep,FLXMRlmmc-method}
+\alias{FLXmstep,FLXMRlmmcfix-method}
 \alias{FLXmstep,FLXMRmgcv-method}
 \alias{FLXmstep,FLXMRrobglm-method}
 \alias{FLXmstep,FLXMRziglm-method}
@@ -81,7 +93,9 @@
 \alias{existGradient}
 \alias{existGradient,FLXM-method}
 \alias{existGradient,FLXMRglm-method}
+\alias{existGradient,FLXMRcondlogit-method}
 \alias{existGradient,FLXMRglmfix-method}
+\alias{existGradient,FLXMRmultinom-method}
 \alias{existGradient,FLXP-method}
 
 \title{Internal FlexMix functions}

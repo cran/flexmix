@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-refit.R 4666 2011-02-23 15:52:35Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: plot-refit.R 4859 2012-12-18 08:42:33Z gruen $
 #
 
 prepanel.default.coef <- function (x, y, subscripts, groups=NULL, horizontal = TRUE, nlevels, origin = NULL, 
@@ -50,18 +50,18 @@ panel.coef <- function(x, y, subscripts, groups, significant = NULL, horizontal 
     col.fill[!significant[subscripts]] <- col[2]
   }
   else if (missing(col)) col.fill <- "grey" else col.fill <- col
-  panel.barchart(x, y, border = col.sig, col = col.fill, horizontal = horizontal, ...)
+  lattice::panel.barchart(x, y, border = col.sig, col = col.fill, horizontal = horizontal, ...)
   if (!missing(groups)) {
     if (horizontal) {
       z <- x + rep(c(-1,1), each = length(x)) * matrix(rep(groups[subscripts], 2), ncol = 2)
       for (i in seq_along(x)) {
-        panel.xyplot(z[i,], rep(y[i], 2), type = "l", col = col.sig[i], lwd = lwd)
+        lattice::panel.xyplot(z[i,], rep(y[i], 2), type = "l", col = col.sig[i], lwd = lwd)
       }
     }
     else {
       z <- y + rep(c(-1,1), each = length(y)) * matrix(rep(groups[subscripts], 2), ncol = 2)
       for (i in seq_along(y)) {
-        panel.xyplot(rep(x[i], 2), z[i,], type = "l", col = col.sig[i], lwd = lwd)
+        lattice::panel.xyplot(rep(x[i], 2), z[i,], type = "l", col = col.sig[i], lwd = lwd)
       }
     }
   }
@@ -100,10 +100,10 @@ function(x, y, model = 1, which = c("model", "concomitant"),
     }
     groups <- if (ci) plot.data$SD else NULL
     significant <- if (significance) plot.data$Significance else NULL
-    xyplot(formula, data = plot.data, xlab = xlab, ylab = ylab, origin = 0, horizontal = horizontal,
-           scales = scales, as.table = as.table, significant = significant,
-           groups = groups, prepanel = function(...) prepanel.default.coef(...),
-           panel = function(x, y, subscripts, groups, ...)
-           panel.coef(x, y, subscripts, groups, ...), ...)
+    lattice::xyplot(formula, data = plot.data, xlab = xlab, ylab = ylab, origin = 0, horizontal = horizontal,
+                    scales = scales, as.table = as.table, significant = significant,
+                    groups = groups, prepanel = function(...) prepanel.default.coef(...),
+                    panel = function(x, y, subscripts, groups, ...)
+                    panel.coef(x, y, subscripts, groups, ...), ...)
 })
 

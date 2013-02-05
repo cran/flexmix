@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: flxmcmvpois.R 4805 2012-04-05 16:15:44Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: flxmcmvpois.R 4859 2012-12-18 08:42:33Z gruen $
 #
 
 FLXMCmvpois <- function(formula=.~.)
@@ -8,7 +8,6 @@ FLXMCmvpois <- function(formula=.~.)
   z <- new("FLXMC", weighted=TRUE, formula=formula,
                 dist="mvpois", name="model-based Poisson clustering")
   
-  require("stats")
   z@preproc.y <- function(x){
     x <- as.matrix(x)
     storage.mode(x) <- "integer"

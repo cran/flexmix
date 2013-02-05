@@ -66,7 +66,7 @@ par(opar)
 f1 <- flexmix(y~., data=df2, k=2)
 
 ## sort components on Intercept
-f1 <- relabel(f1, "Intercept")
+f1 <- relabel(f1, "model", "Intercept")
 
 ## the parameters should be close to the true beta and sigma
 round(parameters(f1),3)
@@ -77,7 +77,7 @@ df3 <- ExLinear(beta/2, 100, min=-1, max=2, family="poisson")
 plot(y~x1, df3, col=attr(df3, "clusters"))
 
 f3 <- flexmix(y~., data=df3, k=2, model=FLXMRglm(family="poisson"))
-round(parameters(relabel(f3, "Intercept")), 3)
+round(parameters(relabel(f3, "model", "Intercept")), 3)
 beta/2
 }
 \keyword{datasets}

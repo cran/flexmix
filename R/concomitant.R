@@ -1,19 +1,18 @@
 #
-#  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 4709 2011-07-29 07:13:40Z gruen $
+#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  $Id: concomitant.R 4859 2012-12-18 08:42:33Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {
   z <- new("FLXPmultinom", name="FLXPmultinom", formula=formula)
   multinom.fit <- function(x, y, w, ...) {
-    require("nnet")
     r <- ncol(x)
     p <- ncol(y)
     if (p < 2) stop("Multinom requires at least two components.")
     mask <- c(rep(0, r + 1), rep(c(0, rep(1, r)), p - 1))
-    nnet.default(x, y, w, mask = mask, size = 0, 
-                 skip = TRUE, softmax = TRUE, censored = FALSE, 
-                 rang = 0, trace=FALSE,...)
+    nnet::nnet.default(x, y, w, mask = mask, size = 0, 
+                       skip = TRUE, softmax = TRUE, censored = FALSE, 
+                       rang = 0, trace=FALSE,...)
   }
   z@fit <- function(x, y, w, ...) multinom.fit(x, y, w, ...)$fitted.values
   z@refit <- function(x, y, w, ...) {

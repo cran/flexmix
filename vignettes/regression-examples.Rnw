@@ -242,7 +242,9 @@ The mixture model is fitted by first loading the package and the
 dataset and then specifying the component specific model. In a first
 step a component specific model with only varying effects is
 specified. Then the fitting function \code{flexmix()} is called
-repeatedly using \code{stepFlexmix()}.
+repeatedly using \code{stepFlexmix()}. Finally, we order the
+components such that they are in ascending order with respect to the
+coefficients of the variable \code{x1}.
 <<NregFix>>=
 set.seed(2807)
 library("flexmix")
@@ -250,6 +252,7 @@ data("NregFix", package = "flexmix")
 Model <- FLXMRglm(~ x2 + x1)
 fittedModel <- stepFlexmix(y ~ 1, model = Model, nrep = 3, k = 3,
   data = NregFix, concomitant = FLXPmultinom(~ w))             
+fittedModel <- relabel(fittedModel, "model", "x1")
 summary(refit(fittedModel))
 @ 
 
@@ -349,6 +352,7 @@ betaMixFix
 <<beta-fig, fig=true, echo=false, results=hide, height = 5>>=
 library("grid")
 betaMixFix_3 <- getModel(betaMixFix, "3")
+betaMixFix_3 <- relabel(betaMixFix_3, "model", "Intercept")
 betablocker$Center <- with(betablocker, factor(Center, levels = Center[order((Deaths/Total)[1:22])]))
 clusters <- factor(clusters(betaMixFix_3), labels = paste("Cluster", 1:3))
 print(dotplot(Deaths/Total ~ Center | clusters, groups  = Treatment, as.table = TRUE,
@@ -395,12 +399,12 @@ probabilities smaller than \code{eps} are omitted. With argument
 marked which are assigned to this component based on the maximum
 a-posteriori probabilities. This indicates which components overlap.
 <<default-plot, fig=true>>=
-print(plot(betaMixFix_3, mark = 2, col = "grey", markcol = 1))
+print(plot(betaMixFix_3, mark = 1, col = "grey", markcol = 1))
 @ 
 
 The default plot of the fitted model indicates that the components are
-well separated. In addition component 2 has a slight overlap with
-component 3, but none with component 1.
+well separated. In addition component 1 has a slight overlap with
+component 2 but none with component 3.
 
 The fitted parameters of the component specific models can be accessed
 with:
