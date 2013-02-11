@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4859 2012-12-18 08:42:33Z gruen $
+#  $Id: models.R 4880 2013-02-10 22:28:57Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -24,7 +24,6 @@ FLXMRglm <- function(formula=.~.,
              name=paste("FLXMRglm", family, sep=":"), offset = offset,
              family=family, refit=glmrefit)
     z@preproc.y <- function(x){
-      x <- as.matrix(x)
       if (ncol(x) > 1)
         stop(paste("for the", family, "family y must be univariate"))
       x
@@ -59,7 +58,6 @@ FLXMRglm <- function(formula=.~.,
     }
     else if(family=="binomial"){
       z@preproc.y <- function(x){
-        x <- as.matrix(x)
         if (ncol(x) != 2)
           stop("for the binomial family, y must be a 2 column matrix\n",
                "where col 1 is no. successes and col 2 is no. failures")
@@ -214,7 +212,6 @@ MCmvbinary <- function(formula=.~.)
 
     ## make sure that y is binary
     z@preproc.y <- function(x){
-        x <- as.matrix(x)
         storage.mode(x) <- "logical"
         storage.mode(x) <- "integer"
         x
@@ -297,7 +294,6 @@ FLXMCmvcombi <- function(formula=.~.)
     ## figure out who is binary
     BINARY <- NULL
     z@preproc.y <- function(x){
-      x <- as.matrix(x)
       BINARY <<- apply(x, 2, function(z) all(unique(z) %in% c(0,1)))
       x
     }

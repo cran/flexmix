@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4834 2012-08-02 10:17:09Z gruen $
+#  $Id: flexmix.R 4880 2013-02-10 22:28:57Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -335,7 +335,8 @@ function(model, data, formula, lhs=TRUE, ...)
   if (lhs) {
     mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL) else model.frame(model@terms, data=data, na.action = NULL)
     model@terms <- attr(mf, "terms")
-    model@y <- model@preproc.y(model.response(mf))
+    response <- as.matrix(model.response(mf))
+    model@y <- model@preproc.y(response)
   }
   else {
     mt1 <- if (is.null(model@terms)) terms(model@fullformula, data=data) else model@terms

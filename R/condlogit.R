@@ -47,8 +47,8 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRcondlogit"),
   if (lhs) {
     mf <- model.frame(model@fullformula, data=data, na.action = NULL)
     model@x <- model.matrix(attr(mf, "terms"), data=mf)
-    y <- model.response(mf)
-    model@y <- model@preproc.y(as.matrix(y))
+    response <- as.matrix(model.response(mf))
+    model@y <- model@preproc.y(response)
   }
   else {
     mt1 <- terms(model@fullformula, data=data)

@@ -74,8 +74,8 @@ sample <- data.frame(y = rep(rnorm(unique(id)/2, 0, c(5, 2)), each = 10) +
                      x = x,
                      id = factor(id))
 fitted <- flexmix(.~.|id, k = 2, model = FLXMRlmm(y ~ x, random = ~ 1),
-                  data = sample)
+                  data = sample, control = list(tolerance = 10^-3),
+                  cluster = rep(rep(1:2, each = 10), 50))
 parameters(fitted)
-xyplot(y ~ x | clusters(fitted), groups = id, data = sample, type = "l")
 }
 \keyword{models}

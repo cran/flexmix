@@ -26,7 +26,6 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
                 weighted = TRUE, family = family, name = "FLXMRlmm:gaussian")
   if (any(varFix)) object <- new("FLXMRlmmfix", object)
   object@preproc.y <- function(x){
-    x <- as.matrix(x)
     if (ncol(x) > 1)
       stop(paste("y must be univariate"))
     x

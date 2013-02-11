@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: utils.R 4874 2013-02-05 06:58:49Z gruen $
+#  $Id: utils.R 4878 2013-02-08 09:09:35Z gruen $
 #
 
 list2object = function(from, to){
@@ -58,16 +58,3 @@ bipolarCols <- function(n, hue=c(10, 130), ...)
 }
 
 ###**********************************************************
-
-## code copied from flexclust/R/utils.R -r 4873
-
-MClapply <- function(X, FUN, multicore=TRUE, ...)
-{
-    if(inherits(multicore, "cluster"))
-        parallel::parLapply(multicore, X, FUN)
-    else if(multicore)
-        parallel::mclapply(X, FUN, ...)
-    else
-        lapply(X, FUN, ...)
-}
-

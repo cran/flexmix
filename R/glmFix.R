@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 4834 2012-08-02 10:17:09Z gruen $
+#  $Id: glmFix.R 4880 2013-02-10 22:28:57Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -156,8 +156,8 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRfix"), function(model, data
     if (lhs) {
       y <- mm.all$response
       rownames(y) <- NULL
-      model@y <- apply(y, 2, rep, sum(k@k))
-      model@y <- model@preproc.y(model@y)
+      response <- as.matrix(apply(y, 2, rep, sum(k@k)))
+      model@y <- model@preproc.y(response)
     }
     model@x <- model@preproc.x(model@x)
     model

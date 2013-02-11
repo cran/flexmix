@@ -1,5 +1,10 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-10}{
+  \itemize{
+    \item Parallel processing disabled in \code{stepFlexmix()}.
+  }
+}
 \section{Changes in flexmix version 2.3-9}{
   \itemize{
     \item Package dependencies, imports and suggests modified suitably

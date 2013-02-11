@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 4859 2012-12-18 08:42:33Z gruen $
+%  $Id: stepFlexmix.Rd 4879 2013-02-08 09:16:18Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -25,7 +25,7 @@ initMethod(name = c("tol.em", "cem.em", "sem.em"),
            step2 = list(), control = list(), nrep = 3L)
 
 stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
-            unique=FALSE, multicore = TRUE)
+            unique=FALSE)
 
 \S4method{plot}{stepFlexmix,missing}(x, y, what=c("AIC", "BIC", "ICL"),
   xlab=NULL, ylab=NULL, legend="topright", ...)
@@ -68,10 +68,6 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
     object.}
   \item{unique}{If \code{TRUE}, then \code{unique()} is called on the
     result, see below.}
-  \item{multicore}{If \code{TRUE}, use \code{mclapply()} from package
-    \pkg{parallel} for parallel processing. If an object of class
-    \code{"cluster"}, use \code{parLapply()} from package
-    \pkg{parallel}. If \code{FALSE}, no parallelization is performed.}
   \item{x, object}{An object of class \code{"stepFlexmix"}.}
   \item{y}{Not used.}
   \item{what}{Character vector naming information criteria to

@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 4874 2013-02-05 06:58:49Z gruen $
+#  Copyright (C) 2004-2013 Friedrich Leisch and Bettina Gruen
+#  $Id: stepFlexmix.R 4878 2013-02-08 09:09:35Z gruen $
 #
 
 setClass("stepFlexmix",
@@ -13,27 +13,27 @@ setClass("stepFlexmix",
 
 
 stepFlexmix <- function(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
-                        unique=FALSE, multicore=TRUE)
+                        unique=FALSE)
 {
     MYCALL <- match.call()
     MYCALL1 <- MYCALL
-
-    if (!is.logical(multicore)) 
-      stop("argument multicore is not logical (TRUE or FALSE)")
     
     bestFlexmix <- function(...)
     {
-      seed <- as.list(round(2^31 * runif(nrep, -1, 1)))
-      res <- MClapply(seed, function(y) {
-        set.seed(y)
-        if (verbose) 
-          cat(" *")
-        x <- try(flexmix(...))
-      }, multicore = multicore)
-      logLiks <- sapply(res, function(x) if (is(x, "try-error")) NA else logLik(x))
-      return(list(z = res[[which.max(logLiks)]],
-                  logLiks = logLiks))
+        z = new("flexmix", logLik=-Inf)
+        logLiks = rep(NA, length.out = nrep)
+        for(m in seq_len(nrep)){
+            if(verbose) cat(" *")
+            x = try(flexmix(...))
+            if (!is(x, "try-error")) {
+              logLiks[m] <- logLik(x)
+              if(logLik(x) > logLik(z))
+                z = x
+            }
+        }
+        return(list(z = z, logLiks = logLiks))
     }
+
     z = list()
     if(is.null(k)){
         RET = bestFlexmix(...)

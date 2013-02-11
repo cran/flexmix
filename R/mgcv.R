@@ -110,8 +110,8 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, dat
   if (lhs) {
     model@terms <- terms(gp$fake.formula, data = data)   
     mf <- model.frame(model@terms, data=data, na.action = NULL, drop.unused.levels = TRUE)
-    model@y <- as.matrix(model.response(mf, "numeric"))
-    model@y <- model@preproc.y(model@y)
+    response <- as.matrix(model.response(mf, "numeric"))
+    model@y <- model@preproc.y(response)
   }
   else {
     model@terms <- terms(gp$fake.formula, data = data)   
