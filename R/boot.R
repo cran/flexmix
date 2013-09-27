@@ -42,13 +42,28 @@ setMethod("FLXgetNewModelmatrix", "FLXM", function(object, model, indices, group
     obs_groups <- lapply(groups$group[groups$groupfirst][indices],
                          function(x) which(x == groups$group))
     indices_grouped <- unlist(obs_groups)
-    newgroups$group <- factor(rep(seq_along(obs_groups), sapply(obs_groups, length)))
-    newgroups$groupfirst <- !duplicated(newgroups$group)
   } else {
     indices_grouped <- indices
   }
   object@y <- model@y[indices_grouped,,drop=FALSE]
   object@x <- model@x[indices_grouped,,drop=FALSE]
+  object
+})
+
+setMethod("FLXgetNewModelmatrix", "FLXMRglmfix", function(object, model, indices, groups) {
+  if (length(groups$group) > 0) {
+    obs_groups <- lapply(groups$group[groups$groupfirst][indices],
+                         function(x) which(x == groups$group))
+    indices_grouped <- unlist(obs_groups)
+  } else {
+    indices_grouped <- indices
+  }
+  object@y <- do.call("rbind", rep(list(model@y[indices_grouped,,drop=FALSE]), sum(model@nestedformula@k)))
+  object@x <- do.call("rbind", lapply(seq_len(sum(model@nestedformula@k)), function(K)
+                                      model@x[model@segment[,K],,drop=FALSE][indices_grouped,,drop=FALSE]))
+  N <- nrow(object@x)/sum(model@nestedformula@k)
+  object@segment <- matrix(FALSE, ncol = sum(model@nestedformula@k), nrow = nrow(object@x))
+  for (m in seq_len(sum(model@nestedformula@k))) object@segment[(m - 1) * N + seq_len(N), m] <- TRUE
   object
 })
 
@@ -86,6 +101,12 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
       } else {
         n <- sum(groups$groupfirst)
         indices <- sample(seq_len(n), n, replace = TRUE)
+        if (length(groups$group) > 0) {
+            obs_groups <- lapply(groups$group[groups$groupfirst][indices],
+                                 function(x) which(x == groups$group))
+            newgroups$group <- factor(rep(seq_along(obs_groups), sapply(obs_groups, length)))
+            newgroups$groupfirst <- !duplicated(newgroups$group)
+        }
         for (i in seq_len(m)) {
           new@model[[i]] <- FLXgetNewModelmatrix(new@model[[i]], object@model[[i]],
                                                  indices, groups)
@@ -114,7 +135,7 @@ boot_flexmix <- function(object, R, sim = c("ordinary", "empirical", "parametric
           prior <- evalPrior(new@prior, new@concomitant)
           postunscaled <- if (is(prior, "matrix")) postunscaled + log(prior)
                           else sweep(postunscaled, 2, log(prior), "+")
-          postunscaled <- exp(postunscaled)
+          postunscaled <- exp(postunscaled - log_row_sums(postunscaled))
         }
         x <- try(FLXfit(new@model, new@concomitant, new@control, postunscaled, newgroups, weights = new@weights))
         if (!is(x, "try-error")) {

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4880 2013-02-10 22:28:57Z gruen $
+#  $Id: flexmix.R 4909 2013-08-15 09:46:51Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -100,7 +100,7 @@ setMethod("FLXremoveComponent", signature(model = "FLXM"), function(model, ...) 
 
 setMethod("FLXmstep", signature(model = "FLXM"), function(model, weights, components, ...) {
   if ("component" %in% names(formals(model@fit)))
-    sapply(seq_len(ncol(weights)), function(k) model@fit(model@x, model@y, weights[,k], component = components[[k]]))
+    sapply(seq_len(ncol(weights)), function(k) model@fit(model@x, model@y, weights[,k], component = components[[k]]@parameters))
   else
     sapply(seq_len(ncol(weights)), function(k) model@fit(model@x, model@y, weights[,k]))
 })
@@ -142,7 +142,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
                          group, groupfirst)
       # Check min.prior
       nok <- if (nrow(prior) == 1) which(prior < control@minprior) else {
-               if (is.null(weights)) which(colMeans(prior[groupfirst,]) < control@minprior)
+               if (is.null(weights)) which(colMeans(prior[groupfirst,,drop=FALSE]) < control@minprior)
                else which(colSums(prior[groupfirst,] * weights[groupfirst])/sum(weights[groupfirst]) < control@minprior)
              }
       if(length(nok)) {
@@ -376,7 +376,7 @@ groupPosteriors <- function(x, group)
 
 ungroupPriors <- function(x, group, groupfirst) {
   if (!length(group)) group <- seq_along(groupfirst)
-  if (nrow(x) > 1) {
+  if (nrow(x) >= length(group[groupfirst])) {
     x <- x[order(as.integer(group[groupfirst])),,drop=FALSE]
     x <- x[as.integer(group),,drop=FALSE]
   }

@@ -40,14 +40,14 @@ FLXMCfactanal(formula = . ~ ., factors = 1, ...)
 }
 \seealso{\code{\link{flexmix}}}
 \examples{
-## Reproduce Table 8.1. p.255 (McLachlan and Peel, 2000)
+## Reproduce (partly) Table 8.1. p.255 (McLachlan and Peel, 2000)
 if (require("gclus")) {
   data("wine", package = "gclus")
   wine_data <- as.matrix(wine[,-1])
   set.seed(123)
   wine_fl_diag <- initFlexmix(wine_data ~ 1, k = 3, nrep = 10,
                               model = FLXMCmvnorm(diagonal = TRUE))
-  wine_fl_fact <- lapply(1:8, function(q) flexmix(wine_data ~ 1, model =
+  wine_fl_fact <- lapply(1:4, function(q) flexmix(wine_data ~ 1, model =
                           FLXMCfactanal(factors = q, nstart = 3),
                           cluster = posterior(wine_fl_diag)))
   sapply(wine_fl_fact, logLik)

@@ -59,7 +59,7 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
 
   object@defineComponent <- expression({
     predict <- function(x, ...) 
-      if (is(coef, "smooth.spline.fit")) lapply(x, function(X) getS3method("predict", "smooth.spline.fit")(coef, X)$y)
+      if (is(coef, "smooth.spline.fit")) lapply(x, function(X) stats::predict(coef, X)$y)
       else lapply(x, function(X) X %*% coef)
     
     logLik <- function(x, y, z, which, group, ...) {
@@ -101,7 +101,7 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
       lapply(fit, function(Z) {
         comp <- with(list(coef = coef(Z),
                           sigma2 =  Z$sigma2,
-                          df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], ncol(w), 1)),
+                          df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], 1/ncol(w), 1)),
                      eval(object@defineComponent))
         comp@random <- determineRandom(comp@predict(x), y, z, which, comp@parameters$sigma2)
         comp

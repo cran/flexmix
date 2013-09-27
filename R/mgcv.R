@@ -1,14 +1,12 @@
 setClass("FLXMRmgcv",
          representation(G = "list",
-                        control = "list",
-                        gp = "ANY"),
+                        control = "list"),
          contains="FLXMRglm")
 
 FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson"),
                       offset = NULL, control = NULL, optimizer = c("outer", "newton"),
                       in.out = NULL, eps = .Machine$double.eps, ...)
 {
-  s <- mgcv::s
   if (is.null(control)) control <- mgcv::gam.control()
   family <- match.arg(family)
 
@@ -18,7 +16,7 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
 
   scale <- if (family %in% c("binomial", "poisson")) 1 else -1
 
-  gam_fit <- function(G, gp, w) {
+  gam_fit <- function(G, w) {
     G$family <- get(family)()
     G$am <- am
     G$w <- w
@@ -53,8 +51,8 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
         }
       }
     }
-    z <- mgcv:::estimate.gam(G, method = "ML", optimizer = optimizer, control = control, scale = scale,
-                             in.out = in.out, ...)
+    z <- mgcv::gam(G = G, method = "ML", optimizer = optimizer, control = control, scale = scale,
+                   in.out = in.out, ...)
     if (zero_weights) {
       residuals <- z$residuals
       z$residuals <- rep(0, length(ok))
@@ -69,8 +67,8 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
   }
 
   if (family=="gaussian"){
-    z@fit <- function(x, y, w, G, gp){
-      gam.fit <- gam_fit(G, gp, w)
+    z@fit <- function(x, y, w, G){
+      gam.fit <- gam_fit(G, w)
       with(list(coef = gam.fit$coefficients, df = sum(gam.fit$edf)+1,
                 sigma = sqrt(sum(w * gam.fit$residuals^2 /
                   mean(w))/ (nrow(x)-sum(gam.fit$edf)))),
@@ -78,8 +76,8 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
     }
   }
   else if(family %in% c("binomial", "poisson")){
-    z@fit <- function(x, y, w, G, gp){
-      gam.fit <- gam_fit(G, gp, w)
+    z@fit <- function(x, y, w, G){
+      gam.fit <- gam_fit(G, w)
       with(list(coef = gam.fit$coefficients, df = sum(gam.fit$edf)),
                 eval(z@defineComponent))
     }
@@ -90,11 +88,11 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
 
 setMethod("FLXmstep", signature(model = "FLXMRmgcv"), function(model, weights, ...)
 {
-  apply(weights, 2, function(w) model@fit(model@x, model@y, w, model@G, model@gp))
+  apply(weights, 2, function(w) model@fit(model@x, model@y, w, model@G))
 })
 
 setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, data, formula, lhs=TRUE,
-                                           paraPen = list(), ...)
+                                             paraPen = list(), ...)
 {
   require("mgcv")
   formula <- RemoveGrouping(formula)
@@ -103,9 +101,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, dat
   if(is.null(model@formula))
     model@formula <- formula
 
-  s <- mgcv::s
   model@fullformula <- update(terms(formula, data=data), model@formula)
-
   gp <- mgcv::interpret.gam(model@fullformula)
   if (lhs) {
     model@terms <- terms(gp$fake.formula, data = data)   
@@ -117,18 +113,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, dat
     model@terms <- terms(gp$fake.formula, data = data)   
     mf <- model.frame(delete.response(model@terms), data=data, na.action = NULL, drop.unused.levels = TRUE)
   }
-  model@gp <- gp
-  pmf <- model.frame(delete.response(terms(gp$pf, data = data)), data = data, na.action = NULL, drop.unused.levels = TRUE)
-  pterms <- delete.response(attr(pmf, "terms"))
-  model@G <- mgcv:::gam.setup(gp, pterms = pterms, data = mf, 
-                              knots = NULL, sp = NULL, min.sp = NULL, H = NULL, 
-                              absorb.cons = TRUE, paraPen = paraPen)
-  model@G$offset <- model@offset
-  if (is.null(model@G$offset)) 
-    model@G$offset <- rep(0, model@G$n)
-  model@G$terms <- model@terms
-  model@G$pterms <- pterms
-  model@G$mf <- mf
+  model@G <- mgcv::gam(model@fullformula, data = data, fit = FALSE)
   model@x <- model@G$X
   model@contrasts <- attr(model@x, "contrasts")
   model@x <- model@preproc.x(model@x)

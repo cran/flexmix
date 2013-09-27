@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: Lapply-methods.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: Lapply-methods.Rd 4910 2013-08-19 19:40:35Z gruen $
 %
 \name{Lapply-methods}
 \docType{methods}
@@ -38,7 +38,7 @@
 \keyword{methods}
 \author{Friedrich Leisch and Bettina Gruen}
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 ex2 <- flexmix(yn ~ x, data = NPreg, k = 2, model = list(FLXMRglm(yn ~ 
     . + I(x^2)), FLXMRglm(yp ~ ., family = "poisson")))
 ex2r <- refit(ex2, method = "mstep")

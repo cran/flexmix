@@ -40,6 +40,8 @@ FLXMRcondlogit(formula = . ~ ., strata)
 \examples{
 if (require("mlogit")) {
   data("Catsup", package = "mlogit")
+  ## To reduce the time needed for the example only a subset is used
+  Catsup <- subset(Catsup, id \%in\% 1:100)
   Catsup$experiment <- seq_len(nrow(Catsup))
   vnames <- c("display", "feature", "price")
   Catsup_long <-

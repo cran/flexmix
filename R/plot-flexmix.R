@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: plot-flexmix.R 4859 2012-12-18 08:42:33Z gruen $
+#  $Id: plot-flexmix.R 4922 2013-09-03 13:32:45Z gruen $
 #
 
 determine_y <- function(h, root) {
@@ -25,10 +25,10 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
               lattice::do.breaks(range(x, finite = TRUE), nint)
             else quantile(x, 0:nint/nint, na.rm = TRUE)
         }
-        h <- lattice:::hist.constructor(x, breaks = breaks, plot = FALSE, ...)
+        h <- hist.constructor(x, breaks = breaks, plot = FALSE, ...)
         y <- determine_y(h, root)
         if (!is.null(mark)) {
-          h1 <- lattice:::hist.constructor(x[groups[subscripts] == mark], breaks = h$breaks, plot = FALSE, ...)
+          h1 <- hist.constructor(x[groups[subscripts] == mark], breaks = h$breaks, plot = FALSE, ...)
           y1 <- determine_y(h1, root)
         }
         nb <- length(breaks)
@@ -63,7 +63,7 @@ function (x, breaks, equal.widths = TRUE, nint = max(round(log2(length(x)) + 1),
         lattice::do.breaks(range(x, finite = TRUE), nint)
       else quantile(x, 0:nint/nint, na.rm = TRUE)
     }
-    h <- lattice:::hist.constructor(x, breaks = breaks, plot = FALSE, ...)
+    h <- hist.constructor(x, breaks = breaks, plot = FALSE, ...)
     y <- determine_y(h, root)
     list(xlim = if (isFactor) xlimits else range(x, breaks, 
            finite = TRUE), ylim = range(0, y, finite = TRUE), 
@@ -117,13 +117,13 @@ function(x, y, mark=NULL, markcol=NULL, col=NULL,
     if (root) {
       hh$yscale.components <- function (lim, packet.number = 0, packet.list = NULL, right = TRUE, ...) 
         {
-          comps <- lattice:::calculateAxisComponents(lim, packet.list = packet.list, 
-                                                     packet.number = packet.number, ...)
+          comps <- calculateAxisComponents(lim, packet.list = packet.list, 
+                                           packet.number = packet.number, ...)
           comps$at <- sqrt(seq(min(comps$at)^2, max(comps$at)^2, length.out = length(comps$at)))
           comps$labels <- format(comps$at^2, trim = TRUE)
           list(num.limit = comps$num.limit, left = list(ticks = list(at = comps$at, 
-                                                          tck = 1), labels = list(at = comps$at, labels = comps$labels, 
-                                                                      cex = 1, check.overlap = comps$check.overlap)), right = right)
+                                                            tck = 1), labels = list(at = comps$at, labels = comps$labels, 
+                                                                          cex = 1, check.overlap = comps$check.overlap)), right = right)
         }
     }
     hh

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4880 2013-02-10 22:28:57Z gruen $
+#  $Id: models.R 4909 2013-08-15 09:46:51Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -83,7 +83,7 @@ FLXMRglm <- function(formula=.~.,
       })
 
       z@fit <- function(x, y, w, component){
-        fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset, start=component@parameters$coef)
+        fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset, start=component$coef)
         with(list(coef = coef(fit), df = ncol(x)),
              eval(z@defineComponent))
       }
@@ -107,7 +107,7 @@ FLXMRglm <- function(formula=.~.,
       })
           
       z@fit <- function(x, y, w, component){
-        fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset, start=component@parameters$coef)
+        fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset, start=component$coef)
         with(list(coef = coef(fit), df = ncol(x)),
              eval(z@defineComponent))
       }
@@ -131,7 +131,7 @@ FLXMRglm <- function(formula=.~.,
       })
 
       z@fit <- function(x, y, w, component){
-        fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset, start=component@parameters$coef)
+        fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset, start=component$coef)
         with(list(coef = coef(fit), df = ncol(x)+1,
                   shape = sum(fit$prior.weights)/fit$deviance),
              eval(z@defineComponent))

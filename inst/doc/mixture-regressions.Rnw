@@ -63,6 +63,7 @@
 <<echo=false,results=hide>>=
 options(width=60, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 library("flexmix")
+library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)
 lattice.options(default.theme=ltheme)
 data("NPreg", package = "flexmix")

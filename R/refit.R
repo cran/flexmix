@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4834 2012-08-02 10:17:09Z gruen $
+#  $Id: refit.R 4890 2013-04-09 17:13:11Z gruen $
 #
 ###*********************************************************
 
@@ -102,13 +102,15 @@ function(object, ...) function(parms) {
 
 setMethod("getPriors", signature(object="FLXP"),
 function(object, group, groupfirst) {
-  priors <- apply(object@coef, 2, function(x) object@x %*% x)
+  priors <- matrix(apply(object@coef, 2, function(x) object@x %*% x),
+                   nrow = nrow(object@x))
   ungroupPriors(priors/rowSums(priors), group, groupfirst)
 })
 
 setMethod("getPriors", signature(object="FLXPmultinom"),
 function(object, group, groupfirst) {
-  priors <- apply(object@coef, 2, function(x) exp(object@x %*% x))
+  priors <- matrix(apply(object@coef, 2, function(x) exp(object@x %*% x)),
+                   nrow = nrow(object@x))
   ungroupPriors(priors/rowSums(priors), group, groupfirst)
 })
 

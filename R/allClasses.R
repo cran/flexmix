@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 4880 2013-02-10 22:28:57Z gruen $
+#  $Id: allClasses.R 4922 2013-09-03 13:32:45Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -241,7 +241,6 @@ function(object, model = 1, which = c("model", "concomitant"), ...) {
     })
   } else {
     z <- object@concomitant
-    class(z) <- c("multinom", "nnet")
     fitted.summary <- summary(z)
     k <- nrow(coef(fitted.summary)) + 1
     coefs <- lapply(2:k, function(n) {

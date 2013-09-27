@@ -1,5 +1,27 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-11}{
+  \itemize{
+    \item Examples changed to be less time consuming.
+    \item Bug fixed in ungroupPriors() and getPriors() to work with a
+      grouping where only one unique value is contained. Thanks to
+      Christine Koehler for pointing the problem out.
+    \item The \code{logLik()} method for \code{"flexmix"} objects now
+      also has a \code{newdata} argument.
+    \item In the M-step only the parameters of the previously fitted
+      components are passed over to avoid nesting of
+      environments. Thanks to Dominik Ernst for pointing the problem
+      out.
+    \item Function \code{boot()} was fixed to work correctly with
+      grouped data if the groups are kept and if fixed effects are
+      fitted.
+    \item Authors@R used in DESCRIPTION. Deepayan Sarkar listed as
+      contributor due to internal code copied from package lattice used
+      for the plots in flexmix.
+    \item Model driver \code{FLXMRlmer()} adapted for \pkg{lme4} (>=
+      1.0).
+  }
+}
 \section{Changes in flexmix version 2.3-10}{
   \itemize{
     \item Parallel processing disabled in \code{stepFlexmix()}.

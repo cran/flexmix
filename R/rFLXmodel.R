@@ -62,7 +62,7 @@ rmvbinary <- function(n, center) sapply(center, function(p) rbinom(n, 1, p))
 
 setMethod("rFLXM", signature(model = "FLXMC", components = "FLXcomponent"),
           function(model, components, class, ...) {
-            rmvnorm <- function(n, center, cov) mvtnorm:::rmvnorm(n = n, mean = center, sigma = cov)
+            rmvnorm <- function(n, center, cov) mvtnorm::rmvnorm(n = n, mean = center, sigma = cov)
             dots <- list(...)
             FUN <- paste("r", model@dist, sep = "")
             args <- c(n = nrow(model@x), dots, components@parameters)

@@ -1,11 +1,7 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: infocrit.R 4834 2012-08-02 10:17:09Z gruen $
+#  $Id: infocrit.R 4922 2013-09-03 13:32:45Z gruen $
 #
-
-if (!getRversion() >= "2.13.0") {
-  setGeneric("nobs", function(object, ...) standardGeneric("nobs"))
-}
 
 setMethod("nobs", signature(object="flexmix"),
 function(object, ...) {          
@@ -13,11 +9,18 @@ function(object, ...) {
 })
 
 setMethod("logLik", signature(object="flexmix"),
-function(object, ...){
-    z <- object@logLik
-    attr(z, "df") <- object@df
-    attr(z, "nobs") <- nobs(object)
-    class(z) <- "logLik"
+function(object, newdata, ...){
+    if (missing(newdata)) {
+        z <- object@logLik
+        attr(z, "df") <- object@df
+        attr(z, "nobs") <- nobs(object)
+        class(z) <- "logLik"
+    } else {
+        z <- sum(log(rowSums(posterior(object, newdata = newdata, unscaled = TRUE))))
+        attr(z, "df") <- object@df
+        attr(z, "nobs") <- nrow(newdata)
+        class(z) <- "logLik"
+    }
     z
 })
 

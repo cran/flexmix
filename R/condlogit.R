@@ -26,7 +26,7 @@ FLXMRcondlogit <- function(formula=.~., strata) {
   
   z@fit <- function(x, y, w, strata){
     index <- w > 0
-    fit <- survival::coxph.fit(x[index,], survival::Surv(1-y, y)[index], strata[index], weights=w[index], control = survival::coxph.control(),
+    fit <- survival::coxph.fit(x[index,,drop=FALSE], survival::Surv(1-y, y)[index], strata[index], weights=w[index], control = survival::coxph.control(),
                                method = "exact", rownames = seq_len(nrow(y))[index])
     coef <- coef(fit)
     df <- length(coef)

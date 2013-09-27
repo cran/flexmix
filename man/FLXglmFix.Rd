@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglmFix.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  $Id: FLXglmFix.Rd 4910 2013-08-19 19:40:35Z gruen $
 %
 \name{FLXMRglmfix}
 \alias{FLXMRglmfix}
@@ -43,7 +43,7 @@ FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE,
 \author{Friedrich Leisch and Bettina Gruen}
 \seealso{\code{FLXMRglm}}
 \examples{
-data("NPreg")
+data("NPreg", package = "flexmix")
 ex <- flexmix(yn~x|id2, data=NPreg, k=2,
               model=FLXMRglm(yn~.+I(x^2)))
 ex.fix <- flexmix(yn~x|id2, data = NPreg, 

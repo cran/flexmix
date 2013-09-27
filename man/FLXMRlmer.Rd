@@ -24,7 +24,7 @@
 FLXMRlmm(formula = . ~ ., random, lm.fit = c("lm.wfit",
           "smooth.spline"), varFix = c(Random = FALSE, Residual =
           FALSE), \dots)
-FLXMRlmer(formula = . ~ ., random, weighted = FALSE,
+FLXMRlmer(formula = . ~ ., random, weighted = TRUE,
           control = list(), eps = .Machine$double.eps)
 }
 \arguments{
@@ -34,8 +34,8 @@ FLXMRlmer(formula = . ~ ., random, weighted = FALSE,
     \code{flexmix} model
     formula.}
   \item{random}{A formula for specifying the random effects.}
-  \item{weighted}{A logical indicating if the model can estimate
-    weighted ML.}
+  \item{weighted}{A logical indicating if the model should be estimated
+    with weighted ML.}
   \item{control}{A list of control parameters. See
     \code{\link[lme4]{lmer}} for details.}
   \item{eps}{Observations with a component-specific posterior smaller
@@ -60,14 +60,15 @@ FLXMRlmer(formula = . ~ ., random, weighted = FALSE,
 \section{Warning}{
   For \code{FLXMRlmer} the weighted ML estimation is only correct if the
   covariate matrix of the random effects is the same for each
-  observation. By default non-weighted ML estimation is made. If this is
-  changed the condition on the covariate matrix of the random effects is
-  checked.
+  observation. By default weighted ML estimation is made and the
+  condition on the covariate matrix of the random effects is checked. If
+  this fails, only estimation with \code{weighted=FALSE} is possible
+  which will maximize the classification likelihood.
 }
 \author{Bettina Gruen}
 \examples{
-id <- rep(1:100, each = 10)
-x <- rep(1:10, 100)
+id <- rep(1:50, each = 10)
+x <- rep(1:10, 50)
 sample <- data.frame(y = rep(rnorm(unique(id)/2, 0, c(5, 2)), each = 10) +
                          rnorm(length(id), rep(c(3, 8), each = 10)) +
                          rep(c(0, 3), each = 10) * x,
@@ -75,7 +76,7 @@ sample <- data.frame(y = rep(rnorm(unique(id)/2, 0, c(5, 2)), each = 10) +
                      id = factor(id))
 fitted <- flexmix(.~.|id, k = 2, model = FLXMRlmm(y ~ x, random = ~ 1),
                   data = sample, control = list(tolerance = 10^-3),
-                  cluster = rep(rep(1:2, each = 10), 50))
+                  cluster = rep(rep(1:2, each = 10), 25))
 parameters(fitted)
 }
 \keyword{models}

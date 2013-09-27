@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 4879 2013-02-08 09:16:18Z gruen $
+%  $Id: stepFlexmix.Rd 4884 2013-02-13 09:34:58Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -119,15 +119,15 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
 \examples{
 data("Nclus", package = "flexmix")
 
-## try 5 times for k=4
+## try 2 times for k=4
 set.seed(511)
 ex1 <- initFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diagonal=FALSE),
-                   nrep = 5)
+                   nrep=2)
 ex1
 
-## now 3 times each for k=2:6, specify control parameter
-ex2 <- initFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
-                   control=list(minprior=0), nrep=3)
+## now 2 times each for k=2:5, specify control parameter
+ex2 <- initFlexmix(Nclus~1, k=2:5, model=FLXMCmvnorm(diagonal=FALSE),
+                   control=list(minprior=0), nrep=2)
 ex2
 plot(ex2)
 
@@ -143,8 +143,8 @@ getModel(ex2, which="3")
 ## get model with smallest ICL (here same as for AIC and BIC: true k=4)
 getModel(ex2, which="ICL")
 
-## now 1 time each for k=2:6, with larger minimum prior
-ex3 <- initFlexmix(Nclus~1, k=2:6, model=FLXMCmvnorm(diagonal=FALSE),
+## now 1 time each for k=2:5, with larger minimum prior
+ex3 <- initFlexmix(Nclus~1, k=2:5, model=FLXMCmvnorm(diagonal=FALSE),
                    control=list(minprior=0.1), nrep=1)
 ex3
 

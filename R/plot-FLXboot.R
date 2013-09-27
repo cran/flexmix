@@ -1,8 +1,8 @@
 prepanel.parallel.horizontal <- 
 function (x, y, z, horizontal = TRUE, ...) 
 {
-  if (horizontal) list(xlim = lattice:::extend.limits(c(1, ncol(as.data.frame(z))), prop = 0.03), ylim = c(0, 1), dx = 1, dy = 1)
-  else list(xlim = c(0, 1), ylim = lattice:::extend.limits(c(1, ncol(as.data.frame(z))), prop = 0.03), dx = 1, dy = 1)
+  if (horizontal) list(xlim = extend.limits(c(1, ncol(as.data.frame(z))), prop = 0.03), ylim = c(0, 1), dx = 1, dy = 1)
+  else list(xlim = c(0, 1), ylim = extend.limits(c(1, ncol(as.data.frame(z))), prop = 0.03), dx = 1, dy = 1)
 }
 
 panel.parallel.horizontal <- 
@@ -79,7 +79,7 @@ confidence.panel.boot <- function(x, y, z, subscripts, lwd = 1, SD = NULL, ..., 
   panel.parallel.horizontal(x, y, z, subscripts, ..., lower = lower, upper = upper) 
   if (!is.null(SD)) {
     for (l in seq_along(SD)) {
-      llines(y = SD[[l]][,2], x = seq_len(nc), col="white", lwd=lwd, lty = 1)
+      lattice::llines(y = SD[[l]][,2], x = seq_len(nc), col="white", lwd=lwd, lty = 1)
     }
   }
 }

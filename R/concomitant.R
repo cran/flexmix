@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 4859 2012-12-18 08:42:33Z gruen $
+#  Copyright (C) 2004-2013 Friedrich Leisch and Bettina Gruen
+#  $Id: concomitant.R 4922 2013-09-03 13:32:45Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {
@@ -17,18 +17,10 @@ FLXPmultinom <- function(formula=~1) {
   z@fit <- function(x, y, w, ...) multinom.fit(x, y, w, ...)$fitted.values
   z@refit <- function(x, y, w, ...) {
     if (missing(w) || is.null(w)) w <- rep(1, nrow(y))
-    colnames(y) <- NULL
-    fit <- multinom.fit(x, y, w, ...)
+    fit <- multinom(y ~ 0 + x, weights = w, data = list(y = y, x = x), Hess = TRUE, trace = FALSE)
     fit$coefnames <- colnames(x)
-    fit$weights <- w
-    fit$vcoefnames <- fit$coefnames[seq_len(ncol(x))]
-    fit$lab <- seq_len(ncol(y))
-    class(fit) <- c("multinom", "nnet")
-    fit$Hessian <- nnet:::multinomHess(fit, x)
-    Xr <- qr(x)$rank
-    edf <- (ncol(y) - 1) * Xr
-    fit$df.residual <- sum(w) - edf
-    class(fit) <- NULL
+    fit$vcoefnames <- fit$coefnames[seq_along(fit$coefnames)]
+    dimnames(fit$Hessian) <- lapply(dim(fit$Hessian) / ncol(x), function(i) paste(rep(seq_len(i) + 1, each = ncol(x)), colnames(x), sep = ":"))
     fit
   }
   z
@@ -93,7 +85,7 @@ setMethod("FLXfillConcomitant", signature(concomitant="FLXP"), function(concomit
 })
 
 setMethod("FLXfillConcomitant", signature(concomitant="FLXPmultinom"), function(concomitant, posterior, weights) {
-  concomitant@coef <- cbind("1" = 0, t(getS3method("coef", "multinom")(concomitant@refit(concomitant@x, posterior, weights))))
+  concomitant@coef <- cbind("1" = 0, t(coef(concomitant@refit(concomitant@x, posterior, weights))))
   concomitant
 })
 
