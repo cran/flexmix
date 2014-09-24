@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4909 2013-08-15 09:46:51Z gruen $
+#  $Id: flexmix.R 4978 2014-02-13 15:45:15Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -333,14 +333,14 @@ function(model, data, formula, lhs=TRUE, ...)
   ## </FIXME>
   
   if (lhs) {
-    mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL) else model.frame(model@terms, data=data, na.action = NULL)
+    mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL) else model.frame(model@terms, data=data, na.action = NULL, xlev = model@xlevels)
     model@terms <- attr(mf, "terms")
     response <- as.matrix(model.response(mf))
     model@y <- model@preproc.y(response)
   }
   else {
     mt1 <- if (is.null(model@terms)) terms(model@fullformula, data=data) else model@terms
-    mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
+    mf <- model.frame(delete.response(mt1), data=data, na.action = NULL, xlev = model@xlevels)
     model@terms<- attr(mf, "terms")
     ## <FIXME>: warum war das da???
     ## attr(mt, "intercept") <- attr(mt1, "intercept")

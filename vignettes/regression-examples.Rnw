@@ -623,7 +623,7 @@ tab <- with(trypanosome, table(Dead, Dose))
 Tryp.dat <- data.frame(Dead = tab["1",], Alive = tab["0",], Dose = as.numeric(colnames(tab)))
 plot(Dead/(Dead+Alive) ~ Dose, data = Tryp.dat)
 Tryp.pred <- predict(glm(cbind(Dead, 1-Dead) ~ log(Dose), family = "binomial", data = trypanosome), newdata=Tryp.dat, type = "response")
-TrypMix.pred <- as.matrix(as.data.frame(predict(TrypMix, newdata = Tryp.dat)) ) %*% TrypMix@prior
+TrypMix.pred <- predict(TrypMix, newdata = Tryp.dat, aggregate = TRUE)[[1]]
 lines(Tryp.dat$Dose, Tryp.pred, lty = 2)
 lines(Tryp.dat$Dose, TrypMix.pred, lty = 3)
 legend(4.7, 1, c("GLM", "Mixture model"), lty=c(2, 3), xjust=0, yjust=1)

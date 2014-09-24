@@ -30,7 +30,7 @@ FLXMRcondlogit <- function(formula=.~., strata) {
                                method = "exact", rownames = seq_len(nrow(y))[index])
     coef <- coef(fit)
     df <- length(coef)
-    eval(z@defineComponent)
+    with(list(coef = coef, df = df), eval(z@defineComponent))
   }
   z
 }

@@ -36,8 +36,8 @@ FLXdist <- function(formula, k = NULL, model=FLXMRglm(), components, concomitant
                                      components[[k]][[n]])
     }
   }
-  z <- new("FLXdist", formula=formula, call=mycall, concomitant=concomitant,
-           prior=prior, k=length(prior), model=model, components=comp)
+  new("FLXdist", formula=formula, call=mycall, concomitant=concomitant,
+      prior=prior, k=length(prior), model=model, components=comp)
 }
 
 ###**********************************************************

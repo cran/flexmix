@@ -94,7 +94,6 @@ setMethod("FLXmstep", signature(model = "FLXMRmgcv"), function(model, weights, .
 setMethod("FLXgetModelmatrix", signature(model="FLXMRmgcv"), function(model, data, formula, lhs=TRUE,
                                              paraPen = list(), ...)
 {
-  require("mgcv")
   formula <- RemoveGrouping(formula)
   
   if (length(grep("\\|", deparse(model@formula)))) stop("no grouping variable allowed in the model")

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 4880 2013-02-10 22:28:57Z gruen $
+#  $Id: glmFix.R 4978 2014-02-13 15:45:15Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -139,7 +139,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRfix"), function(model, data
       model@formula <- formula
     model@fullformula <- update.formula(formula, model@formula)
     k <- model@nestedformula
-    mm.all <- modelMatrix(model@fullformula, model@fixed, k@formula, data, lhs)
+    mm.all <- modelMatrix(model@fullformula, model@fixed, k@formula, data, lhs, model@xlevels)
     model@design <- modelDesign(mm.all, k)
     desNested <- if (sum(sapply(mm.all$nested, ncol))) {
       rbind(ncol(mm.all$fixed) + seq_len(sum(sapply(mm.all$nested, ncol))),
@@ -160,6 +160,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRfix"), function(model, data
       model@y <- model@preproc.y(response)
     }
     model@x <- model@preproc.x(model@x)
+    model@xlevels <- mm.all$xlevels
     model
 })
 

@@ -42,7 +42,7 @@ update.latent <- function(x, y, C, fit) {
       SIG
     })
   }
-  Sigma <- GAMMA <- MU <- rep(list(vector("numeric", length = 0)), length(x))
+  Sigma <- MU <- rep(list(vector("numeric", length = 0)), length(x))
   if (length(AnyMissing) > 0) {
     MU[AnyMissing] <- lapply(AnyMissing, function(i) {
       S <- Sig[[i]]
@@ -58,11 +58,6 @@ update.latent <- function(x, y, C, fit) {
   Sigma <- lapply(moments, "[[", "variance")
   censored <- list(mu = lapply(moments, "[[", "mean"),
                    Sigma = Sigma)
-  ybar <- lapply(seq_along(y), function(i) {
-    Y <- y[[i]]
-    Y[index[[i]]] <- censored$mu[[i]]
-    Y
-  })
   list(censored = censored)
 }
 
@@ -83,7 +78,7 @@ update.latent.random <- function(x, y, z, C, which, fit) {
       SIG
     })
   }
-  Sigma <- GAMMA <- MU <- rep(list(vector("numeric", length = 0)), length(x))
+  Sigma <- MU <- rep(list(vector("numeric", length = 0)), length(x))
   if (length(AnyMissing) > 0) {
     MU[AnyMissing] <- lapply(AnyMissing, function(i) {
       S <- Sig[[which[i]]]
@@ -157,7 +152,7 @@ moments_truncated <- function(mu, Sigma, T, ...) {
     T2[lower.tri(T2)] <- t(T2)[lower.tri(T2)]
     phiqr <- lapply(seq_along(T1), function(q)
                     sapply(seq_along(T1), function(r) {
-                      if (r == q) return(0) else return(dmvnorm(T1[c(q, r)],
+                      if (r == q) return(0) else return(mvtnorm::dmvnorm(T1[c(q, r)],
                             mean = rep(0, length.out = length(c(q,r))), sigma = R[c(q,r), c(q,r)]))}))
     if (length(mu) == 2) {
       Ex2 <- R - T2 / alpha +
@@ -208,7 +203,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
       AnyMissing <- which(sapply(C, sum) > 0)
       ybar <- lapply(seq_along(y), function(i) {
         Y <- y[[i]]
-      Y[C[[i]] == 1] <- censored$mu[[i]]
+        Y[C[[i]] == 1] <- censored$mu[[i]]
         Y
       })
       Y <- do.call("rbind", ybar)
@@ -279,8 +274,10 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
         }
         if ("coef" %in% names(fit[[1]]))
           fit <- lapply(seq_len(ncol(w)), function(k) update.latent(X[[k]], y[[k]], C[[k]], fit[[k]]))
-        else if (any_removed) {
-          for (k in seq_len(ncol(w))) fit[[k]]$censored <- lapply(fit[[k]]$censored, "[", ok[,k])
+        else {
+          fit <- lapply(seq_len(ncol(w)), function(k)
+                        list(censored = list(mu = lapply(seq_along(y[[k]]), function(i) y[[k]][[i]][C[[k]][[i]] == 1]),
+                                 Sigma = lapply(C[[k]], function(x) diag(1, nrow = sum(x)) * var(unlist(y[[k]]))))))
         }
         fit <- lapply(seq_len(ncol(w)), function(k) c(lmc.wfit(X[[k]], y[[k]], W[[k]], C[[k]], fit[[k]]$censored),
                                                       censored = list(fit[[k]]$censored)))
@@ -305,9 +302,8 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
         if ("coef" %in% names(fit)) {
           fit <- update.latent(x, y, C, fit)
         } else {
-          if (any_removed) {
-            fit$censored <- fit$censored[ok]
-          }
+          fit$censored <- list(mu = lapply(seq_along(y), function(i) y[[i]][C[[i]] == 1]),
+                               Sigma = lapply(C, function(x) diag(1, nrow = sum(x)) * var(unlist(y))))
         }
         fit <- c(lmc.wfit(x, y, w, C, fit$censored),
                  censored = list(fit$censored))
@@ -410,11 +406,13 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
         if ("coef" %in% names(fit[[1]])) 
           fit <- lapply(seq_len(ncol(w)), function(k) update.latent.random(X[[k]], y[[k]], z, C[[k]], which[[k]],
                                                                            fit[[k]]))
-        else if (any_removed) {
-          for (k in seq_len(ncol(w))) {
-            fit[[k]]$random <- lapply(fit[[k]]$random, "[", ok[,k])
-            fit[[k]]$censored <- lapply(fit[[k]]$censored, "[", ok[,k])
-          }
+        else {
+            fit <- lapply(seq_len(ncol(w)), function(k)
+                          list(random = list(beta = lapply(W[[k]], function(i) rep(0, ncol(z[[i]]))),
+                                              Gamma = lapply(W[[k]], function(i) diag(ncol(z[[i]])))),
+                               censored = list(mu = lapply(seq_along(y[[k]]), function(i) y[[k]][[i]][C[[k]][[i]] == 1]),
+                                                Sigma = lapply(C[[k]], function(x) diag(1, nrow = sum(x)) * var(unlist(y[[k]]))),
+                                                psi = lapply(C[[k]], function(x) rep(0, sum(x))))))
         }
         fit <- lapply(seq_len(ncol(w)), function(k) c(lmmc.wfit(X[[k]], y[[k]], W[[k]], z, C[[k]],
                                                                 which[[k]], fit[[k]]$random, fit[[k]]$censored),
@@ -454,9 +452,12 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           which <- which[ok]
         }
         if ("coef" %in% names(fit)) fit <- update.latent.random(x, y, z, C, which, fit)
-        else if (any_removed) {
-          fit$random <- lapply(fit$random, "[", ok)
-          fit$censored <- lapply(fit$censored, "[", ok)
+        else {
+            fit <- list(random = list(beta = lapply(which, function(i) rep(0, ncol(z[[i]]))),
+                            Gamma = lapply(which, function(i) diag(ncol(z[[i]])))),
+                        censored = list(mu = lapply(seq_along(y), function(i) y[[i]][C[[i]] == 1]),
+                            Sigma = lapply(C, function(x) diag(1, nrow = sum(x)) * var(unlist(y))),
+                            psi = lapply(C, function(x) rep(0, sum(x)))))
         }
         fit <- c(lmmc.wfit(x, y, w, z, C, which, fit$random, fit$censored),
                  random = list(fit$random), censored = list(fit$censored))
@@ -478,63 +479,32 @@ setMethod("FLXmstep", signature(model = "FLXMRlmc"),
           function(model, weights, components)
 {
   weights <- weights[!duplicated(model@group),,drop=FALSE]
-  if (is.null(components)) {
-    censored <- list(mu = lapply(seq_along(model@y), function(i) model@y[[i]][model@C[[i]] == 1]),
-                     Sigma = lapply(model@C, function(x) diag(1, nrow = sum(x)) * var(unlist(model@y))))
-    return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@C, 
-                                                         list(censored = censored))))
- }else {
-   return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@C,  
-                                                        components[[k]]@parameters)))
- }
+  return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@C,  
+                                                       components[[k]]@parameters)))
 })
 
 setMethod("FLXmstep", signature(model = "FLXMRlmcfix"),
           function(model, weights, components)
 {
   weights <- weights[!duplicated(model@group),,drop=FALSE]
-  if (is.null(components)) {
-    fit <- rep(list(list(censored = list(mu = lapply(seq_along(model@y), function(i) model@y[[i]][model@C[[i]] == 1]),
-                           Sigma = lapply(model@C, function(x) diag(1, nrow = sum(x)) * var(unlist(model@y)))))),
-                    ncol(weights))
-    return(model@fit(model@x, model@y, weights, model@C, fit))
-  }else 
-   return(model@fit(model@x, model@y, weights, model@C, 
-                    lapply(components, function(x) x@parameters)))
+  return(model@fit(model@x, model@y, weights, model@C, 
+                   lapply(components, function(x) x@parameters)))
 })
 
 setMethod("FLXmstep", signature(model = "FLXMRlmmc"),
           function(model, weights, components)
 {
   weights <- weights[!duplicated(model@group),,drop=FALSE]
-  if (is.null(components)) {
-    random <- list(beta = lapply(model@which, function(i) rep(0, ncol(model@z[[i]]))),
-                   Gamma = lapply(model@which, function(i) diag(ncol(model@z[[i]]))))
-    censored <- list(mu = lapply(seq_along(model@y), function(i) model@y[[i]][model@C[[i]] == 1]),
-                     Sigma = lapply(model@C, function(x) diag(1, nrow = sum(x)) * var(unlist(model@y))),
-                     psi = lapply(model@C, function(x) rep(0, sum(x))))
-    return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@z, model@C, model@which,
-                                                         list(random = random, censored = censored))))
-  }else {
-   return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@z, model@C, model@which, 
-                                                        components[[k]]@parameters)))
- }
+  return(sapply(1:ncol(weights), function(k) model@fit(model@x, model@y, weights[,k], model@z, model@C, model@which, 
+                                                       components[[k]]@parameters)))
 })
 
 setMethod("FLXmstep", signature(model = "FLXMRlmmcfix"),
           function(model, weights, components)
 {
   weights <- weights[!duplicated(model@group),,drop=FALSE]
-  if (is.null(components)) {
-    fit <- rep(list(list(random = list(beta = lapply(model@which, function(i) rep(0, ncol(model@z[[i]]))),
-                           Gamma = lapply(model@which, function(i) diag(ncol(model@z[[i]])))),
-                         censored = list(mu = lapply(seq_along(model@y), function(i) model@y[[i]][model@C[[i]] == 1]),
-                           Sigma = lapply(model@C, function(x) diag(1, nrow = sum(x)) * var(unlist(model@y))),
-                           psi = lapply(model@C, function(x) rep(0, sum(x)))))), ncol(weights))
-    return(model@fit(model@x, model@y, weights, model@z, model@C, model@which, fit))
-  }else 
-   return(model@fit(model@x, model@y, weights, model@z, model@C, model@which,
-                    lapply(components, function(x) x@parameters)))
+  return(model@fit(model@x, model@y, weights, model@z, model@C, model@which,
+                   lapply(components, function(x) x@parameters)))
 })
 
 setMethod("FLXgetModelmatrix", signature(model="FLXMRlmc"),

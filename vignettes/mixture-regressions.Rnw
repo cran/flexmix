@@ -3,7 +3,7 @@
 %  $Id: mixture-regressions.Rnw $
 %
 \documentclass[nojss]{jss} 
-\usepackage{amsfonts,thumbpdf}
+\usepackage{amsfonts}
 \title{FlexMix Version 2: Finite Mixtures with Concomitant
   Variables and Varying and Constant Parameters}
 \Plaintitle{FlexMix Version 2: Finite Mixtures with Concomitant

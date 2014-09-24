@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 4834 2012-08-02 10:17:09Z gruen $
+#  $Id: flexmixFix.R 4978 2014-02-13 15:45:15Z gruen $
 #
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {
@@ -87,25 +87,32 @@ setMethod("FLXdeterminePostunscaled", signature(model = "FLXMRfix"), function(mo
 
 ###**********************************************************
 
-modelMatrix <- function(random, fixed, nested, data=list(), lhs)
+modelMatrix <- function(random, fixed, nested, data=list(), lhs, xlevels = NULL)
 {
   if (!lhs) 
     random <- random[-2]
   mf.random <- model.frame(random, data=data, na.action = NULL)
   response <- if (lhs) as.matrix(model.response(mf.random)) else NULL
-  mm.random <- model.matrix(attr(mf.random, "terms"), data=mf.random)
+  xlev <- xlevels[names(.getXlevels(terms(mf.random), mf.random))]
+  mm.random <- if (is.null(xlev))  model.matrix(terms(mf.random), data=mf.random)
+               else model.matrix(terms(mf.random), data=data, xlev = xlev)
+  xlevels.random <- .getXlevels(terms(mf.random), mf.random)
   randomfixed <- if(identical(paste(deparse(fixed), collapse = ""), "~0")) random
                  else update(random, paste("~.+", paste(deparse(fixed[[length(fixed)]]), collapse = "")))
-  mm.randomfixed <- model.matrix(terms(randomfixed, data=data), data=data)
+  mf.randomfixed <- model.frame(randomfixed, data=data)
+  mm.randomfixed <- model.matrix(terms(mf.randomfixed), data=mf.randomfixed, xlev = xlevels[names(.getXlevels(terms(mf.randomfixed), mf))])
   mm.fixed <- mm.randomfixed[,!colnames(mm.randomfixed) %in% colnames(mm.random), drop=FALSE]
-  all <- mm.all <- mm.nested <- list()
+  xlevels.fixed <- .getXlevels(terms(mf.randomfixed), mf.randomfixed)
+  all <- mm.all <- mm.nested <- xlevels.nested <- list()
   for (l in seq_along(nested)) {
     all[[l]] <- if (identical(paste(deparse(nested[[l]]), collapse = ""), "~0")) randomfixed
-    else update(randomfixed, paste("~.+", paste(deparse(nested[[l]][[length(nested[[l]])]]), collapse = "")))
-    mm.all[[l]] <- model.matrix(terms(all[[l]], data=data), data=data)
+                else update(randomfixed, paste("~.+", paste(deparse(nested[[l]][[length(nested[[l]])]]), collapse = "")))
+    mf <- model.frame(all[[l]], data=data)
+    mm.all[[l]] <- model.matrix(terms(mf), data=mf, xlev = xlevels[names(.getXlevels(terms(mf), mf))])
     mm.nested[[l]] <- mm.all[[l]][,!colnames(mm.all[[l]]) %in% colnames(mm.randomfixed),drop=FALSE]
+    xlevels.nested[[l]] <- .getXlevels(terms(mf), mf)
   }
-  return(list(random=mm.random, fixed=mm.fixed, nested=mm.nested, response=response))
+  return(list(random=mm.random, fixed=mm.fixed, nested=mm.nested, response=response, xlevels=c(xlevels.random, xlevels.fixed, unlist(xlevels.nested))))
 }
 
 ###**********************************************************

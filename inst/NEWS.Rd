@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-12}{
+  \itemize{
+    \item Construction of model matrices changed to re-use levels of
+      factors while fitting for prediction. Thanks to Robert Poos for
+      pointing the problem out.
+    \item Package mgcv of version at least 1.8-0 is required in order
+      to avoid loading of the package for formula evaluation.
+   }
+}
 \section{Changes in flexmix version 2.3-11}{
   \itemize{
     \item Examples changed to be less time consuming.
