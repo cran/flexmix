@@ -1,13 +1,13 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: posterior.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: posterior.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{posterior}
 \alias{clusters,flexmix,missing-method}
 \alias{clusters,FLXdist,ANY-method}
 \alias{posterior,flexmix,missing-method}
 \alias{posterior,FLXdist,listOrdata.frame-method}
-\title{Determine cluster membership and posterior probabilities}
+\title{Determine Cluster Membership and Posterior Probabilities}
 \description{Determine posterior probabilities or cluster memberships for a fitted
   \code{flexmix}  or unfitted \code{FLXdist} model.} 
 \usage{

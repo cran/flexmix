@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-13}{
+  \itemize{
+    \item A model driver for mixtures of regression models with
+      (adaptive) lasso and elastic net penalizations for the coefficients
+      building on \pkg{glmnet} was provided by Frederic Mortier and
+      Nicolas Picard.
+    \item A bug in a coerce method to class \code{"FLXnested"} fixed.
+  }
+}
 \section{Changes in flexmix version 2.3-12}{
   \itemize{
     \item Construction of model matrices changed to re-use levels of

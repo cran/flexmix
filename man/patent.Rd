@@ -1,13 +1,13 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: patent.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: patent.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{patent}
 \alias{patent}
 \docType{data}
-\title{Patents and R\&D spending}
+\title{Patents and R&D Spending}
 \description{
-  Number of patents, R\&D spending and sales in millions of dollar for 70
+  Number of patents, R&D spending and sales in millions of dollar for 70
   pharmaceutical and biomedical companies in 1976.
 }
 \usage{data("patent")}
@@ -16,8 +16,8 @@
   \describe{
     \item{Company}{Name of company.}
     \item{Patents}{Number of patents.}
-    \item{RDS}{R\&D spending per sales.}
-    \item{lgRD}{Logarithmized R\&D spendings (in millions of dollars).}
+    \item{RDS}{R&D spending per sales.}
+    \item{lgRD}{Logarithmized R&D spendings (in millions of dollars).}
   }
 }
 \details{
@@ -25,7 +25,7 @@
 }
 \source{
   P. Wang, I.M. Cockburn and M.L. Puterman. Analysis of Patent
-  Data - A Mixed-Poisson-Regression-Model Approach.
+  Data -- A Mixed-Poisson-Regression-Model Approach.
   \emph{Journal of Business & Economic Statistics}, \bold{16}(1),
   27--41, 1998.
 }
@@ -37,12 +37,12 @@
 }
 \examples{
 data("patent", package = "flexmix")
-patentMix <- initFlexmix(Patents ~ lgRD, k=3,
-                      model=FLXMRglm(family="poisson"),
-                      concomitant=FLXPmultinom(~RDS),
-                      nrep=5, data=patent)
-plot(Patents ~ lgRD, data=patent,
-     pch=as.character(clusters(patentMix)))
+patentMix <- initFlexmix(Patents ~ lgRD, k = 3,
+                         model = FLXMRglm(family = "poisson"),
+                         concomitant = FLXPmultinom(~RDS),
+                         nrep = 5, data = patent)
+plot(Patents ~ lgRD, data = patent,
+     pch = as.character(clusters(patentMix)))
 ordering <- order(patent$lgRD)
 apply(fitted(patentMix), 2, function(y)
       lines(sort(patent$lgRD), y[ordering]))

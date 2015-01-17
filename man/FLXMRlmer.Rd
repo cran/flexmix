@@ -50,9 +50,9 @@ FLXMRlmer(formula = . ~ ., random, weighted = TRUE,
 }
 \details{
   \code{FLXMRlmm} allows only one random effect. \code{FLXMRlmer} allows
-  an arbitrary number of random effects if \code{weighted=FALSE}; a
+  an arbitrary number of random effects if \code{weighted = FALSE}; a
   certain structure of the model matrix of the random effects has to be
-  given for weighted ML estimation, i.e. where \code{weighted=TRUE}.
+  given for weighted ML estimation, i.e. where \code{weighted = TRUE}.
 }
 \value{
   Returns an object of class \code{FLXMRlmer} and \code{FLXMRlmm}.
@@ -62,7 +62,7 @@ FLXMRlmer(formula = . ~ ., random, weighted = TRUE,
   covariate matrix of the random effects is the same for each
   observation. By default weighted ML estimation is made and the
   condition on the covariate matrix of the random effects is checked. If
-  this fails, only estimation with \code{weighted=FALSE} is possible
+  this fails, only estimation with \code{weighted = FALSE} is possible
   which will maximize the classification likelihood.
 }
 \author{Bettina Gruen}

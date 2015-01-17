@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: plot-methods.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: plot-methods.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{plot-methods}
 \docType{methods}
@@ -12,9 +12,9 @@
   rootogram or histogram of the posterior probabilities.
 }
 \usage{
-\S4method{plot}{flexmix,missing}(x, y, mark=NULL, markcol=NULL,
-  col = NULL, eps=1e-4, root=TRUE, ylim=TRUE, main=NULL, xlab="",
-  ylab="", as.table=TRUE, endpoints=c(-0.04, 1.04),...)
+\S4method{plot}{flexmix,missing}(x, y, mark = NULL, markcol = NULL,
+  col  =  NULL, eps = 1e-4, root = TRUE, ylim = TRUE, main = NULL, xlab = "",
+  ylab = "", as.table = TRUE, endpoints = c(-0.04, 1.04), ...)
 }
 \arguments{
   \item{x}{An object of class \code{"flexmix"}.}
@@ -74,7 +74,7 @@
   Data Mining, 197--205. ACM Press, New York, NY, USA, 2003.
 
   Friedrich Leisch. Exploring the structure of mixture model
-  components. In Jaromir Antoch, editor, Compstat 2004 - Proceedings in
+  components. In Jaromir Antoch, editor, Compstat 2004--Proceedings in
   Computational Statistics, 1405--1412. Physika Verlag, Heidelberg,
   Germany, 2004. ISBN 3-7908-1554-3.
 }

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: Mehta.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: Mehta.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{Mehta}
 \alias{Mehta}
@@ -37,9 +37,9 @@
 \examples{
 data("Mehta", package = "flexmix")
 mehtaMix <- initFlexmix(cbind(Response, Total-Response) ~ 1|Site, 
-                     data=Mehta, nrep=5, k=3,
-                     model=FLXMRglmfix(family="binomial",
-                       fixed=~ Drug), 
-                     control=list(minprior=0.04))
+                        data = Mehta, nrep = 5, k = 3,
+                        model = FLXMRglmfix(family = "binomial",
+                          fixed = ~ Drug), 
+                        control = list(minprior = 0.04))
 }
 \keyword{datasets}

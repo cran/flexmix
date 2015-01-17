@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmodel-class.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXmodel-class.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{FLXM-class}
 \docType{class}

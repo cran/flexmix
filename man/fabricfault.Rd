@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: fabricfault.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: fabricfault.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{fabricfault}
 \alias{fabricfault}
@@ -33,9 +33,9 @@
 }
 \examples{
 data("fabricfault", package = "flexmix")
-fabricMix <- initFlexmix(Faults ~ 1, data=fabricfault, k=2,
-                         model=FLXMRglmfix(family="poisson",
-                           fixed=~ log(Length)), 
-                         nrep=5)
+fabricMix <- initFlexmix(Faults ~ 1, data = fabricfault, k = 2,
+                         model = FLXMRglmfix(family = "poisson",
+                           fixed = ~ log(Length)), 
+                         nrep = 5)
 }
 \keyword{datasets}

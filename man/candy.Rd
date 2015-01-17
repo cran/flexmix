@@ -1,11 +1,11 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: candy.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: candy.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{candy}
 \alias{candy}
 \docType{data}
-\title{Candy packs purchased}
+\title{Candy Packs Purchased}
 \description{
   The data is from a new product and concept test where the number of
   individual packs of hard candy purchased within the past 7 days is recorded.

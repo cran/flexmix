@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 4922 2013-09-03 13:32:45Z gruen $
+#  $Id: allClasses.R 5016 2015-01-17 11:12:41Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -278,12 +278,12 @@ setClass("FLXnested",
 
 setAs("numeric", "FLXnested",
       function(from, to) {
-        new("FLXnested", formula = ~0, k = from)
+        new("FLXnested", formula = rep(list(~0), length(from)), k = from)
       })
 
 setAs("list", "FLXnested",
       function(from, to) {
-        z = list2object(from, to)
+          z <- list2object(from, to)
       })
 
 setAs("NULL", "FLXnested",
@@ -291,13 +291,10 @@ setAs("NULL", "FLXnested",
         new(to)
       })
 
-setMethod("initialize", "FLXnested", function(.Object, formula=~0, k = numeric(0), ...) {
-  if (is(formula, "formula")) .Object@formula <- lapply(rep(1,length(k)),
-                                                             function(i) formula)
-  else .Object@formula <- formula
-  .Object@k <- k
-  .Object <- callNextMethod()
-  .Object
+setMethod("initialize", "FLXnested", function(.Object, formula = list(), k = numeric(0), ...) {
+    if (is(formula, "formula")) formula <- rep(list(formula), length(k))
+    .Object <- callNextMethod(.Object, formula = formula, k = k, ...)
+    .Object
 })
 
 ###**********************************************************

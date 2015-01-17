@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRrobglm.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  $Id: FLXMRrobglm.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{FLXMRrobglm}
 \alias{FLXMRrobglm}
@@ -13,7 +13,7 @@
 }
 \usage{
 FLXMRrobglm(formula = . ~ ., family = c("gaussian", "poisson"),
-            bgw=FALSE, ...)
+            bgw = FALSE, ...)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula
@@ -26,7 +26,7 @@ FLXMRrobglm(formula = . ~ ., family = c("gaussian", "poisson"),
   \item{bgw}{Logical, controls whether the parameters of the background
     component are fixed to multiples of location and scale of the
     complete data (the default), or estimated by EM with normal weights for the
-    background (\code{bgw=TRUE}).}
+    background (\code{bgw = TRUE}).}
   \item{\dots}{passed to \code{FLXMRglm}}
 }
 \value{
@@ -40,35 +40,37 @@ FLXMRrobglm(formula = . ~ ., family = c("gaussian", "poisson"),
 \references{
   Friedrich Leisch. Modelling background noise in finite mixtures of
   generalized linear regression models. In Paula Brito, editor, Compstat
-  2008-Proceedings in Computational Statistics, 385--396. Physica
-  Verlag, Heidelberg, Germany, 2008.
+  2008--Proceedings in Computational Statistics, 385--396. Physica
+  Verlag, Heidelberg, Germany, 2008.\cr
   Preprint available at http://epub.ub.uni-muenchen.de/6332/.
 }
 \examples{
 ## Example from Compstat paper, see paper for detailed explanation:
 data("NPreg", package = "flexmix")
-DATA <- NPreg[,1:2]
+DATA <- NPreg[, 1:2]
 set.seed(3)
-DATA2 <- rbind(DATA, cbind(x=-runif(3), yn=50+runif(3)))
+DATA2 <- rbind(DATA, cbind(x = -runif(3), yn = 50 + runif(3)))
 
 ## Estimation without (f2) and with (f3) background component
-f2 <- flexmix(yn~x+I(x^2), data=DATA2, k=2)
-f3 <- flexmix(yn~x+I(x^2), data=DATA2, k=3, model=FLXMRrobglm(), 
-              control=list(minprior=0))
+f2 <- flexmix(yn ~ x + I(x^2), data = DATA2, k = 2)
+f3 <- flexmix(yn ~ x + I(x^2), data = DATA2, k = 3,
+              model = FLXMRrobglm(), 
+              control = list(minprior = 0))
 
 ## Predict on new data for plots
-x <- seq(-5,15,by=.1)
-y2 <- predict(f2, newdata=data.frame(x=x))
-y3 <- predict(f3, newdata=data.frame(x=x))
+x <- seq(-5,15, by = .1)
+y2 <- predict(f2, newdata = data.frame(x = x))
+y3 <- predict(f3, newdata = data.frame(x = x))
 
 ## f2 was estimated without background component:
-plot(yn~x, data=DATA2, pch=clusters(f2), col=clusters(f2))
-lines(x, y2$Comp.1, col=1)
-lines(x, y2$Comp.2, col=2)
+plot(yn ~ x, data = DATA2, pch = clusters(f2), col = clusters(f2))
+lines(x, y2$Comp.1, col = 1)
+lines(x, y2$Comp.2, col = 2)
 
 ## f3 is with background component:
-plot(yn~x, data=DATA2, pch=4-clusters(f3), col=4-clusters(f3))
-lines(x, y3$Comp.2, col=2)
-lines(x, y3$Comp.3, col=1)
+plot(yn ~ x, data = DATA2, pch = 4 - clusters(f3),
+     col = 4 - clusters(f3))
+lines(x, y3$Comp.2, col = 2)
+lines(x, y3$Comp.3, col = 1)
 }
 \keyword{models}

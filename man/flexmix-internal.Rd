@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix-internal.Rd 4837 2012-08-08 18:26:26Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: flexmix-internal.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -98,7 +98,7 @@
 \alias{existGradient,FLXMRmultinom-method}
 \alias{existGradient,FLXP-method}
 
-\title{Internal FlexMix functions}
+\title{Internal FlexMix Functions}
 \description{
   Internal flexmix functions, methods and classes.
 }

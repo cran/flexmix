@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: refit.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: refit.Rd 5011 2015-01-13 21:36:24Z gruen $
 %
 \name{refit-methods}
 \alias{refit,flexmix-method}
@@ -25,7 +25,7 @@
 "concomitant"), ...)
 
 \S4method{plot}{FLXRoptim,missing}(x, y, model = 1, which = c("model", "concomitant"),
-         bycluster=TRUE, alpha=0.05, components, labels=NULL,
+         bycluster = TRUE, alpha = 0.05, components, labels = NULL,
          significance = FALSE, xlab = NULL, ylab = NULL, ci = TRUE,
          scales = list(), as.table = TRUE, horizontal = TRUE, ...)
 }
@@ -98,16 +98,17 @@
   that the missing information of the component memberships are replaced
   by the expected values.
 
-  The \code{newdata} argument can only be specified for refitting
-  \code{FLXMRglm} components using \code{method = "mstep"}. A variant of
-  \code{glm} for weighted ML estimation is used for fitting the
-  components and full \code{glm} objects are returned. Please note that
-  in this case the data and the model frame are stored for each
-  component which can significantly increase the object size.
-}
+  The \code{newdata} argument can only be specified when using
+  \code{method = "mstep"} for refitting \code{FLXMRglm} components. A
+  variant of \code{glm} for weighted ML estimation is used for fitting
+  the components and full \code{glm} objects are returned. Please note
+  that in this case the data and the model frame are stored for each
+  component which can significantly increase the object size.  }
+
 \examples{
+
 data("NPreg", package = "flexmix")
-ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
+ex1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2)
 ex1r <- refit(ex1)
 
 ## in one component all coefficients should be highly significant,

@@ -5,8 +5,7 @@
 \alias{FLXMRlmc-class}
 \alias{FLXMRlmcfix-class}
 \alias{predict,FLXMRlmc-method}
-\title{FlexMix Interface to Linear Mixed Models with Left-Censored
-  Observations}
+\title{FlexMix Interface to Linear Mixed Models with Left-Censoring}
 \description{
   This is a driver which allows fitting of mixtures of linear models
   with random effects and left-censored observations.

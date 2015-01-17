@@ -1,10 +1,10 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: salmonellaTA98.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: salmonellaTA98.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{salmonellaTA98}
 \alias{salmonellaTA98}
-\title{Salmonella reverse mutagenicity assay}
+\title{Salmonella Reverse Mutagenicity Assay}
 \usage{data("salmonellaTA98")}
 \description{
   Data on Ames Salmonella reverse mutagenicity assay.

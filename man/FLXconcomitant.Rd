@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXconcomitant.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXconcomitant.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{FLXP}
 \docType{class}
@@ -9,7 +9,7 @@
 \alias{FLXconstant}
 \alias{FLXmultinom}
 \alias{show,FLXP-method}
-\title{Creates the concomitant variable model.}
+\title{Creates the Concomitant Variable Model}
 \description{
   Creator functions for the concomitant variable
   model. \code{FLXPconstant} specifies constant priors
@@ -17,7 +17,7 @@
 }
 \usage{
 FLXPconstant()
-FLXPmultinom(formula=~1)
+FLXPmultinom(formula = ~1)
 }
 \arguments{
   \item{formula}{A formula for determining the model matrix of the

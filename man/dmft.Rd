@@ -1,11 +1,11 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: dmft.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: dmft.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{dmft}
 \alias{dmft}
 \docType{data}
-\title{Dental data}
+\title{Dental Data}
 \description{
    Count data from a dental epidemiological study for evaluation of
    various programs for reducing caries collected among school

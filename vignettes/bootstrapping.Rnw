@@ -62,9 +62,8 @@ prettyPrint <- function(x, sep = " ", linebreak = "\n\t", width = getOption("wid
   \pkg{flexmix} as well as the application of resampling methods for
   model diagnostics of fitted finite mixture models. Convenience
   functions to perform these methods are available in package
-  \pkg{flexmix}. The results of the application to an artificial
-  example and the \code{seizure} data set as described in
-  \cite{mixtures:Gruen+Leisch:2010} are reproduced.
+  \pkg{flexmix}. The use of the methods is illustrated with an
+  artificial example and the \code{seizure} data set.
 
 }
 
@@ -78,14 +77,14 @@ prettyPrint <- function(x, sep = " ", linebreak = "\n\t", width = getOption("wid
 
 \section{Implementation of resampling methods}\label{sec:implementation}
 
-The proposed framework for model diagnostics using resampling equally
-allows to investigate model fit for all kinds of mixture models. The
-procedure is applicable to mixture models with different component
-specific models and does not impose any limitation such as for example
-on the dimension of the parameter space of the component specific
-model. In addition to the fitting step different component specific
-models only require different random number generators for the
-parametric bootstrap. 
+The proposed framework for model diagnostics using resampling
+\citep{mixtures:gruen+leisch:2004} equally allows to investigate model
+fit for all kinds of mixture models. The procedure is applicable to
+mixture models with different component specific models and does not
+impose any limitation such as for example on the dimension of the
+parameter space of the component specific model. In addition to the
+fitting step different component specific models only require
+different random number generators for the parametric bootstrap.
 
 The \code{boot()} function in \pkg{flexmix} is a generic \proglang{S4}
 function with a method for fitted finite mixtures of class
@@ -149,9 +148,9 @@ generating process which is theoretically not identifiable. We are
 assuming a finite mixture of linear regression models with two
 components of equal size where the coverage condition is not fulfilled
 \citep{mixtures:Hennig:2000}. Hence, intra-component label switching
-\citep{mixtures:Gruen+Leisch:2010} is possible, i.e., there exist two
-parameterizations implying the same mixture distribution which differ
-how the components between the covariate points are combined.
+is possible, i.e., there exist two parameterizations implying the same
+mixture distribution which differ how the components between the
+covariate points are combined.
 
 We assume that one measurement per object and a single categorical
 regressor with two levels are given. The usual design matrix for a

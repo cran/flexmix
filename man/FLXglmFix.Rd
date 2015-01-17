@@ -1,11 +1,11 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglmFix.Rd 4910 2013-08-19 19:40:35Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXglmFix.Rd 5015 2015-01-17 11:12:29Z gruen $
 %
 \name{FLXMRglmfix}
 \alias{FLXMRglmfix}
 \alias{FLXglmFix}
-\title{FlexMix Interface to Generalized Linear Models with fixed coefficients}
+\title{FlexMix Interface to GLMs with Fixed Coefficients}
 \description{
   This implements a driver for FlexMix which interfaces the \code{glm}
   family of models and where it is possible to specify fixed (constant) or
@@ -13,8 +13,7 @@
   variance estimate is equal for all components.
 }
 \usage{
-FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE,
-       nested = NULL,
+FLXMRglmfix(formula = . ~ ., fixed = ~0, varFix = FALSE, nested = NULL, 
        family = c("gaussian", "binomial", "poisson", "Gamma"),
        offset = NULL)
 }
@@ -44,13 +43,17 @@ FLXMRglmfix(formula = . ~ ., fixed=~0, varFix = FALSE,
 \seealso{\code{FLXMRglm}}
 \examples{
 data("NPreg", package = "flexmix")
-ex <- flexmix(yn~x|id2, data=NPreg, k=2,
-              model=FLXMRglm(yn~.+I(x^2)))
-ex.fix <- flexmix(yn~x|id2, data = NPreg, 
-                  model=FLXMRglmfix(nested = list(k = c(1,1),
-                                    formula = c(~0, ~I(x^2)))))
+ex <- flexmix(yn ~ x | id2, data = NPreg, k = 2,
+              cluster = NPreg$class,
+              model = FLXMRglm(yn ~ . + I(x^2)))
+ex.fix <- flexmix(yn ~ x | id2, data = NPreg,
+                  cluster = posterior(ex),
+                  model = FLXMRglmfix(nested = list(k = c(1, 1),
+                                      formula = c(~0, ~I(x^2)))))
 summary(refit(ex))
+\dontrun{
 summary(refit(ex.fix))
+}
 }
 \keyword{regression}
 \keyword{models}

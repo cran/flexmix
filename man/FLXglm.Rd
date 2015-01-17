@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglm.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXglm.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{FLXMRglm}
 \alias{FLXMRglm}
@@ -12,8 +12,8 @@
 }
 \usage{
 FLXMRglm(formula = . ~ .,
-       family = c("gaussian", "binomial", "poisson", "Gamma"),
-       offset = NULL)
+         family = c("gaussian", "binomial", "poisson", "Gamma"),
+         offset = NULL)
 }
 \arguments{
   \item{formula}{A formula which is interpreted relative to the formula

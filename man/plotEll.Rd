@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: plotEll.Rd 4846 2012-09-28 15:22:11Z leisch $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: plotEll.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{plotEll}
 \alias{plotEll}
@@ -10,9 +10,9 @@
   \code{\link{FLXMCmvnorm}}.
 }
 \usage{
-plotEll(object, data, which=1:2, model=1, project=NULL, points=TRUE,
-        eqscale=TRUE, col=NULL, number = TRUE, cex=1.5, numcol="black", 
-        pch=NULL, ...)
+plotEll(object, data, which = 1:2, model = 1, project = NULL, points = TRUE,
+        eqscale = TRUE, col = NULL, number = TRUE, cex = 1.5, numcol = "black", 
+        pch = NULL, ...)
 }
 \arguments{
   \item{object}{An object of class \code{flexmix} with a fitted

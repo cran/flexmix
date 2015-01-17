@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix.Rd 4831 2012-07-29 20:28:08Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: flexmix.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{flexmix}
 \alias{flexmix}
@@ -20,9 +20,9 @@
 }
 \usage{
 flexmix(formula, data = list(), k = NULL, cluster = NULL, 
-        model=NULL, concomitant=NULL, control = NULL,
+        model = NULL, concomitant = NULL, control = NULL,
         weights = NULL)
-\S4method{summary}{flexmix}(object, eps=1e-4, ...)
+\S4method{summary}{flexmix}(object, eps = 1e-4, ...)
 }
 \arguments{
   \item{formula}{A symbolic description of the model to be fit. The
@@ -92,8 +92,8 @@ data("NPreg", package = "flexmix")
 
 ## mixture of two linear regression models. Note that control parameters
 ## can be specified as named list and abbreviated if unique.
-ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2,
-                   control=list(verb=5, iter=100))
+ex1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2,
+               control = list(verb = 5, iter = 100))
 
 ex1
 summary(ex1)
@@ -102,38 +102,39 @@ plot(ex1)
 ## now we fit a model with one Gaussian response and one Poisson
 ## response. Note that the formulas inside the call to FLXMRglm are
 ## relative to the overall model formula.
-ex2 <- flexmix(yn~x, data=NPreg, k=2,
-               model=list(FLXMRglm(yn~.+I(x^2)), 
-                          FLXMRglm(yp~., family="poisson")))
+ex2 <- flexmix(yn ~ x, data = NPreg, k = 2,
+               model = list(FLXMRglm(yn ~ . + I(x^2)), 
+                            FLXMRglm(yp ~ ., family = "poisson")))
 plot(ex2)
 
 ex2
 table(ex2@cluster, NPreg$class)
 
 ## for Gaussian responses we get coefficients and standard deviation
-parameters(ex2, component=1, model=1)
+parameters(ex2, component = 1, model = 1)
 
 ## for Poisson response we get only coefficients
-parameters(ex2, component=1, model=2)
+parameters(ex2, component = 1, model = 2)
 
 ## fitting a model only to the Poisson response is of course
 ## done like this
-ex3 <- flexmix(yp~x, data=NPreg, k=2, model=FLXMRglm(family="poisson"))
+ex3 <- flexmix(yp ~ x, data = NPreg, k = 2,
+               model = FLXMRglm(family = "poisson"))
 
 ## if observations are grouped, i.e., we have several observations per
 ## individual, fitting is usually much faster:
-ex4 <- flexmix(yp~x|id1, data=NPreg, k=2,
-               model=FLXMRglm(family="poisson"))
+ex4 <- flexmix(yp~x|id1, data = NPreg, k = 2,
+               model = FLXMRglm(family = "poisson"))
 
 ## And now a binomial example. Mixtures of binomials are not generically
 ## identified, here the grouping variable is necessary:
 set.seed(1234)
-ex5 <- initFlexmix(cbind(yb,1-yb)~x, data=NPreg, k=2,
-                   model=FLXMRglm(family="binomial"), nrep=5)
+ex5 <- initFlexmix(cbind(yb,1 - yb) ~ x, data = NPreg, k = 2,
+                   model = FLXMRglm(family = "binomial"), nrep = 5)
 table(NPreg$class, clusters(ex5))
 
-ex6 <- initFlexmix(cbind(yb,1-yb)~x|id2, data=NPreg, k=2,
-                   model=FLXMRglm(family="binomial"), nrep=5)
+ex6 <- initFlexmix(cbind(yb, 1 - yb) ~ x | id2, data = NPreg, k = 2,
+                   model = FLXMRglm(family = "binomial"), nrep = 5)
 table(NPreg$class, clusters(ex6))
 
 }

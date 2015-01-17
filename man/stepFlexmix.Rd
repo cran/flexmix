@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 4884 2013-02-13 09:34:58Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: stepFlexmix.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -24,13 +24,13 @@ initMethod(name = c("tol.em", "cem.em", "sem.em"),
            step1 = list(tolerance = 10^-2),
            step2 = list(), control = list(), nrep = 3L)
 
-stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
-            unique=FALSE)
+stepFlexmix(..., k = NULL, nrep = 3, verbose = TRUE, drop = TRUE,
+            unique = FALSE)
 
-\S4method{plot}{stepFlexmix,missing}(x, y, what=c("AIC", "BIC", "ICL"),
-  xlab=NULL, ylab=NULL, legend="topright", ...)
+\S4method{plot}{stepFlexmix,missing}(x, y, what = c("AIC", "BIC", "ICL"),
+  xlab = NULL, ylab = NULL, legend = "topright", ...)
 
-\S4method{getModel}{stepFlexmix}(object, which="BIC")
+\S4method{getModel}{stepFlexmix}(object, which = "BIC")
 
 \S4method{unique}{stepFlexmix}(x, incomparables = FALSE, ...)
 }
@@ -90,9 +90,9 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
   components in a slot if \code{length(k)>1}, else directly an object of
   class \code{"flexmix"}.
 
-  If \code{unique=FALSE}, then the resulting object contains one
+  If \code{unique = FALSE}, then the resulting object contains one
   model per element of \code{k} (which is the number of clusters the EM
-  algorithm started with). If \code{unique=TRUE}, then the result
+  algorithm started with). If \code{unique = TRUE}, then the result
   is resorted according to the number of clusters contained in the
   fitted models (which may be less than the number with which the EM
   algorithm started), and only the maximum likelihood solution for each
@@ -109,7 +109,7 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
   Christophe Biernacki, Gilles Celeux and Gerard Govaert. Choosing
   starting values for the EM algorithm for getting the highest
   likelihood in multivariate Gaussian mixture models. \emph{Computational
-  Statistics & Data Analysis}, \bold{41}(3-4), 561--575, 2003.
+  Statistics & Data Analysis}, \bold{41}(3--4), 561--575, 2003.
 
   Theresa Scharl, Bettina Gruen and Friedrch Leisch.  Mixtures of
   regression models for time-course gene expression data: Evaluation of
@@ -119,15 +119,15 @@ stepFlexmix(..., k=NULL, nrep=3, verbose=TRUE, drop=TRUE,
 \examples{
 data("Nclus", package = "flexmix")
 
-## try 2 times for k=4
+## try 2 times for k = 4
 set.seed(511)
-ex1 <- initFlexmix(Nclus~1, k=4, model=FLXMCmvnorm(diagonal=FALSE),
-                   nrep=2)
+ex1 <- initFlexmix(Nclus~1, k = 4, model = FLXMCmvnorm(diagonal = FALSE),
+                   nrep = 2)
 ex1
 
-## now 2 times each for k=2:5, specify control parameter
-ex2 <- initFlexmix(Nclus~1, k=2:5, model=FLXMCmvnorm(diagonal=FALSE),
-                   control=list(minprior=0), nrep=2)
+## now 2 times each for k = 2:5, specify control parameter
+ex2 <- initFlexmix(Nclus~1, k = 2:5, model = FLXMCmvnorm(diagonal = FALSE),
+                   control = list(minprior = 0), nrep = 2)
 ex2
 plot(ex2)
 
@@ -135,17 +135,18 @@ plot(ex2)
 BIC(ex2)
 
 ## get smallest model
-getModel(ex2, which=1)
+getModel(ex2, which = 1)
 
 ## get model with 3 components
-getModel(ex2, which="3")
+getModel(ex2, which = "3")
 
-## get model with smallest ICL (here same as for AIC and BIC: true k=4)
-getModel(ex2, which="ICL")
+## get model with smallest ICL (here same as for AIC and BIC: true k = 4)
+getModel(ex2, which = "ICL")
 
-## now 1 time each for k=2:5, with larger minimum prior
-ex3 <- initFlexmix(Nclus~1, k=2:5, model=FLXMCmvnorm(diagonal=FALSE),
-                   control=list(minprior=0.1), nrep=1)
+## now 1 time each for k = 2:5, with larger minimum prior
+ex3 <- initFlexmix(Nclus~1, k = 2:5,
+                   model = FLXMCmvnorm(diagonal = FALSE),
+                   control = list(minprior = 0.1), nrep = 1)
 ex3
 
 ## keep only maximum likelihood solution for each unique number of

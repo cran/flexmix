@@ -32,6 +32,7 @@ export(
        "FLXMRcondlogit",
        "FLXMRglm",
        "FLXMRglmfix",
+       "FLXMRglmnet",
        "FLXMRlmer",
        "FLXMRlmm",
        "FLXMRlmmc",

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: BregFix.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: BregFix.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{BregFix}
 \alias{BregFix}
@@ -25,7 +25,7 @@
 \examples{
 data("BregFix", package = "flexmix")
 Model <- FLXMRglmfix(family="binomial",
-                   nested = list(formula = c(~x, ~0), k = c(2,1)))
+                     nested = list(formula = c(~x, ~0), k = c(2, 1)))
 Conc <- FLXPmultinom(~w)
 FittedBin <- initFlexmix(cbind(yes, no) ~ 1, data = BregFix,
                          k = 3, model = Model, concomitant = Conc)

@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: trypanosome.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: trypanosome.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{trypanosome}
 \alias{trypanosome}
@@ -42,7 +42,7 @@
 \examples{
 data("trypanosome", package = "flexmix")
 trypMix <- initFlexmix(cbind(Dead, 1-Dead) ~ 1, k = 2, 
-	               nrep=5, data = trypanosome,
+	               nrep = 5, data = trypanosome,
 	               model = FLXMRglmfix(family = "binomial",
                            fixed = ~log(Dose)))
 }

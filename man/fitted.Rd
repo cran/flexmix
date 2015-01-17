@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: fitted.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: fitted.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{fitted-methods}
 \docType{methods}
@@ -13,7 +13,7 @@
   Extract fitted values for each component from a flexmix object.
 }
 \usage{
-\S4method{fitted}{flexmix}(object, drop=TRUE, aggregate=FALSE, ...)
+\S4method{fitted}{flexmix}(object, drop = TRUE, aggregate = FALSE, ...)
 }
 \arguments{
   \item{object}{an object of class \code{"flexmix"} or
@@ -29,8 +29,8 @@
 \author{Friedrich Leisch and Bettina Gruen}
 \examples{
 data("NPreg", package = "flexmix")
-ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
-matplot(NPreg$x, fitted(ex1), pch=16, type="p")
+ex1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2)
+matplot(NPreg$x, fitted(ex1), pch = 16, type = "p")
 points(NPreg$x, NPreg$yn)
 }
 

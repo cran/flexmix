@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: ExNclus.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: ExNclus.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{ExNclus}
 \alias{ExNclus}
@@ -27,6 +27,6 @@ data("Nclus")
 \examples{
 data("Nclus", package = "flexmix")
 require("MASS")
-eqscplot(Nclus, col=rep(1:4, c(100, 100, 150, 200)))
+eqscplot(Nclus, col = rep(1:4, c(100, 100, 150, 200)))
 }
 \keyword{datasets}

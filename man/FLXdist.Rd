@@ -2,7 +2,7 @@
 \alias{FLXdist}
 \alias{simulate,FLXdist-method}
 \alias{show,FLXdist-method}
-\title{Finite mixtures of distributions}
+\title{Finite Mixtures of Distributions}
 \description{
   Constructs objects of class \code{FLXdist} which represent unfitted finite mixture
   models.

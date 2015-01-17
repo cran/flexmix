@@ -11,7 +11,7 @@
 \alias{clusters,FLXboot,listOrdata.frame-method}
 \alias{predict,FLXboot-method}
 \alias{posterior,FLXboot,listOrdata.frame-method}
-\title{Bootstrap a flexmix object}
+\title{Bootstrap a flexmix Object}
 \description{
   Given a \code{flexmix} object perform parametric or empirical bootstrap.
 }

@@ -1,5 +1,5 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
 %  $Id: posterior.Rd 3937 2008-03-28 14:56:01Z leisch $
 %
 \name{relabel}
@@ -17,7 +17,7 @@
 
 \usage{
 relabel(object, by, ...)
-\S4method{relabel}{FLXdist,character}(object, by, which=NULL, ...)
+\S4method{relabel}{FLXdist,character}(object, by, which = NULL, ...)
 }
 \arguments{
   \item{object}{An object of class \code{"flexmix"}.}
@@ -35,10 +35,10 @@ relabel(object, by, ...)
 \keyword{methods}
 \examples{
     set.seed(123)
-    beta <- matrix(1:16, ncol=4)
+    beta <- matrix(1:16, ncol = 4)
     beta
-    df1 <- ExLinear(beta, n=100, sd=.5)
-    f1 <- flexmix(y~., data=df1, k=4)
+    df1 <- ExLinear(beta, n = 100, sd = .5)
+    f1 <- flexmix(y~., data = df1, k = 4)
 
     ## There was label switching, parameters are not in the same order
     ## as in beta:
@@ -51,7 +51,7 @@ relabel(object, by, ...)
     summary(abs(as.vector(betas-parameters(f1))))
 
     ## We relabel the components by sorting the coefficients of x1:
-    r1 <- relabel(f1, by="model", which="x1")
+    r1 <- relabel(f1, by = "model", which = "x1")
     round(parameters(r1))
 
     ## Now we can easily compare the fit with the true parameters:

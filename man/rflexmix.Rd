@@ -12,7 +12,7 @@
 \alias{rFLXM,FLXMRglmfix,list-method}
 \alias{rFLXM,FLXM,FLXcomponent-method}
 \alias{rFLXM,FLXMRglm,FLXcomponent-method}
-\title{Random number generator for finite mixtures}
+\title{Random Number Generator for Finite Mixtures}
 \description{
   Given a finite mixture model generate random
   numbers from it.

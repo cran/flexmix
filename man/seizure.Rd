@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: seizure.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: seizure.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{seizure}
 \alias{seizure}
@@ -30,17 +30,17 @@
 }
 \references{
   B. Gruen and F. Leisch. Bootstrapping finite mixture models.
-  In J. Antoch, editor, Compstat 2004 - Proceedings in Computational
+  In J. Antoch, editor, Compstat 2004--Proceedings in Computational
   Statistics, 1115--1122. Physika Verlag, Heidelberg, Germany, 2004.
   ISBN 3-7908-1554-3.
 }
 \examples{
 data("seizure", package = "flexmix")
-plot(Seizures/Hours~Day, col=as.integer(Treatment),
-     pch=as.integer(Treatment), data=seizure)
-abline(v=27.5, lty=2, col="grey")
+plot(Seizures/Hours ~ Day, col = as.integer(Treatment),
+     pch = as.integer(Treatment), data = seizure)
+abline(v = 27.5, lty = 2, col = "grey")
 legend(140, 9, c("Baseline", "Treatment"),
-       pch=1:2, col=1:2, xjust=1, yjust=1)
+       pch = 1:2, col = 1:2, xjust = 1, yjust = 1)
 
 set.seed(123)
 
@@ -48,14 +48,15 @@ set.seed(123)
 ## "good" and "bad" days, respectively, each a Poisson GLM with hours of
 ## parental observation as offset
 
-seizMix <- flexmix(Seizures~Treatment*log(Day),
-                   data=seizure, k=2,
-                   model=FLXMRglm(family="poisson", offset=log(seizure$Hours)))
+seizMix <- flexmix(Seizures ~ Treatment * log(Day),
+                   data = seizure, k = 2,
+                   model = FLXMRglm(family = "poisson",
+                     offset = log(seizure$Hours)))
 
 summary(seizMix)
 summary(refit(seizMix))
 
-matplot(seizure$Day, fitted(seizMix)/seizure$Hours, type="l",
-        add=TRUE, col=3:4)
+matplot(seizure$Day, fitted(seizMix)/seizure$Hours, type = "l",
+        add = TRUE, col = 3:4)
 }
 \keyword{datasets}

@@ -1,11 +1,11 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: ICL.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: ICL.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{ICL}
 \alias{ICL,flexmix-method}
 \alias{ICL,stepFlexmix-method}
-\title{Integrated completed likelihood criterion}
+\title{Integrated Completed Likelihood Criterion}
 \description{
   Compute the Integrated Completed Likelihood criterion for model selection.
 }
@@ -37,6 +37,6 @@
 }
 \examples{
 data("NPreg", package = "flexmix")
-ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
+ex1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2)
 ICL(ex1)
 }

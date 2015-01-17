@@ -1,7 +1,7 @@
 \name{FLXMCfactanal}
 \alias{FLXMCfactanal}
 \alias{rFLXM,FLXMCfactanal,FLXcomponent-method}
-\title{Driver for mixtures of factor analyzers}
+\title{Driver for Mixtures of Factor Analyzers}
 \description{
   This driver for \code{\link{flexmix}} implements estimation of mixtures of
   factor analyzers using ML estimation of factor analysis implemented in

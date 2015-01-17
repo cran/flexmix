@@ -5,7 +5,7 @@
 \alias{group,flexmix-method}
 \alias{group,FLXM-method}
 \alias{group,FLXMRglmfix-method}
-\title{Extract grouping variable}
+\title{Extract Grouping Variable}
 \description{
   Extract grouping variable for all observations.
 }

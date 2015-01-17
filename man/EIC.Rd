@@ -6,7 +6,7 @@
 \alias{EIC}
 \alias{EIC,flexmix-method}
 \alias{EIC,stepFlexmix-method}
-\title{Entropic measure information criterion}
+\title{Entropic Measure Information Criterion}
 \description{
   Compute the Entropic measure Information criterion for model selection.
 }
@@ -37,6 +37,6 @@
 }
 \examples{
 data("NPreg", package = "flexmix")
-ex1 <- flexmix(yn~x+I(x^2), data=NPreg, k=2)
+ex1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2)
 EIC(ex1)
 }

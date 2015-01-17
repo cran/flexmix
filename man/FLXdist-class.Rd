@@ -1,6 +1,6 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXdist-class.Rd 4666 2011-02-23 15:52:35Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: FLXdist-class.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{FLXdist-class}
 \docType{class}
@@ -18,9 +18,9 @@
   models. 
 }
 \usage{
-\S4method{parameters}{FLXdist}(object, component=NULL, model=NULL, which = c("model",
-    "concomitant"), simplify=TRUE, drop=TRUE)
-\S4method{predict}{FLXdist}(object, newdata=list(), aggregate=FALSE, ...)
+\S4method{parameters}{FLXdist}(object, component = NULL, model = NULL, which = c("model",
+    "concomitant"), simplify = TRUE, drop = TRUE)
+\S4method{predict}{FLXdist}(object, newdata = list(), aggregate = FALSE, ...)
 }
 \arguments{
   \item{object}{An object of class "FLXdist".}

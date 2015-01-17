@@ -1,11 +1,11 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: bioChemists.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: bioChemists.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{bioChemists}
 \alias{bioChemists}
 \docType{data}
-\title{Article production by graduate students in biochemistry Ph.D. programs}
+\title{Articles by Graduate Students in Biochemistry Ph.D. Programs}
 \description{
   A sample of 915 biochemistry graduate students.
 }

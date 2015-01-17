@@ -1,11 +1,11 @@
 %
-%  Copyright (C) 2004-2011 Friedrich Leisch and Bettina Gruen
-%  $Id: betablocker.Rd 4811 2012-05-08 15:35:52Z gruen $
+%  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
+%  $Id: betablocker.Rd 5008 2015-01-13 20:30:25Z gruen $
 %
 \name{betablocker}
 \alias{betablocker}
 \docType{data}
-\title{Clinical trial of beta-blockers}
+\title{Clinical Trial of Beta-Blockers}
 \description{
   22-centre clinical trial of beta-blockers for reducing mortality after
   myocardial infarction.
@@ -40,9 +40,9 @@
 }
 \examples{
 data("betablocker", package = "flexmix")
-betaMix <- initFlexmix(cbind(Deaths, Total-Deaths) ~ 1 | Center,
-                       data=betablocker, k=3, nrep=5,
-                       model=FLXMRglmfix(family="binomial",
-                         fixed=~Treatment)) 
+betaMix <- initFlexmix(cbind(Deaths, Total - Deaths) ~ 1 | Center,
+                       data = betablocker, k = 3, nrep = 5,
+                       model = FLXMRglmfix(family = "binomial",
+                         fixed = ~Treatment)) 
 }
 \keyword{datasets}
