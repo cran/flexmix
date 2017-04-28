@@ -12,8 +12,8 @@ function (x, y, z, subscripts, groups = NULL, col = superpose.line$col,
         na.rm = TRUE)), upper = sapply(z, function(x) max(as.numeric(x), 
         na.rm = TRUE)), horizontal = TRUE, ...) 
 {
-    superpose.line <- lattice::trellis.par.get("superpose.line")
-    reference.line <- lattice::trellis.par.get("reference.line")
+    superpose.line <- trellis.par.get("superpose.line")
+    reference.line <- trellis.par.get("reference.line")
     n.r <- ncol(z)
     n.c <- length(subscripts)
     if (is.null(groups)) {
@@ -43,10 +43,10 @@ function (x, y, z, subscripts, groups = NULL, col = superpose.line$col,
     upper <- rep(upper, length = n.r)
     dif <- upper - lower
     if (n.r > 1) {
-      if (horizontal) lattice::panel.segments(y0 = 0, y1 = 1, x0 = seq_len(n.r), x1 = seq_len(n.r), 
+      if (horizontal) panel.segments(y0 = 0, y1 = 1, x0 = seq_len(n.r), x1 = seq_len(n.r), 
                                      col = reference.line$col, lwd = reference.line$lwd, 
                                      lty = reference.line$lty)
-      else lattice::panel.segments(x0 = 0, x1 = 1, y0 = seq_len(n.r), y1 = seq_len(n.r), 
+      else panel.segments(x0 = 0, x1 = 1, y0 = seq_len(n.r), y1 = seq_len(n.r), 
                           col = reference.line$col, lwd = reference.line$lwd, 
                           lty = reference.line$lty)
     }else return(invisible())
@@ -54,9 +54,9 @@ function (x, y, z, subscripts, groups = NULL, col = superpose.line$col,
         x0 <- (as.numeric(z[subscripts, i]) - lower[i])/dif[i]
         x1 <- (as.numeric(z[subscripts, i + 1]) - lower[i + 1])/dif[i + 
             1]
-        if (horizontal) lattice::panel.segments(y0 = x0, x0 = i, y1 = x1, x1 = i + 1, 
+        if (horizontal) panel.segments(y0 = x0, x0 = i, y1 = x1, x1 = i + 1, 
             col = col, lty = lty, lwd = lwd, alpha = alpha, ...)
-        else lattice::panel.segments(x0 = x0, y0 = i, x1 = x1, y1 = i + 1, 
+        else panel.segments(x0 = x0, y0 = i, x1 = x1, y1 = i + 1, 
                             col = col, lty = lty, lwd = lwd, alpha = alpha, ...)
     }
     invisible()
@@ -70,22 +70,22 @@ confidence.panel.boot <- function(x, y, z, subscripts, lwd = 1, SD = NULL, ..., 
   if (!is.null(SD)) {
     SD <- lapply(SD, function(x) (x - lower)/dif)
     for (l in seq_along(SD)) {
-      grid::grid.polygon(y = grid::unit(c(SD[[l]][,1], rev(SD[[l]][,3])), "native"),
-                   x = grid::unit(c(seq_len(nc),rev(seq_len(nc))), "native"),
-                   gp = grid::gpar(fill = rgb(190/225, 190/225, 190/225, 0.5), col = "darkgrey"))
+      grid.polygon(y = unit(c(SD[[l]][,1], rev(SD[[l]][,3])), "native"),
+                   x = unit(c(seq_len(nc),rev(seq_len(nc))), "native"),
+                   gp = gpar(fill = rgb(190/225, 190/225, 190/225, 0.5), col = "darkgrey"))
     }
   }
   
   panel.parallel.horizontal(x, y, z, subscripts, ..., lower = lower, upper = upper) 
   if (!is.null(SD)) {
     for (l in seq_along(SD)) {
-      lattice::llines(y = SD[[l]][,2], x = seq_len(nc), col="white", lwd=lwd, lty = 1)
+      llines(y = SD[[l]][,2], x = seq_len(nc), col="white", lwd=lwd, lty = 1)
     }
   }
 }
 
 setMethod("plot", signature(x = "FLXboot", y = "missing"), function(x, y, ordering = NULL, range = c(0, 1),
-                                             ci = FALSE, varnames = colnames(pars), strip_name = NULL, ...) {
+                                               ci = FALSE, varnames = colnames(pars), strip_name = NULL, ...) {
   k <- x@object@k
   pars <- parameters(x)
   if (ci) {
@@ -94,7 +94,7 @@ setMethod("plot", signature(x = "FLXboot", y = "missing"), function(x, y, orderi
     CI <- x_refit@coef + qnorm(0.975) * cbind(-sd, 0, sd)
     indices_prior <- grep("alpha$", names(x_refit@coef))
     if (length(indices_prior)) {
-      z <- rmvnorm(10000, x_refit@coef[indices_prior,drop=FALSE], x_refit@vcov[indices_prior,indices_prior,drop=FALSE])
+      z <- mvtnorm::rmvnorm(10000, x_refit@coef[indices_prior,drop=FALSE], x_refit@vcov[indices_prior,indices_prior,drop=FALSE])
       Priors <- t(apply(cbind(1, exp(z))/rowSums(cbind(1, exp(z))), 2, quantile, c(0.025, 0.5, 0.975)))
       indices <- lapply(seq_len(k), function(i) grep(paste("_Comp.", i, sep = ""), names(x_refit@coef[-indices_prior])))
       SD <- lapply(seq_len(k), function(i) rbind(CI[indices[[i]], ], prior = Priors[i,]))
@@ -122,7 +122,7 @@ setMethod("plot", signature(x = "FLXboot", y = "missing"), function(x, y, orderi
   pars <- na.omit(pars)
   if (!is.null(attr(pars, "na.action"))) 
     Ordering <- Ordering[-attr(na.omit(pars), "na.action")]
-  parallel.plot <- lattice::parallelplot(formula, groups = Ordering, default.scales = list(y = list(at = c(0, 1), labels = range_name),
+  parallel.plot <- parallelplot(formula, groups = Ordering, default.scales = list(y = list(at = c(0, 1), labels = range_name),
                                                                        x = list(alternating = FALSE, axs = "i", tck = 0, at = seq_len(ncol(pars)))), range = range,
                                          panel = confidence.panel.boot, prepanel = prepanel.parallel.horizontal, SD = SD, ...)
   parallel.plot$x.scales$labels <- varnames

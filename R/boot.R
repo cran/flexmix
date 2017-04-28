@@ -200,11 +200,17 @@ setMethod("parameters", "FLXboot", function(object, k, ...) {
   Coefs <- lapply(seq_along(object@parameters), function(i) 
                   if (is.na(object@k[i])) NULL
                   else do.call("cbind", c(lapply(seq_len(object@k[i]), function(j) 
-                                                 unlist(sapply(seq_along(object@object@model), function(m) 
-                                                               FLXgetParameters(as(object@object@model[[m]], "FLXMR"),
-                                                                                list(with(c(object@parameters[[i]][[paste(k)]][[m]][[j]],
-                                                                                            list(df = object@object@components[[j]][[m]]@df)),
-                                                                                          eval(object@object@model[[m]]@defineComponent))))))),
+                      unlist(sapply(seq_along(object@object@model), function(m) 
+                          FLXgetParameters(as(object@object@model[[m]], "FLXMR"),
+                                           if (is(object@object@model[[m]]@defineComponent, "expression")) 
+                                               list(eval(object@object@model[[m]]@defineComponent,
+                                                         c(object@parameters[[i]][[paste(k)]][[m]][[j]],
+                                                           list(df = object@object@components[[j]][[m]]@df))))
+                                           else {
+                                               list(object@object@model[[m]]@defineComponent(
+                                                   c(object@parameters[[i]][[paste(k)]][[m]][[j]],
+                                                     list(df = object@object@components[[j]][[m]]@df))))
+                                           })))),
                                           as.list(rep(NA, k - object@k[i])))))
   Coefs <- t(do.call("cbind", Coefs))
   colnames(Coefs) <- gsub("Comp.1_", "", colnames(Coefs))
@@ -226,9 +232,15 @@ setMethod("clusters", signature(object = "FLXboot", newdata = "listOrdata.frame"
       variables <- variables[variables %in% slotNames(new@model[[m]])]
       for (var in variables) assign(var, slot(new@model[[m]], var))
       for (K in seq_len(object@k[i])) {
-        new@components[[K]][[m]] <- with(c(object@parameters[[i]][[paste(k)]][[m]][[K]],
-                                           list(df = object@object@components[[K]][[m]]@df)),
-                                         eval(object@object@model[[m]]@defineComponent))
+          new@components[[K]][[m]] <-
+              if (is(object@object@model[[m]]@defineComponent, "expression"))
+                  eval(object@object@model[[m]]@defineComponent,
+                       c(object@parameters[[i]][[paste(k)]][[m]][[K]],
+                         list(df = object@object@components[[K]][[m]]@df)))
+              else
+                  object@object@model[[m]]@defineComponent(
+                      c(object@parameters[[i]][[paste(k)]][[m]][[K]],
+                        list(df = object@object@components[[K]][[m]]@df)))
       }
     }
     clusters(new, newdata = newdata)})
@@ -246,9 +258,15 @@ setMethod("posterior", signature(object = "FLXboot", newdata = "listOrdata.frame
       variables <- variables[variables %in% slotNames(new@model[[m]])]
       for (var in variables) assign(var, slot(new@model[[m]], var))
       for (K in seq_len(object@k[i])) {
-        new@components[[K]][[m]] <- with(c(object@parameters[[i]][[paste(k)]][[m]][[K]],
-                                           list(df = object@object@components[[K]][[m]]@df)),
-                                         eval(object@object@model[[m]]@defineComponent))
+          new@components[[K]][[m]] <-
+              if (is(object@object@model[[m]]@defineComponent, "expression"))
+                  eval(object@object@model[[m]]@defineComponent,
+                       c(object@parameters[[i]][[paste(k)]][[m]][[K]],
+                         list(df = object@object@components[[K]][[m]]@df)))
+              else
+                  object@object@model[[m]]@defineComponent(
+                      c(object@parameters[[i]][[paste(k)]][[m]][[K]],
+                        list(df = object@object@components[[K]][[m]]@df)))
       }
     }
     posterior(new, newdata = newdata)})
@@ -265,9 +283,15 @@ setMethod("predict", signature(object = "FLXboot"), function(object, newdata, k,
       variables <- variables[variables %in% slotNames(new@model[[m]])]
       for (var in variables) assign(var, slot(new@model[[m]], var))
       for (K in seq_len(object@k[i, paste(k)])) {
-        new@components[[K]][[m]] <- with(c(object@parameters[[i]][[paste(k)]][[m]][[K]],
-                                           list(df = object@object@components[[1]][[m]]@df)),
-                                         eval(object@object@model[[m]]@defineComponent))
+          new@components[[K]][[m]] <-
+              if (is(object@object@model[[m]]@defineComponent, "expression"))
+                  eval(object@object@model[[m]]@defineComponent,
+                       c(object@parameters[[i]][[paste(k)]][[m]][[K]],
+                         list(df = object@object@components[[1]][[m]]@df)))
+              else 
+                  object@object@model[[m]]@defineComponent(
+                       c(object@parameters[[i]][[paste(k)]][[m]][[K]],
+                         list(df = object@object@components[[1]][[m]]@df)))
       }
     }
     predict(new, newdata = newdata, ...)})

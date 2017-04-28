@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2013 Friedrich Leisch and Bettina Gruen
-#  $Id: concomitant.R 4922 2013-09-03 13:32:45Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: concomitant.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 FLXPmultinom <- function(formula=~1) {
@@ -10,13 +10,14 @@ FLXPmultinom <- function(formula=~1) {
     p <- ncol(y)
     if (p < 2) stop("Multinom requires at least two components.")
     mask <- c(rep(0, r + 1), rep(c(0, rep(1, r)), p - 1))
-    nnet::nnet.default(x, y, w, mask = mask, size = 0, 
+    nnet.default(x, y, w, mask = mask, size = 0, 
                        skip = TRUE, softmax = TRUE, censored = FALSE, 
                        rang = 0, trace=FALSE,...)
   }
   z@fit <- function(x, y, w, ...) multinom.fit(x, y, w, ...)$fitted.values
   z@refit <- function(x, y, w, ...) {
     if (missing(w) || is.null(w)) w <- rep(1, nrow(y))
+    rownames(y) <- rownames(x) <- NULL
     fit <- multinom(y ~ 0 + x, weights = w, data = list(y = y, x = x), Hess = TRUE, trace = FALSE)
     fit$coefnames <- colnames(x)
     fit$vcoefnames <- fit$coefnames[seq_along(fit$coefnames)]

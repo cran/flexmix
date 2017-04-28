@@ -1,5 +1,29 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-14}{
+  \itemize{
+    \item A bug fixed for \code{FLXMRcondlogit()} to ensure that the
+    formula for the strata is also stored and can be used for
+    predicting, etc. new data. Thanks to Peter Fraser-Mackenziefor
+    for pointing the problem out.
+    \item A bug fixed for \code{FLXMRglmfix()} which occurred if several
+    components were simultaneously omitted. Thanks to Moritz Berger for
+    pointing the problem out.
+    \item For mixtures of mixed effects models and with censored data
+    only weighted ML estimation is implemented. This is now checked and
+    an error is given if a different estimation method is requested.
+    \item A generic function \code{sigma()} is available for R >= 3.3.0
+    and thus different versions of \code{sigma()} need to be called
+    depending on the R version. Thanks also to Stephen Martin for
+    pointing the issue out.
+    \item Components are now generated using functions instead of
+    expressions.
+    \item Functions from the base packages \pkg{stats}, \pkg{graphics}
+    and \pkg{grDevices} are now correctly imported before being used.
+    \item Function \code{FLXMCdist1} implements model drivers for
+    univariate mixtures of different distributions.
+  }
+}
 \section{Changes in flexmix version 2.3-13}{
   \itemize{
     \item A model driver for mixtures of regression models with

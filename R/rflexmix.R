@@ -18,7 +18,7 @@ setMethod("rflexmix", signature(object = "flexmix", newdata="missing"), function
   object <- undo_weights(object)
   group <- group(object)
   prior <- determinePrior(object@prior, object@concomitant, group)
-  class <- apply(prior, 1, function(x) stats::rmultinom(1, size = 1, prob = x))
+  class <- apply(prior, 1, function(x) rmultinom(1, size = 1, prob = x))
   class <- if (is.matrix(class)) t(class) else as.matrix(class)
   class <- max.col(class)[group]
   y <- vector("list", N)

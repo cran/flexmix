@@ -1,15 +1,16 @@
 setClass("FLXMRcondlogit",
-         representation(strata="ANY"),
+         representation(strata="ANY",
+                        strata_formula="ANY"),
          contains = "FLXMRglm")
 
 FLXMRcondlogit <- function(formula=.~., strata) {
-  z <- new("FLXMRcondlogit", weighted=TRUE, formula=formula, strata=strata,
+  z <- new("FLXMRcondlogit", weighted=TRUE, formula=formula, strata_formula=strata,
            family="multinomial", name=paste("FLXMRcondlogit"))
 
   
-  z@defineComponent <- expression({
+  z@defineComponent <- function(para) {
     predict <- function(x, ...) 
-      tcrossprod(x, t(coef))
+      tcrossprod(x, t(para$coef))
     
     logLik <- function(x, y, strata) {
       llh_all <- vector("numeric", length = length(y))
@@ -19,10 +20,10 @@ FLXMRcondlogit <- function(formula=.~., strata) {
     }
     
     new("FLXcomponent",
-        parameters=list(coef=coef),
+        parameters=list(coef=para$coef),
         logLik=logLik, predict=predict,
-        df=df)
-  })
+        df=para$df)
+  }
   
   z@fit <- function(x, y, w, strata){
     index <- w > 0
@@ -30,7 +31,7 @@ FLXMRcondlogit <- function(formula=.~., strata) {
                                method = "exact", rownames = seq_len(nrow(y))[index])
     coef <- coef(fit)
     df <- length(coef)
-    with(list(coef = coef, df = df), eval(z@defineComponent))
+    z@defineComponent(list(coef = coef, df = df))
   }
   z
 }
@@ -56,7 +57,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRcondlogit"),
     mt <- attr(mf, "terms")
     model@x <- model.matrix(mt, data=mf)
   }
-  strata <- update(model@strata, ~ . + 0)
+  strata <- update(model@strata_formula, ~ . + 0)
   mf <- model.frame(strata, data=data, na.action=NULL)
   model@strata <- as.integer(model.matrix(attr(mf, "terms"), data=mf))
   ## Omit the intercept for identifiability

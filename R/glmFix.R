@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 4978 2014-02-13 15:45:15Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: glmFix.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -32,10 +32,10 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence))) + rep(1/variance, variance)
             lapply(seq_len(k),
-                   function(K) with(list(coef=coefs[as.logical(incidence[K,])],
-                                         sigma=sigma[K],
-                                         df= df[K]),
-                                    eval(z@defineComponent)))
+                   function(K) z@defineComponent(
+                                    list(coef = coefs[as.logical(incidence[K, ])],
+                                         sigma = sigma[K],
+                                         df = df[K])))
           }
     }
     else if(family=="binomial"){
@@ -47,9 +47,9 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
             lapply(seq_len(k),
-                   function(K) with(list(coef=coefs[as.logical(incidence[K,])],
-                                         df = df[K]),
-                                    eval(z@defineComponent)))
+                   function(K) z@defineComponent(
+                                    list(coef = coefs[as.logical(incidence[K, ])],
+                                         df = df[K])))
           }
     }
     else if(family=="poisson"){
@@ -61,9 +61,9 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
             lapply(seq_len(k),
-                   function(K) with(list(coef=coefs[as.logical(incidence[K,])],
-                                         df = df[K]),
-                                    eval(z@defineComponent)))
+                   function(K) z@defineComponent(
+                                    list(coef = coefs[as.logical(incidence[K, ])],
+                                         df = df[K])))
           }
     }
     else if(family=="Gamma"){
@@ -76,10 +76,10 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
             names(coefs) <- colnames(incidence)
             df <- rowSums(incidence/rep(colSums(incidence), each = nrow(incidence)))
             lapply(seq_len(k),
-                   function(K) with(list(coef=coefs[as.logical(incidence[K,])],
+                   function(K) z@defineComponent(
+                                    list(coef = coefs[as.logical(incidence[K, ])],
                                          df = df[K],
-                                         shape = shape),
-                                    eval(z@defineComponent)))
+                                         shape = shape)))
           }
     }
     else stop(paste("Unknown family", family))

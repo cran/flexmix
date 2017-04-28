@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: infocrit.R 4922 2013-09-03 13:32:45Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: infocrit.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 setMethod("nobs", signature(object="flexmix"),

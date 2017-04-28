@@ -62,6 +62,8 @@
 \SweaveOpts{width=9, height=4.5, eps=FALSE, keep.source=TRUE}
 <<echo=false,results=hide>>=
 options(width=60, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
+library("graphics")
+library("stats")
 library("flexmix")
 library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)
@@ -1075,9 +1077,8 @@ introduced which (currently) has two subclasses: \code{"FLXMC"} for
 model-based clustering and \code{"FLXMR"} for clusterwise regression,
 where predictor variables are given. Additional slots have been
 introduced to allow for data preprocessing and the construction of the
-components was separated from the fit and is now captured as an
-expression \citep[to allow for lexical
-scoping;][]{mixtures:Gentleman+Ihaka:2000} in the slot
+components was separated from the fit and is implemented using lexical
+scoping \citep{mixtures:Gentleman+Ihaka:2000} in the slot
 \code{defineComponent}. \code{"FLXMC"} has an additional slot
 \code{dist} to specify the name of the distribution of the variable.
 In the future functionality shall be provided for sampling from a

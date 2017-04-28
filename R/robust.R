@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: robust.R 4834 2012-08-02 10:17:09Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: robust.R 5079 2016-01-31 12:21:12Z gruen $
 #
 ###*********************************************************
 
@@ -52,10 +52,9 @@ setMethod("FLXmstep", signature(model = "FLXMRrobglm"),
         coef <- c(cwt$center, rep(0, ncol(model@x)-1))
     
         names(coef) <- colnames(model@x)
-        comp.1 <- with(list(coef = coef, df = 0, offset = NULL,
-                            sigma=sqrt(cwt$cov),
-                            family = model@family),
-                       eval(model@defineComponent))
+        comp.1 <- model@defineComponent(list(coef = coef, df = 0, offset = NULL,
+                                             sigma=sqrt(cwt$cov),
+                                             family = model@family))
     }
     else if(model@family=="poisson")
     {
@@ -63,15 +62,14 @@ setMethod("FLXmstep", signature(model = "FLXMRrobglm"),
         coef <- c(log(3*cwt$center), rep(0, ncol(model@x)-1))
         names(coef) <- colnames(model@x)
         
-        comp.1 <- with(list(coef = coef, df = 0, offset = NULL,
-                            family = model@family),
-                       eval(model@defineComponent))
+        comp.1 <- model@defineComponent(list(coef = coef, df = 0, offset = NULL,
+                            family = model@family))
     }
     else{
         stop("Other families not implemented yet!")
     }
     
     c(list(comp.1), FLXmstep(as(model, "FLXMRglm"),
-                             weights[, -1, drop=FALSE]))
+                             weights[, -1, drop=FALSE], ...))
 })
 

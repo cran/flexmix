@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: flexmix-internal.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: flexmix-internal.Rd 5079 2016-01-31 12:21:12Z gruen $
 %
 \name{flexmix-internal}
 \alias{FLXgetModelmatrix}
@@ -18,6 +18,7 @@
 \alias{FLXgetK,FLXMRfix-method}
 \alias{FLXgetModelmatrix}
 \alias{FLXgetModelmatrix,FLXM-method}
+\alias{FLXgetModelmatrix,FLXMCmvcombi-method}
 \alias{FLXgetModelmatrix,FLXMRcondlogit-method}
 \alias{FLXgetModelmatrix,FLXMRfix-method}
 \alias{FLXgetModelmatrix,FLXMRlmc-method}
@@ -32,6 +33,7 @@
 \alias{FLXgetObs,FLXMRlmc-method}
 \alias{FLXmstep}       
 \alias{FLXmstep,FLXM-method}
+\alias{FLXmstep,FLXMCmvcombi-method}
 \alias{FLXmstep,FLXMRcondlogit-method}
 \alias{FLXmstep,FLXMRfix-method}
 \alias{FLXmstep,FLXMRlmc-method}

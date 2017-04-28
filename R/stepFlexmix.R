@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2013 Friedrich Leisch and Bettina Gruen
-#  $Id: stepFlexmix.R 4878 2013-02-08 09:09:35Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: stepFlexmix.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 setClass("stepFlexmix",

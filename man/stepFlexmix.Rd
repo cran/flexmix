@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: stepFlexmix.Rd 5115 2017-04-07 08:18:13Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -104,7 +104,7 @@ stepFlexmix(..., k = NULL, nrep = 3, verbose = TRUE, drop = TRUE,
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression in R. \emph{Journal of Statistical
-  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
+  Software}, \bold{11}(8), 2004. doi:10.18637/jss.v011.i08
 
   Christophe Biernacki, Gilles Celeux and Gerard Govaert. Choosing
   starting values for the EM algorithm for getting the highest

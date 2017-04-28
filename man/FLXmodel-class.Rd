@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmodel-class.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: FLXmodel-class.Rd 5079 2016-01-31 12:21:12Z gruen $
 %
 \name{FLXM-class}
 \docType{class}
@@ -18,7 +18,7 @@
 \section{Slots}{
   \describe{
     \item{\code{fit}:}{Function returning an \code{FLXcomponent} object.}
-    \item{\code{defineComponent}:}{Expression to determine the
+    \item{\code{defineComponent}:}{Function or expression to determine the
       \code{FLXcomponent} object given the parameters.}
     \item{\code{weighted}:}{Logical indicating whether \code{fit} can do
     weighted likelihood maximization.}

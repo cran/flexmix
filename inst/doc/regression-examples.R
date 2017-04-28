@@ -1,8 +1,10 @@
 ### R code from vignette source 'regression-examples.Rnw'
 
 ###################################################
-### code chunk number 1: regression-examples.Rnw:11-12
+### code chunk number 1: regression-examples.Rnw:11-14
 ###################################################
+library("stats")
+library("graphics")
 library("flexmix")
 
 
@@ -239,7 +241,8 @@ summary(refit(TrypMix))
 ### code chunk number 26: trypanosome
 ###################################################
 tab <- with(trypanosome, table(Dead, Dose))
-Tryp.dat <- data.frame(Dead = tab["1",], Alive = tab["0",], Dose = as.numeric(colnames(tab)))
+Tryp.dat <- data.frame(Dead = tab["1",], Alive = tab["0",], 
+                       Dose = as.numeric(colnames(tab)))
 plot(Dead/(Dead+Alive) ~ Dose, data = Tryp.dat)
 Tryp.pred <- predict(glm(cbind(Dead, 1-Dead) ~ log(Dose), family = "binomial", data = trypanosome), newdata=Tryp.dat, type = "response")
 TrypMix.pred <- predict(TrypMix, newdata = Tryp.dat, aggregate = TRUE)[[1]]
@@ -404,7 +407,7 @@ for (i in 1:2) lines(salmonellaTA98$x, salmonMix.pr[[i]], lty=i)
 
 
 ###################################################
-### code chunk number 39: regression-examples.Rnw:920-924
+### code chunk number 39: regression-examples.Rnw:923-927
 ###################################################
 SI <- sessionInfo()
 pkgs <- paste(sapply(c(SI$otherPkgs, SI$loadedOnly), function(x) 

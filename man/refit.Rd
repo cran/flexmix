@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: refit.Rd 5011 2015-01-13 21:36:24Z gruen $
+%  $Id: refit.Rd 5115 2017-04-07 08:18:13Z gruen $
 %
 \name{refit-methods}
 \alias{refit,flexmix-method}
@@ -86,7 +86,7 @@
 \references{
   Friedrich Leisch. FlexMix: A general framework for finite mixture
   models and latent class regression in R. \emph{Journal of Statistical
-  Software}, \bold{11}(8), 2004. http://www.jstatsoft.org/v11/i08/
+  Software}, \bold{11}(8), 2004. doi:10.18637/jss.v011.i08
 }
 \section{Warning}{
   For \code{method = "mstep"} the standard deviations are determined

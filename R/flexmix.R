@@ -1,10 +1,10 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 4978 2014-02-13 15:45:15Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmix.R 5115 2017-04-07 08:18:13Z gruen $
 #
 
 log_row_sums <- function(m) {
-  M <- m[cbind(seq_len(nrow(m)), max.col(m))]
+  M <- m[cbind(seq_len(nrow(m)), max.col(m, "first"))]
   M + log(rowSums(exp(m - M)))
 }
 
@@ -119,7 +119,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   control <- allweighted(model, control, weights)
   if(control@verbose>0)
     cat("Classification:", control@classify, "\n")
-  if (control@classify=="random") iter.rm <- 0
+  if (control@classify %in% c("SEM", "random")) iter.rm <- 0
   group <- groups$group
   groupfirst <- groups$groupfirst
   if(length(group)>0) postunscaled <- groupPosteriors(postunscaled, group)
@@ -128,7 +128,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
   postscaled <- exp(logpostunscaled - log_row_sums(logpostunscaled))
   
   llh <- -Inf
-  if (control@classify=="random") llh.max <- -Inf
+  if (control@classify %in% c("SEM", "random")) llh.max <- -Inf
   converged <- FALSE
   components <- rep(list(rep(list(new("FLXcomponent")), k)), length(model))
   ### EM
@@ -162,6 +162,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
           iter.rm <- iter
         }
         model <- lapply(model, FLXremoveComponent, nok)
+        components <- lapply(components, "[", -nok)
       }
       components <- lapply(seq_along(model), function(i) FLXmstep(model[[i]], postscaled, components[[i]]))
       postunscaled <- matrix(0, nrow = N, ncol = k)
@@ -213,7 +214,7 @@ function(model, concomitant, control, postunscaled=NULL, groups, weights)
       }
       if(control@verbose && (iter%%control@verbose==0))
         printIter(iter, llh)
-    }
+  }
   ### Construct return object
   if (control@classify=="random") {
     components <- components.max
@@ -333,7 +334,8 @@ function(model, data, formula, lhs=TRUE, ...)
   ## </FIXME>
   
   if (lhs) {
-    mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL) else model.frame(model@terms, data=data, na.action = NULL, xlev = model@xlevels)
+    mf <- if (is.null(model@terms)) model.frame(model@fullformula, data=data, na.action = NULL)
+          else model.frame(model@terms, data=data, na.action = NULL, xlev = model@xlevels)
     model@terms <- attr(mf, "terms")
     response <- as.matrix(model.response(mf))
     model@y <- model@preproc.y(response)
@@ -383,8 +385,8 @@ ungroupPriors <- function(x, group, groupfirst) {
   x
 }
 
-allweighted <- function(model, control, weights) {
-  allweighted <- all(sapply(model, function(x) x@weighted))
+setMethod("allweighted", signature(model = "list", control = "ANY", weights = "ANY"), function(model, control, weights) {
+  allweighted <- all(sapply(model, function(x) allweighted(x, control, weights)))
   if(allweighted){
     if(control@classify=="auto")
       control@classify <- "weighted"
@@ -401,8 +403,12 @@ allweighted <- function(model, control, weights) {
       stop("it is not possible to specify weights for models without weighted ML estimation")
   }
   control
-}
+})
 
+setMethod("allweighted", signature(model = "FLXM", control = "ANY", weights = "ANY"), function(model, control, weights) {
+  model@weighted              
+})
+          
 initPosteriors <- function(k, cluster, N, groups) {
   if(is(cluster, "matrix")){
     postunscaled <- cluster

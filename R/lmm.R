@@ -13,6 +13,13 @@ setClass("FLXMRlmm",
 setClass("FLXMRlmmfix",
          contains = "FLXMRlmm")
 
+setMethod("allweighted", signature(model = "FLXMRlmm", control = "ANY", weights = "ANY"), function(model, control, weights) {
+    if (!control@classify %in% c("auto", "weighted"))
+        stop("Model class only supports weighted ML estimation.")
+    model@weighted
+})
+
+
 FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spline"),
                      varFix = c(Random = FALSE, Residual = FALSE), ...)
 {
@@ -47,7 +54,7 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
     fit <- get(lm.fit)(X, Y - Effect, W, ...)
     XSigmaX <- sapply(seq_along(z), function(i) sum(diag(crossprod(z[[i]]) %*% random$Sigma[[i]])))
     wSum <- tapply(w, which, sum)
-    sigma2 <- (sum(W*resid(fit)^2) + sum(wSum*XSigmaX))/sum(W)
+    sigma2 <- (sum(W*residuals(fit)^2) + sum(wSum*XSigmaX))/sum(W)
     wSigma <- add(lapply(seq_along(z), function(i) wSum[i]*random$Sigma[[i]]))
     bb <- add(lapply(seq_along(which), function(i) tcrossprod(random$beta[[i]])*w[i]))
     psi <- (wSigma + bb)/sum(w)
@@ -57,24 +64,24 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
          df = if (is(fit, "smooth.spline")) fit$df else ncol(x[[1]]))
   }
 
-  object@defineComponent <- expression({
+  object@defineComponent <- function(para) {
     predict <- function(x, ...) 
-      if (is(coef, "smooth.spline.fit")) lapply(x, function(X) stats::predict(coef, X)$y)
-      else lapply(x, function(X) X %*% coef)
+      if (is(para$coef, "smooth.spline.fit")) lapply(x, function(X) predict(para$coef, X)$y)
+      else lapply(x, function(X) X %*% para$coef)
     
     logLik <- function(x, y, z, which, group, ...) {
-      V <- lapply(z, function(Z) tcrossprod(tcrossprod(Z, sigma2$Random), Z) + diag(nrow(Z)) * sigma2$Residual)
+      V <- lapply(z, function(Z) tcrossprod(tcrossprod(Z, para$sigma2$Random), Z) + diag(nrow(Z)) * para$sigma2$Residual)
       mu <- predict(x, ...)
       llh <- sapply(seq_along(x), function(i) 
                     mvtnorm::dmvnorm(t(y[[i]]), mean = mu[[i]], sigma = V[[which[i]]], log=TRUE)/nrow(V[[which[i]]]))
       as.vector(ungroupPriors(matrix(llh), group, !duplicated(group)))
     }
     new("FLXcomponentlmm",
-        parameters = list(coef = coef, sigma2 = sigma2),
+        parameters = list(coef = para$coef, sigma2 = para$sigma2),
         random = list(),
         logLik = logLik, predict = predict,
-        df = df)
-  })
+        df = para$df)
+  }
 
   determineRandom <- function(mu, y, z, which, sigma2) {
     Sigma <- lapply(z, function(Z)
@@ -99,10 +106,9 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
       }
       n <- nrow(fit[[1]]$sigma2$Random)
       lapply(fit, function(Z) {
-        comp <- with(list(coef = coef(Z),
-                          sigma2 =  Z$sigma2,
-                          df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], 1/ncol(w), 1)),
-                     eval(object@defineComponent))
+        comp <- object@defineComponent(list(coef = coef(Z),
+                                            sigma2 =  Z$sigma2,
+                                            df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) + ifelse(varFix["Residual"], 1/ncol(w), 1)))
         comp@random <- determineRandom(comp@predict(x), y, z, which, comp@parameters$sigma2)
         comp
       })
@@ -111,10 +117,10 @@ FLXMRlmm <- function(formula = . ~ ., random, lm.fit = c("lm.wfit", "smooth.spli
     function(x, y, w, z, which, random){
       fit <- lmm.wfit(x, y, w, z, which, random)
       n <- nrow(fit$sigma2$Random)
-      comp <- with(list(coef = coef(fit),
+      comp <- object@defineComponent(
+                   list(coef = coef(fit),
                         df = fit$df + n*(n+1)/2 + 1,
-                        sigma2 =  fit$sigma2),
-                   eval(object@defineComponent))
+                        sigma2 =  fit$sigma2))
       comp@random <- determineRandom(comp@predict(x), y, z, which, comp@parameters$sigma2)
       comp
     }
@@ -158,7 +164,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmm"),
   if (identical(paste(deparse(formula_nogrouping), collapse = ""), paste(deparse(formula), collapse = ""))) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   model@fullformula <- update(model@fullformula,
-                              paste(".~. |", .FLXgetGroupingVar(formula)))
+                                     paste(".~. |", .FLXgetGroupingVar(formula)))
   mt1 <- terms(model@random, data=data)
   mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
   model@z <- model.matrix(attr(mf, "terms"), data)

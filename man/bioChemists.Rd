@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: bioChemists.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: bioChemists.Rd 5035 2015-05-06 19:59:02Z gruen $
 %
 \name{bioChemists}
 \alias{bioChemists}
@@ -29,7 +29,7 @@ data("bioChemists")
 }
 \source{
   found in Stata format at
-  \url{http://www.indiana.edu/~jslsoc/stata/socdata/couart2.dta}
+  \url{http://www.indiana.edu/~jslsoc/stata/spex_data/couart2.dta}
 }
 \references{
   Long, J. Scott. The origins of sex difference in

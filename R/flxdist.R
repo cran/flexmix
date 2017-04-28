@@ -45,16 +45,22 @@ FLXdist <- function(formula, k = NULL, model=FLXMRglm(), components, concomitant
 setGeneric("FLXcomponent", function(object, ...) standardGeneric("FLXcomponent"))
 
 setMethod("FLXcomponent", signature(object="FLXM"), function(object, components, ...) {
-  df <- numeric()
-  with(components, eval(object@defineComponent))
+  components$df <- numeric()
+  if (is(object@defineComponent, "expression"))
+      eval(object@defineComponent, components)
+  else
+      object@defineComponent(components)
 })
 
 ##<fixme>##
 setMethod("FLXcomponent", signature(object="FLXMRglm"), function(object, components, ...) {
-  df <- numeric()
+  components$df <- numeric()
   offset <- NULL
   family <- object@family
-  with(components, eval(object@defineComponent))
+  if (is(object@defineComponent, "expression"))
+      eval(object@defineComponent, components)
+  else
+      object@defineComponent(components)
 })
 
 ###**********************************************************

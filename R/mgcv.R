@@ -69,17 +69,16 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
   if (family=="gaussian"){
     z@fit <- function(x, y, w, G){
       gam.fit <- gam_fit(G, w)
-      with(list(coef = gam.fit$coefficients, df = sum(gam.fit$edf)+1,
-                sigma = sqrt(sum(w * gam.fit$residuals^2 /
-                  mean(w))/ (nrow(x)-sum(gam.fit$edf)))),
-           eval(z@defineComponent))
+      z@defineComponent(list(coef = gam.fit$coefficients, df = sum(gam.fit$edf)+1,
+                                   sigma = sqrt(sum(w * gam.fit$residuals^2 /
+                                                        mean(w))/ (nrow(x)-sum(gam.fit$edf)))))
     }
   }
   else if(family %in% c("binomial", "poisson")){
     z@fit <- function(x, y, w, G){
       gam.fit <- gam_fit(G, w)
-      with(list(coef = gam.fit$coefficients, df = sum(gam.fit$edf)),
-                eval(z@defineComponent))
+      z@defineComponent(
+           list(coef = gam.fit$coefficients, df = sum(gam.fit$edf)))
     }
   }
   else stop(paste("Unknown family", family))

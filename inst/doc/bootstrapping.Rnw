@@ -21,6 +21,7 @@ critical_values <- function(n, p = "0.95") {
     return(sqrt(n.approx)/sqrt(n) * qDiptab[as.character(n.approx), p])
   }
 }
+library("graphics")
 library("flexmix")
 combine <- function(x, sep, width) {
     cs <- cumsum(nchar(x))

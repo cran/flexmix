@@ -9,6 +9,8 @@
 
 \title{Applications of finite mixtures of regression models}
 <<echo=false, hide=true>>=
+library("stats")
+library("graphics")
 library("flexmix")
 @ 
 \author{Bettina Gr{\"u}n\\
@@ -620,7 +622,8 @@ facilitate comparison of the two models.
   \centering
 <<trypanosome, fig=true, echo=false, results=hide>>=
 tab <- with(trypanosome, table(Dead, Dose))
-Tryp.dat <- data.frame(Dead = tab["1",], Alive = tab["0",], Dose = as.numeric(colnames(tab)))
+Tryp.dat <- data.frame(Dead = tab["1",], Alive = tab["0",], 
+                       Dose = as.numeric(colnames(tab)))
 plot(Dead/(Dead+Alive) ~ Dose, data = Tryp.dat)
 Tryp.pred <- predict(glm(cbind(Dead, 1-Dead) ~ log(Dose), family = "binomial", data = trypanosome), newdata=Tryp.dat, type = "response")
 TrypMix.pred <- predict(TrypMix, newdata = Tryp.dat, aggregate = TRUE)[[1]]

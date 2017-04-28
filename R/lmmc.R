@@ -17,6 +17,12 @@ setClass("FLXMRlmmc",
 setClass("FLXMRlmmcfix",
          contains = "FLXMRlmmc")
 
+setMethod("allweighted", signature(model = "FLXMRlmc", control = "ANY", weights = "ANY"), function(model, control, weights) {
+    if (!control@classify %in% c("auto", "weighted"))
+        stop("Model class only supports weighted ML estimation.")
+    model@weighted
+})
+
 update.Residual <- function(fit, w, z, C, which, random, censored) {
   index <- lapply(C, function(x) x == 1)
   W <- rep(w, sapply(which, function(x) nrow(z[[x]])))
@@ -25,7 +31,7 @@ update.Residual <- function(fit, w, z, C, which, random, censored) {
   Residual <- if (length(WHICH) > 0)
     sum(sapply(WHICH, function(i) 
                w[i] * sum(diag(censored$Sigma[[i]]) - 2 * z[[which[i]]][index[[i]],,drop=FALSE] * censored$psi[[i]]))) else 0
-  (sum(W * resid(fit)^2) + Residual + sum(w * ZGammaZ))/sum(W)
+  (sum(W * residuals(fit)^2) + Residual + sum(w * ZGammaZ))/sum(W)
 }
 
 update.latent <- function(x, y, C, fit) {
@@ -208,20 +214,20 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
       })
       Y <- do.call("rbind", ybar)
       fit <- lm.wfit(X, Y, W, ...)
-      fit$sigma2 <- if (length(AnyMissing) > 0) (sum(W * resid(fit)^2) +
+      fit$sigma2 <- if (length(AnyMissing) > 0) (sum(W * residuals(fit)^2) +
                                                  sum(sapply(AnyMissing, function(i) 
-                                                            w[i] * sum(diag(censored$Sigma[[i]])))))/sum(W) else sum(W * resid(fit)^2)/sum(W)
+                                                            w[i] * sum(diag(censored$Sigma[[i]])))))/sum(W) else sum(W * residuals(fit)^2)/sum(W)
       fit$df <- ncol(X)
       fit
     }
-    object@defineComponent <- expression({
+    object@defineComponent <- function(para) {
       predict <- function(x, ...)
-        lapply(x, function(X) X %*% coef)
+        lapply(x, function(X) X %*% para$coef)
       
       logLik <- function(x, y, C, group, censored, ...) {
         AnyMissing <- which(sapply(C, sum) > 0)
         index <- lapply(C, function(x) x == 1)
-        V <- lapply(x, function(X) diag(nrow(X)) * sigma2)
+        V <- lapply(x, function(X) diag(nrow(X)) * para$sigma2)
         mu <- predict(x, ...)
         SIGMA <- rep(list(matrix(nrow = 0, ncol = 0)), length(x))
         if (length(AnyMissing) > 0) {
@@ -253,10 +259,10 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
         })
         as.vector(ungroupPriors(matrix(llh), group, !duplicated(group)))
       }
-      new("FLXcomponent", parameters = list(coef = coef, sigma2 = sigma2, 
-            censored = censored), logLik = logLik, predict = predict, 
-            df = df)
-    })
+      new("FLXcomponent", parameters = list(coef = para$coef, sigma2 = para$sigma2, 
+            censored = para$censored), logLik = logLik, predict = predict, 
+            df = para$df)
+    }
     object@fit <- if (varFix) {
       function(x, y, w, C, fit) {
         any_removed <- any(w <= eps)
@@ -283,11 +289,10 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
                                                       censored = list(fit[[k]]$censored)))
         sigma2 <- sum(sapply(fit, function(x) x$sigma2) * colMeans(w))
         for (k in seq_len(ncol(w))) fit[[k]]$sigma2 <- sigma2
-        lapply(fit, function(Z) with(list(coef = coef(Z),
-                                          df = Z$df + 1/ncol(w),
-                                          sigma2 =  Z$sigma2,
-                                          censored = Z$censored),
-                                     eval(object@defineComponent)))
+        lapply(fit, function(Z) object@defineComponent(list(coef = coef(Z),
+                                                            df = Z$df + 1/ncol(w),
+                                                            sigma2 =  Z$sigma2,
+                                                            censored = Z$censored)))
       }
     } else {
       function(x, y, w, C, fit){
@@ -307,11 +312,11 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
         }
         fit <- c(lmc.wfit(x, y, w, C, fit$censored),
                  censored = list(fit$censored))
-        with(list(coef = coef(fit),
+        object@defineComponent(
+             list(coef = coef(fit),
                   df = fit$df + 1,
                   sigma2 =  fit$sigma2,
-                  censored = fit$censored),
-             eval(object@defineComponent))
+                  censored = fit$censored))
       }
     }
   } else {
@@ -343,14 +348,14 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
       fit
     }
     
-    object@defineComponent <- expression({
+    object@defineComponent <- function(para) {
       predict <- function(x, ...)
-        lapply(x, function(X) X %*% coef)
+        lapply(x, function(X) X %*% para$coef)
       
       logLik <- function(x, y, z, C, which, group, censored, ...) {
         AnyMissing <- which(sapply(C, sum) > 0)
         index <- lapply(C, function(x) x == 1)
-        V <- lapply(z, function(Z) tcrossprod(tcrossprod(Z, sigma2$Random), Z) + diag(nrow(Z)) * sigma2$Residual)
+        V <- lapply(z, function(Z) tcrossprod(tcrossprod(Z, para$sigma2$Random), Z) + diag(nrow(Z)) * para$sigma2$Residual)
         mu <- predict(x, ...)
         SIGMA <- rep(list(matrix(nrow = 0, ncol = 0)), length(x))
         if (length(AnyMissing) > 0) {
@@ -382,10 +387,10 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
       })
         as.vector(ungroupPriors(matrix(llh), group, !duplicated(group)))
       }
-      new("FLXcomponent", parameters = list(coef = coef, sigma2 = sigma2, 
-            censored = censored, random = random), logLik = logLik, predict = predict, 
-            df = df)
-    })
+      new("FLXcomponent", parameters = list(coef = para$coef, sigma2 = para$sigma2, 
+            censored = para$censored, random = para$random), logLik = logLik, predict = predict, 
+            df = para$df)
+    }
     object@fit <- if (any(varFix)) {
       function(x, y, w, z, C, which, fit) {
         any_removed <- any(w <= eps)
@@ -432,13 +437,13 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           for (k in seq_len(ncol(w))) fit[[k]]$sigma2$Residual <- Residual
         } 
         n <- nrow(fit[[1]]$sigma2$Random)
-        lapply(fit, function(Z) with(list(coef = coef(Z),
+        lapply(fit, function(Z) object@defineComponent(
+                                     list(coef = coef(Z),
                                           df = Z$df + n*(n+1)/(2*ifelse(varFix["Random"], ncol(w), 1)) +
                                           ifelse(varFix["Residual"], 1/ncol(w), 1),
                                           sigma2 =  Z$sigma2,
                                           random = Z$random,
-                                          censored = Z$censored),
-                                     eval(object@defineComponent)))
+                                          censored = Z$censored)))
       }
     } else {
       function(x, y, w, z, C, which, fit){
@@ -463,12 +468,12 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
                  random = list(fit$random), censored = list(fit$censored))
         fit$sigma2$Residual <- update.Residual(fit, w, z, C, which, fit$random, fit$censored)
         n <- nrow(fit$sigma2$Random)
-        with(list(coef = coef(fit),
+        object@defineComponent(
+             list(coef = coef(fit),
                   df = fit$df + n*(n+1)/2 + 1,
                   sigma2 =  fit$sigma2,
                   random = fit$random,
-                  censored = fit$censored),
-             eval(object@defineComponent))
+                  censored = fit$censored))
       }
     }
   }
@@ -514,7 +519,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmc"),
   if (formula_nogrouping == formula) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   model@fullformula <- update(model@fullformula,
-                              paste(".~. |", .FLXgetGroupingVar(formula)))
+                                     paste(".~. |", .FLXgetGroupingVar(formula)))
   mt2 <- terms(model@censored, data=data)
   mf2 <- model.frame(delete.response(mt2), data=data, na.action = NULL)
   model@C <- model.matrix(attr(mf2, "terms"), data)

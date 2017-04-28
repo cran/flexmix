@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: plot.R 4834 2012-08-02 10:17:09Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: plot.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 ###**********************************************************
@@ -41,11 +41,11 @@ plotEll <- function(object, data, which=1:2,
     }
 
     if(eqscale)
-      plot(response[,which], asp = 1, col=col[clustering],
+        plot(response[,which], asp = 1, col=col[clustering],
                        pch=pch, type=type, ...)
     else
         plot(response[,which], col=col[clustering], 
-             pch=pch, type=type, ...)
+                       pch=pch, type=type, ...)
         
     
     for(k in seq_along(object@components)){
@@ -54,12 +54,12 @@ plotEll <- function(object, data, which=1:2,
             p <- projCentCov(project, p)
         }
         lines(ellipse::ellipse(p$cov[which,which],
-                               centre=p$center[which], level=0.5),
-              col=col[k], lwd=2)
+                                      centre=p$center[which], level=0.5),
+                     col=col[k], lwd=2)
 
         lines(ellipse::ellipse(p$cov[which,which],
-                               centre=p$center[which], level=0.95),
-              col=col[k], lty=2)
+                                      centre=p$center[which], level=0.95),
+                     col=col[k], lty=2)
     }
     
     ## und nochmal fuer die zentren und nummern (damit die immer oben sind)
@@ -70,17 +70,17 @@ plotEll <- function(object, data, which=1:2,
         }
         if(number){
             rad <- ceiling(log10(object@k)) + 1.5
-            points(p$center[which[1]],
-                   p$center[which[2]],
-                   col=col[k], pch=21, cex=rad*cex, lwd=cex,
-                   bg="white")
+             points(p$center[which[1]],
+                              p$center[which[2]],
+                              col=col[k], pch=21, cex=rad*cex, lwd=cex,
+                              bg="white")
             text(p$center[which[1]],
-                 p$center[which[2]], k, cex=cex, col=numcol)
+                        p$center[which[2]], k, cex=cex, col=numcol)
         }
         else{
-            points(p$center[which[1]],
-                   p$center[which[2]],
-                   pch=16, cex=cex, col=col[k])
+             points(p$center[which[1]],
+                              p$center[which[2]],
+                              pch=16, cex=cex, col=col[k])
         }
     }
 }

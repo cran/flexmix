@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 5016 2015-01-17 11:12:41Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: allClasses.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -36,9 +36,11 @@ function(from, to){
 
 ###**********************************************************
 
+setClassUnion("expressionOrfunction", c("expression", "function"))
+
 setClass("FLXM",
          representation(fit="function",
-                        defineComponent="expression",
+                        defineComponent="expressionOrfunction",
                         weighted="logical",
                         name="character",
                         formula="formula",

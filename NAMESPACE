@@ -1,11 +1,22 @@
+importFrom("graphics", "hist", "lines", "matplot", "plot", "points", "text")
+importFrom("grid", "gpar", "grid.lines", "grid.polygon", "unit")
+importFrom("grDevices", "axisTicks", "hcl", "rgb")
+importFrom("lattice", "barchart", "do.breaks", "histogram", "lattice.getOption", "llines",
+           "panel.abline", "panel.barchart", "panel.rect", "panel.segments", "panel.xyplot",
+           "parallelplot", "trellis.par.get", "xyplot")
 import("methods")
-import("lattice")
-
-importFrom("modeltools", "clusters", "getModel", "ICL", "KLdiv", "Lapply", "parameters", "posterior", "prior", "refit", "relabel")
-importFrom("stats", "fitted", "predict", "simulate", "vcov")
+importFrom("modeltools", "clusters", "getModel", "ICL", "KLdiv", "Lapply",
+           "parameters", "posterior", "prior", "refit", "relabel")
+importFrom("nnet", "multinom", "nnet.default")
+importFrom("stats", "AIC", "as.formula", "BIC", "binomial",
+           ".checkMFClasses", "coef", "cov.wt", "dbinom", "delete.response", "dexp", 
+           "dgamma", "dlnorm", "dnorm", "dpois", "dweibull", "factanal", "Gamma", ".getXlevels",
+           "glm.fit", "lm.wfit", "model.frame", "model.matrix", "model.response",
+           "na.omit", "optim", "pnorm", "poisson", "printCoefmat", "qnorm",
+           "quantile", "rbinom", "residuals", "rgamma", "rmultinom", "rnorm",
+           "rpois", "runif", "terms", "update", "update.formula", "var",
+           "weighted.mean")
 importFrom("stats4", "logLik", "nobs", "plot", "summary")
-
-import("nnet")
 
 export(
        "ExLinear",
@@ -14,13 +25,14 @@ export(
        "FLXdist",
        "FLXgradlogLikfun",
        "FLXlogLikfun",
+       "FLXMCdist1",
        "FLXMCfactanal",
        "FLXMCmvbinary",
        "FLXMCmvcombi",
        "FLXMCmvnorm",
        "FLXMCmvpois",
-       "FLXPmultinom",
        "FLXMCnorm1",
+       "FLXPmultinom",
        "FLXPconstant",
        "FLXfit",
        "FLXglm",

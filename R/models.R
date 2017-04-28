@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: models.R 4909 2013-08-15 09:46:51Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: models.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 FLXMRglm <- function(formula=.~.,
@@ -30,30 +30,29 @@ FLXMRglm <- function(formula=.~.,
     }
 
     if(family=="gaussian"){
-      z@defineComponent <- expression({
+      z@defineComponent <- function(para) {
         predict <- function(x, ...) {
           dotarg = list(...)
           if("offset" %in% names(dotarg)) offset <- dotarg$offset
-          p <- x%*%coef
+          p <- x %*% para$coef
           if (!is.null(offset)) p <-  p + offset
           p
         }
 
         logLik <- function(x, y, ...)
-          dnorm(y, mean=predict(x, ...), sd=sigma, log=TRUE)
+          dnorm(y, mean=predict(x, ...), sd=para$sigma, log=TRUE)
 
         new("FLXcomponent",
-            parameters=list(coef=coef, sigma=sigma),
+            parameters=list(coef=para$coef, sigma=para$sigma),
             logLik=logLik, predict=predict,
-            df=df)
-      })
+            df=para$df)
+      }
 
       z@fit <- function(x, y, w, component){
-        fit <- lm.wfit(x, y, w=w, offset=offset)
-        with(list(coef = coef(fit), df = ncol(x)+1,
-                  sigma =  sqrt(sum(fit$weights * fit$residuals^2 /
-                    mean(fit$weights))/ (nrow(x)-fit$rank))),
-             eval(z@defineComponent))
+          fit <- lm.wfit(x, y, w=w, offset=offset)
+          z@defineComponent(para = list(coef = coef(fit), df = ncol(x)+1,
+                                sigma =  sqrt(sum(fit$weights * fit$residuals^2 /
+                                                      mean(fit$weights))/ (nrow(x)-fit$rank))))
       }
     }
     else if(family=="binomial"){
@@ -65,11 +64,11 @@ FLXMRglm <- function(formula=.~.,
           stop("negative values are not allowed for the binomial family")
         x
       }     
-      z@defineComponent <- expression({
+      z@defineComponent <- function(para) {
         predict <- function(x, ...) {
           dotarg = list(...)
           if("offset" %in% names(dotarg)) offset <- dotarg$offset
-          p <- x%*%coef
+          p <- x %*% para$coef
           if (!is.null(offset)) p <- p + offset
           get(family, mode = "function")()$linkinv(p)
         }
@@ -77,23 +76,22 @@ FLXMRglm <- function(formula=.~.,
           dbinom(y[,1], size=rowSums(y), prob=predict(x, ...), log=TRUE)
 
         new("FLXcomponent",
-            parameters=list(coef=coef),
+            parameters=list(coef=para$coef),
             logLik=logLik, predict=predict,
-            df=df)
-      })
+            df=para$df)
+      }
 
       z@fit <- function(x, y, w, component){
         fit <- glm.fit(x, y, weights=w, family=binomial(), offset=offset, start=component$coef)
-        with(list(coef = coef(fit), df = ncol(x)),
-             eval(z@defineComponent))
+        z@defineComponent(para = list(coef = coef(fit), df = ncol(x)))
       }
     }
     else if(family=="poisson"){
-      z@defineComponent <- expression({
+      z@defineComponent <- function(para) {
         predict <- function(x, ...) {
           dotarg = list(...)
           if("offset" %in% names(dotarg)) offset <- dotarg$offset
-          p <- x%*%coef
+          p <- x %*% para$coef
           if (!is.null(offset)) p <- p + offset
           get(family, mode = "function")()$linkinv(p)
         }
@@ -101,40 +99,39 @@ FLXMRglm <- function(formula=.~.,
           dpois(y, lambda=predict(x, ...), log=TRUE)
         
         new("FLXcomponent",
-            parameters=list(coef=coef),
+            parameters=list(coef=para$coef),
             logLik=logLik, predict=predict,
-            df=df)
-      })
+            df=para$df)
+      }
           
       z@fit <- function(x, y, w, component){
         fit <- glm.fit(x, y, weights=w, family=poisson(), offset=offset, start=component$coef)
-        with(list(coef = coef(fit), df = ncol(x)),
-             eval(z@defineComponent))
+        z@defineComponent(para = list(coef = coef(fit), df = ncol(x)))
       }
     }
     else if(family=="Gamma"){
-      z@defineComponent <- expression({
+      z@defineComponent <- function(para) {
         predict <- function(x, ...) {
           dotarg = list(...)
           if("offset" %in% names(dotarg)) offset <- dotarg$offset
-          p <- x%*%coef
+          p <- x %*% para$coef
           if (!is.null(offset)) p <- p + offset
           get(family, mode = "function")()$linkinv(p)
         }
         logLik <- function(x, y, ...)
-          dgamma(y, shape = shape, scale=predict(x, ...)/shape, log=TRUE)
+          dgamma(y, shape = para$shape, scale=predict(x, ...)/para$shape, log=TRUE)
         
         new("FLXcomponent", 
-            parameters = list(coef = coef, shape = shape),
+            parameters = list(coef = para$coef, shape = para$shape),
             predict = predict, logLik = logLik,
-            df = df)
-      })
+            df = para$df)
+      }
 
       z@fit <- function(x, y, w, component){
         fit <- glm.fit(x, y, weights=w, family=Gamma(), offset=offset, start=component$coef)
-        with(list(coef = coef(fit), df = ncol(x)+1,
-                  shape = sum(fit$prior.weights)/fit$deviance),
-             eval(z@defineComponent))
+        z@defineComponent(para = list(coef = coef(fit), df = ncol(x)+1,
+                              shape = sum(fit$prior.weights)/fit$deviance))
+        
       }
     }
     else stop(paste("Unknown family", family))
@@ -148,16 +145,16 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
     z <- new("FLXMC", weighted=TRUE, formula=formula,
              dist = "mvnorm", name="model-based Gaussian clustering")
 
-    z@defineComponent <- expression({
+    z@defineComponent <- function(para) {
       logLik <- function(x, y)
-        mvtnorm::dmvnorm(y, mean=center, sigma=cov, log=TRUE)
+        mvtnorm::dmvnorm(y, mean=para$center, sigma=para$cov, log=TRUE)
     
       predict <-  function(x, ...)
-        matrix(center, nrow=nrow(x), ncol=length(center),
+        matrix(para$center, nrow=nrow(x), ncol=length(para$center),
                byrow=TRUE)
-      new("FLXcomponent", parameters=list(center = center, cov = cov),
-          df=df, logLik=logLik, predict=predict)
-    })
+      new("FLXcomponent", parameters=list(center = para$center, cov = para$cov),
+          df=para$df, logLik=logLik, predict=predict)
+    }
     
     z@fit <- function(x, y, w, ...){
       para <- cov.wt(y, wt=w)[c("center","cov")]
@@ -166,8 +163,7 @@ FLXMCmvnorm <- function(formula=.~., diagonal=TRUE)
         para$cov <- diag(diag(para$cov))
         para$df <- 2*ncol(y)
       }
-      with(para,
-           eval(z@defineComponent))
+      z@defineComponent(para)
     }
     z
 }
@@ -177,22 +173,21 @@ FLXMCnorm1 <- function(formula=.~.)
     z <- new("FLXMC", weighted=TRUE, formula=formula,
              dist = "mvnorm", name="model-based univariate Gaussian clustering")
 
-    z@defineComponent <- expression({
+    z@defineComponent <- function(para) {
       logLik <- function(x, y)
-        dnorm(y, mean=center, sd=sqrt(cov), log=TRUE)
+        dnorm(y, mean=para$center, sd=sqrt(para$cov), log=TRUE)
     
       predict <-  function(x, ...)
-        matrix(center, nrow=nrow(x), ncol=1,
+        matrix(para$center, nrow=nrow(x), ncol=1,
                byrow=TRUE)
       new("FLXcomponent",
-          parameters=list(mean = as.vector(center), sd = as.vector(sqrt(cov))),
-          df=df, logLik=logLik, predict=predict)
-    })
+          parameters=list(mean = as.vector(para$center), sd = as.vector(sqrt(para$cov))),
+          df=para$df, logLik=logLik, predict=predict)
+    }
     
     z@fit <- function(x, y, w, ...){
       para <- cov.wt(as.matrix(y), wt=w)[c("center","cov")]
-      para$df <- 2
-      with(para, eval(z@defineComponent))
+      z@defineComponent(c(para, list(df = 2)))
     }
     z
 }
@@ -216,26 +211,24 @@ MCmvbinary <- function(formula=.~.)
         storage.mode(x) <- "integer"
         x
     }
-    z@defineComponent <- expression({
+    z@defineComponent <- function(para) {
       predict <- function(x, ...){
-        matrix(center, nrow=nrow(x), ncol=length(center),
+        matrix(para$center, nrow=nrow(x), ncol=length(para$center),
                byrow=TRUE)
       }
         
       logLik <- function(x, y){
-        p <- matrix(center, nrow=nrow(x), ncol=length(center),
+        p <- matrix(para$center, nrow=nrow(x), ncol=length(para$center),
                     byrow=TRUE)
         rowSums(log(y*p+(1-y)*(1-p)))
       }
             
-      new("FLXcomponent", parameters=list(center=center), df=df,
+      new("FLXcomponent", parameters=list(center=para$center), df=para$df,
           logLik=logLik, predict=predict)
-    })
+    }
 
     z@fit <- function(x, y, w, ...)
-      with(list(center = colSums(w*y)/sum(w), df = ncol(y)),
-           eval(z@defineComponent))
-    
+       z@defineComponent(list(center = colSums(w*y)/sum(w), df = ncol(y)))
     z
 }
 
@@ -262,22 +255,21 @@ binary_truncated <- function(y, w, maxit = 200, epsilon = .Machine$double.eps) {
 MCmvbinary_truncated <- function(formula=.~.)
 {
     z <- MCmvbinary(formula=formula)
-    z@defineComponent <- expression({
+    z@defineComponent <- function(para) {
       predict <- function(x, ...) {
-        matrix(center, nrow = nrow(x), ncol = length(center), 
+        matrix(para$center, nrow = nrow(x), ncol = length(para$center), 
                byrow = TRUE)
       }
       logLik <- function(x, y) {
-        p <- matrix(center, nrow = nrow(x), ncol = length(center), 
+        p <- matrix(para$center, nrow = nrow(x), ncol = length(para$center), 
                     byrow = TRUE)
-        rowSums(log(y * p + (1 - y) * (1 - p))) - log(1 - prod(1-center))
+        rowSums(log(y * p + (1 - y) * (1 - p))) - log(1 - prod(1-para$center))
       }
-      new("FLXcomponent", parameters = list(center = center), df = df, 
+      new("FLXcomponent", parameters = list(center = para$center), df = para$df, 
           logLik = logLik, predict = predict)
-    })
+    }
     z@fit <- function(x, y, w, ...){
-      with(list(center = binary_truncated(y, w), df = ncol(y)),
-           eval(z@defineComponent))
+      z@defineComponent(list(center = binary_truncated(y, w), df = ncol(y)))
     }   
     z
 }
@@ -285,61 +277,70 @@ MCmvbinary_truncated <- function(formula=.~.)
 
 ###**********************************************************
 
+setClass("FLXMCmvcombi",
+         representation(binary = "vector"),
+         contains = "FLXMC")
+
+
 FLXMCmvcombi <- function(formula=.~.)
 {
-    z <- new("FLXMC", weighted=TRUE, formula=formula,
+    z <- new("FLXMCmvcombi", weighted=TRUE, formula=formula,
              dist = "mvcombi",
              name="model-based binary-Gaussian clustering")
 
-    ## figure out who is binary
-    BINARY <- NULL
-    z@preproc.y <- function(x){
-      BINARY <<- apply(x, 2, function(z) all(unique(z) %in% c(0,1)))
-      x
-    }
-    
-    z@defineComponent <- expression({
+    z@defineComponent <- function(para) {
       predict <- function(x, ...){
-        matrix(center, nrow=nrow(x), ncol=length(center),
+        matrix(para$center, nrow=nrow(x), ncol=length(para$center),
                byrow=TRUE)
       }
       
       logLik <- function(x, y){
-        z <- 0
-        if(any(BINARY)){
-          p <- matrix(center[BINARY], nrow=nrow(x),
-                      ncol=sum(BINARY), byrow=TRUE)
-          z <- z+rowSums(log(y[,BINARY,drop=FALSE]*p +
-                             (1-y[,BINARY,drop=FALSE])*(1-p)))
-        }
-        if(!all(BINARY)){
-          if(sum(!BINARY)==1)
-            z <- z + dnorm(y[,!BINARY],
-                           mean=center[!BINARY], sd=sqrt(var[!BINARY]),
+        if(any(para$binary)){
+          p <- matrix(para$center[para$binary], nrow=nrow(x),
+                      ncol=sum(para$binary), byrow=TRUE)
+          z <- rowSums(log(y[,para$binary,drop=FALSE]*p +
+                               (1-y[,para$binary,drop=FALSE])*(1-p)))
+        } else z <- rep(0, nrow(x))
+        if(!all(para$binary)){
+          if(sum(!para$binary)==1)
+            z <- z + dnorm(y[,!para$binary],
+                           mean=para$center[!para$binary], sd=sqrt(para$var),
                            log=TRUE)
           else
-            z <- z + mvtnorm::dmvnorm(y[,!BINARY,drop=FALSE],
-                                      mean=center[!BINARY], sigma=diag(var[!BINARY]),
+            z <- z + mvtnorm::dmvnorm(y[,!para$binary,drop=FALSE],
+                                      mean=para$center[!para$binary], sigma=diag(para$var),
                                       log=TRUE)
         }
         z
       }
             
-      new("FLXcomponent", parameters=list(center=center, var=var), df=df,
+      new("FLXcomponent", parameters=list(center=para$center, var=para$var), df=para$df,
           logLik=logLik, predict=predict)
-    })
+    }
 
-    z@fit <- function(x, y, w, ...){
+    z@fit <- function(x, y, w, binary, ...){
       para <- cov.wt(y, wt=w)[c("center","cov")]
-      para$var <- diag(para$cov)
-      para$var <- pmax(para$var, sqrt(.Machine$double.eps))
-      para$var[BINARY] <- NA
-      para$cov <- NULL
-      para$df <- ncol(y) + sum(!BINARY)
-
-
-      with(para, eval(z@defineComponent))
+      para <- list(center = para$center, var = diag(para$cov)[!binary],
+                   df = ncol(y) + sum(!binary),
+                   binary = binary)
+      z@defineComponent(para)
     }
     z
 }
+
+setMethod("FLXgetModelmatrix", signature(model="FLXMCmvcombi"),
+          function(model, data, formula, lhs=TRUE, ...)
+{
+
+  model <- callNextMethod(model, data, formula, lhs)
+  model@binary <- apply(model@y, 2, function(z) all(unique(z) %in% c(0,1)))
+  model
+})
+
+setMethod("FLXmstep", signature(model = "FLXMCmvcombi"),
+          function(model, weights, components)
+{
+   return(sapply(seq_len(ncol(weights)),
+                 function(k) model@fit(model@x, model@y, weights[,k], model@binary)))
+})
 

@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: ziglm.R 4834 2012-08-02 10:17:09Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: ziglm.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 setClass("FLXMRziglm", contains = "FLXMRglm")
@@ -28,8 +28,9 @@ setMethod("FLXmstep", signature(model = "FLXMRziglm"),
           function(model, weights, components, ...) {
   coef <- c(-Inf, rep(0, ncol(model@x)-1))
   names(coef) <- colnames(model@x)
-  comp.1 <- with(list(coef = coef, df = 0, offset = NULL,
-                 family = model@family), eval(model@defineComponent))
+  comp.1 <- model@defineComponent(
+                 list(coef = coef, df = 0, offset = NULL,
+                 family = model@family))
   c(list(comp.1),
     FLXmstep(as(model, "FLXMRglm"), weights[, -1, drop=FALSE], components[-1]))
 })

@@ -58,8 +58,8 @@ FLXMRglmnet <-
             }
             df <- sum(coef != 0)
             sigma <- if (family == "gaussian") sqrt(sum(w * (y - x %*% coef)^2/mean(w))/(nrow(x) - df)) else NULL
-            with(list(coef = coef, sigma = sigma, df = df + ifelse(family == "gaussian", 1, 0)),
-                 eval(z@defineComponent))
+            z@defineComponent(
+                 list(coef = coef, sigma = sigma, df = df + ifelse(family == "gaussian", 1, 0)))
         }
         z
     }

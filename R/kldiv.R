@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: kldiv.R 4834 2012-08-02 10:17:09Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: kldiv.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 setMethod("KLdiv", "matrix",

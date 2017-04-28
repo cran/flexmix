@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 4978 2014-02-13 15:45:15Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: flexmixFix.R 5079 2016-01-31 12:21:12Z gruen $
 #
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {
@@ -41,22 +41,26 @@ setMethod("FLXremoveComponent", signature(model = "FLXMRfix"), function(model, n
   K <- model@nestedformula
   wnok <- sapply(nok, function(i) which(apply(rbind(i > c(0, cumsum(K@k[-length(K@k)])),
                                                     i <= c(cumsum(K@k))), 2, all)))
-  for (w in wnok) {
-    K@k[w] <- K@k[w] - 1
-    if (K@k[w] == 0) {
-      K@k <- K@k[-w]
-      K@formula <- K@formula[-w]
+  wnok <- table(wnok)
+  if (length(wnok) > 0) {
+    K@k[as.integer(names(wnok))] <- K@k[as.integer(names(wnok))] - wnok
+    if (any(K@k == 0)) {
+      keep <- K@k != 0
+      K@k <- K@k[keep]
+      K@formula <- K@formula[keep]
     }
     k <- sum(K@k)
     model@nestedformula <- K
   }
+  
   varnok <- sapply(nok, function(i) which(apply(rbind(i > c(0, cumsum(model@variance[-length(model@variance)])),
                                                       i <= c(cumsum(model@variance))), 2, all)))
-  for (w in varnok) {
-    model@variance[w] <- model@variance[w] - 1
-    if (model@variance[w] == 0) {
-      model@variance <- model@variance[-w]
-    }
+  varnok <- table(varnok)
+  
+  if (length(varnok) > 0) {
+    model@variance[as.integer(names(varnok))] <- model@variance[as.integer(names(varnok))] - varnok
+    if (any(model@variance == 0))
+        model@variance <- model@variance[model@variance != 0]
   }
   
   rok <- which(!apply(model@segment[,nok,drop=FALSE], 1, function(x) any(x)))

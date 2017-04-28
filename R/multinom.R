@@ -13,38 +13,37 @@ FLXMRmultinom <- function(formula=.~., ...)
       y[cbind(seq_along(x), x)] <- 1
       y
     }
-    z@defineComponent <- expression({
+    z@defineComponent <- function(para) {
       predict <- function(x) {
-        p <- tcrossprod(x, coef)
+        p <- tcrossprod(x, para$coef)
         eta <- cbind(1, exp(p))
         eta/rowSums(eta)
       }
       logLik <- function(x, y) {
-        log(predict(x))[cbind(seq_len(nrow(y)), max.col(y))]
+        log(predict(x))[cbind(seq_len(nrow(y)), max.col(y, "first"))]
       }
       
       new("FLXcomponent",
-          parameters=list(coef=coef),
+          parameters=list(coef=para$coef),
           logLik=logLik, predict=predict,
-          df=df)
-    })
+          df=para$df)
+    }
     
     z@fit <- function(x, y, w, component){
       r <- ncol(x)
       p <- ncol(y)
       if (p < 2) stop("Multinom requires at least two components.")
       mask <- c(rep(0, r + 1), rep(c(0, rep(1, r)), p - 1))
-      fit <- nnet::nnet.default(x, y, w, mask = mask, size = 0, 
-                                skip = TRUE, softmax = TRUE, censored = FALSE, 
-                                rang = 0, trace=FALSE, ...)
+      fit <- nnet.default(x, y, w, mask = mask, size = 0, 
+                          skip = TRUE, softmax = TRUE, censored = FALSE, 
+                          rang = 0, trace=FALSE, ...)
       fit$coefnames <- colnames(x)
       fit$weights <- w
       fit$vcoefnames <- fit$coefnames[seq_len(ncol(x))]
       fit$lab <- seq_len(ncol(y))
       class(fit) <- c("multinom", "nnet")
       coef <- coef(fit)
-      with(list(coef = coef, df = length(coef)),
-           eval(z@defineComponent))
+      z@defineComponent(list(coef = coef, df = length(coef)))
     }
     z
 }

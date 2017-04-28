@@ -1,3 +1,6 @@
+sigmaMethod <-
+    getExportedValue(if(getRversion() >= "3.3.0") "stats" else "lme4", "sigma")
+
 setClass("FLXMRlmer",
          representation(random = "formula", 
                         lmod = "list",
@@ -6,8 +9,8 @@ setClass("FLXMRlmer",
          prototype(preproc.z = function(x, ...) x),
          contains = "FLXMRglm")
 
-defineComponent_lmer <- expression({
-    predict <- function(x, ...) x%*%coef
+defineComponent_lmer <- function(para) {
+    predict <- function(x, ...) x%*%para$coef
     logLik <- function(x, y, lmod, ...) {
       z <- as.matrix(lmod$reTrms$Zt)
       grouping <- lmod$reTrms$flist[[1]]
@@ -15,17 +18,17 @@ defineComponent_lmer <- expression({
       for (i in seq_len(nlevels(grouping))) {
         index1 <- which(grouping == levels(grouping)[i])
         index2 <- rownames(z) %in% levels(grouping)[i]
-        V <- crossprod(z[index2,index1,drop=FALSE], sigma2$Random) %*% z[index2, index1, drop=FALSE] + diag(length(index1)) * sigma2$Residual
+        V <- crossprod(z[index2,index1,drop=FALSE], para$sigma2$Random) %*% z[index2, index1, drop=FALSE] + diag(length(index1)) * para$sigma2$Residual
         llh[index1] <- mvtnorm::dmvnorm(y[index1,], mean=predict(x[index1,,drop=FALSE], ...), sigma = V, log=TRUE)/length(index1)
       }
       llh
     }
       
     new("FLXcomponent",
-        parameters=list(coef=coef, sigma2=sigma2),
+        parameters=list(coef=para$coef, sigma2=para$sigma2),
         logLik=logLik, predict=predict,
-        df=df)
-  })
+        df=para$df)
+  }
 
 FLXMRlmer <- function(formula = . ~ ., random, weighted = TRUE, 
                       control = list(), eps = .Machine$double.eps)
@@ -73,7 +76,7 @@ FLXMRlmer <- function(formula = . ~ ., random, weighted = TRUE,
                               restart_edge = control$restart_edge, control = control$optCtrl, 
                               verbose = FALSE, start = NULL)
     mer <- lme4::mkMerMod(environment(devfun), opt, lmod$reTrms, fr = lmod$fr)
-    sigma_res <- lme4::sigma(mer) / sqrt(mean(w))
+    sigma_res <- sigmaMethod(mer) / sqrt(mean(w))
     vc <- lme4::VarCorr(mer)
     n <- c(0, cumsum(sapply(vc, ncol)))
     Random <- matrix(0, max(n), max(n))
@@ -92,10 +95,10 @@ FLXMRlmer <- function(formula = . ~ ., random, weighted = TRUE,
   
   object@fit <- function(x, y, w, lmod){
     fit <- lmer.wfit(x, y, w, lmod)
-    with(list(coef = coef(fit),
+    object@defineComponent(
+         list(coef = coef(fit),
               df = fit$df,
-              sigma2 =  fit$sigma2),
-         eval(object@defineComponent))
+              sigma2 =  fit$sigma2))
   }
   object
 }
@@ -107,13 +110,13 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmer"),
   if (identical(paste(deparse(formula_nogrouping), collapse = ""), paste(deparse(formula), collapse = ""))) stop("please specify a grouping variable")
   model <- callNextMethod(model, data, formula, lhs)
   random_formula <- update(model@random,
-                           paste(".~. |", .FLXgetGroupingVar(formula)))
+                                  paste(".~. |", .FLXgetGroupingVar(formula)))
   fullformula <- model@fullformula
   if (!lhs) fullformula <- fullformula[c(1,3)]
   fullformula <- update(fullformula,
-                        paste(ifelse(lhs, ".", ""), "~. + ", paste(deparse(random_formula[[3]]), collapse = "")))
+                               paste(ifelse(lhs, ".", ""), "~. + ", paste(deparse(random_formula[[3]]), collapse = "")))
   model@fullformula <- update(model@fullformula,
-                              paste(ifelse(lhs, ".", ""), "~. |", .FLXgetGroupingVar(formula)))
+                                     paste(ifelse(lhs, ".", ""), "~. |", .FLXgetGroupingVar(formula)))
   model@lmod <- lme4::lFormula(fullformula, data, REML = FALSE, control = model@control)
   model@lmod <- model@preproc.z(model@lmod)
   model

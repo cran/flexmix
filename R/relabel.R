@@ -1,5 +1,5 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
 #  $Id$
 #
 

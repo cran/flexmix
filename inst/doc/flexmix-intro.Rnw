@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 4827 2012-07-19 06:57:34Z gruen $
+%  $Id: flexmix-intro.Rnw 5079 2016-01-31 12:21:12Z gruen $
 %
 \documentclass[nojss]{jss}
 
@@ -31,7 +31,8 @@
 <<echo=false,results=hide>>=
 set.seed(1504)
 options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
-ps.options(family="Times")
+grDevices::ps.options(family="Times")
+library("graphics")
 library("flexmix")
 data("NPreg")
 @
@@ -610,8 +611,8 @@ model is fitted using the following slots:
 \begin{description}
  \item[fit:] A \texttt{function(x,y,w)} returning an object of class
   \texttt{"FLXcomponent"}.
-\item[defineComponent:] Expression constructing the object of class
-  \texttt{"FLXcomponent"}.
+\item[defineComponent:] Expression or function constructing the object
+  of class \texttt{"FLXcomponent"}.
  \item[weighted:] Logical, specifies if the model may be fitted using
   weighted likelihoods. If \texttt{FALSE}, only hard and random
   classification are allowed (and hard classification becomes the
@@ -700,11 +701,11 @@ covariances, although they use them of course. \R{} uses \emph{lexical
   scoping} rules for finding free variables
 \citep{flexmix:Gentleman+Ihaka:2000}, hence it searches for them first in
 the environment where a function is defined. E.g., the \texttt{fit()}
-function uses the variable \texttt{diagonal} in line~13, and finds it
+function uses the variable \texttt{diagonal} in line~24, and finds it
 in the environment where the function itself was defined, which is the
 body of function \texttt{mymclust()}. Function \texttt{logLik()} uses
-the list \texttt{para} in line~19, and uses the one found in the
-body of \texttt{fit()}.
+the list \texttt{para} in lines~8 and 9, and uses the one found in the
+body of \texttt{defineComponent()}.
 
 Function \texttt{flexmix()} on the other hand never sees the model
 parameters, all it uses are function calls of form \texttt{fit(x,y,w)}
@@ -727,7 +728,7 @@ model details from the FlexMix main engine.
 library("flexmix")
 set.seed(1504)
 options(width=60)
-ps.options(family="Times")
+grDevices::ps.options(family="Times")
 require("ellipse")
 require("mvtnorm")
 source("mymclust.R")

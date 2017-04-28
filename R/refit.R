@@ -1,6 +1,6 @@
 #
-#  Copyright (C) 2004-2012 Friedrich Leisch and Bettina Gruen
-#  $Id: refit.R 4890 2013-04-09 17:13:11Z gruen $
+#  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
+#  $Id: refit.R 5079 2016-01-31 12:21:12Z gruen $
 #
 ###*********************************************************
 
@@ -146,9 +146,12 @@ function(object, components, parms) {
     Parameters$df <- components[[k]]@df
     variables <- c("x", "y")
     for (var in variables) 
-      assign(var, slot(object, var))
-    with(Parameters, eval(object@defineComponent))
-  })
+        assign(var, slot(object, var))
+    if (is(object@defineComponent, "expression"))
+        eval(object@defineComponent, Parameters)
+    else
+        object@defineComponent(Parameters)
+    })
 })
 
 setMethod("FLXreplaceParameters", signature(object="FLXMC"),
@@ -192,8 +195,11 @@ function(object, components, parms) {
     variables <- c("x", "y", "offset", "family")
     for (var in variables) {
       assign(var, slot(object, var))
-    }
-    with(Parameters, eval(object@defineComponent))
+    } 
+    if (is(object@defineComponent, "expression"))
+        eval(object@defineComponent, Parameters)
+    else
+        object@defineComponent(Parameters)
   })
 })
 
@@ -523,7 +529,7 @@ weighted.glm.fit <- function(x, y, weights, offset = NULL, family = "gaussian", 
   if (!is.function(family) & !is(family, "family"))
     family <- get(family, mode = "function", envir = parent.frame())
   fit <- c(glm.fit(x, y, weights = weights, offset=offset,
-                   family=family),
+                          family=family),
            list(call = sys.call(), offset = offset,
                 control = eval(formals(glm.fit)$control),            
                 method = "weighted.glm.fit"))

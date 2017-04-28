@@ -8,9 +8,9 @@ function (x, breaks, include.lowest = TRUE, right = TRUE, ...)
 {
     if (is.numeric(breaks) && length(breaks) > 1) 
         hist(as.numeric(x), breaks = breaks, plot = FALSE, include.lowest = include.lowest, 
-            right = right)
+                       right = right)
     else hist(as.numeric(x), breaks = breaks, right = right, 
-        plot = FALSE)
+                        plot = FALSE)
 }
 
 checkArgsAndCall <- 

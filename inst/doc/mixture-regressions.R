@@ -1,9 +1,11 @@
 ### R code from vignette source 'mixture-regressions.Rnw'
 
 ###################################################
-### code chunk number 1: mixture-regressions.Rnw:63-71
+### code chunk number 1: mixture-regressions.Rnw:63-73
 ###################################################
 options(width=60, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
+library("graphics")
+library("stats")
 library("flexmix")
 library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)
@@ -14,7 +16,7 @@ source("myConcomitant.R")
 
 
 ###################################################
-### code chunk number 2: mixture-regressions.Rnw:498-501
+### code chunk number 2: mixture-regressions.Rnw:500-503
 ###################################################
 par(mfrow=c(1,2))
 plot(yn~x, col=class, pch=class, data=NPreg)
@@ -22,7 +24,7 @@ plot(yp~x, col=class, pch=class, data=NPreg)
 
 
 ###################################################
-### code chunk number 3: mixture-regressions.Rnw:508-515
+### code chunk number 3: mixture-regressions.Rnw:510-517
 ###################################################
 set.seed(1802)
 library("flexmix")
@@ -34,20 +36,20 @@ m1 <- flexmix(. ~ x, data = NPreg, k = 2, model = list(Model_n, Model_p),
 
 
 ###################################################
-### code chunk number 4: mixture-regressions.Rnw:556-557
+### code chunk number 4: mixture-regressions.Rnw:558-559
 ###################################################
 print(plot(m1))
 
 
 ###################################################
-### code chunk number 5: mixture-regressions.Rnw:596-598
+### code chunk number 5: mixture-regressions.Rnw:598-600
 ###################################################
 m1.refit <- refit(m1)
 summary(m1.refit, which = "model", model = 1)
 
 
 ###################################################
-### code chunk number 6: mixture-regressions.Rnw:603-610
+### code chunk number 6: mixture-regressions.Rnw:605-612
 ###################################################
 print(plot(m1.refit, layout = c(1,3), bycluster = FALSE,
       main = expression(paste(yn *tilde(" ")* x + x^2))),
@@ -59,7 +61,7 @@ print(plot(m1.refit, model = 2,
 
 
 ###################################################
-### code chunk number 7: mixture-regressions.Rnw:641-646
+### code chunk number 7: mixture-regressions.Rnw:643-648
 ###################################################
 Model_n2 <- FLXMRglmfix(yn ~ . + 0, nested = list(k = c(1, 1), 
   formula = c(~ 1 + I(x^2), ~ 0)))
@@ -69,13 +71,13 @@ m2
 
 
 ###################################################
-### code chunk number 8: mixture-regressions.Rnw:651-652
+### code chunk number 8: mixture-regressions.Rnw:653-654
 ###################################################
 c(BIC(m1), BIC(m2))
 
 
 ###################################################
-### code chunk number 9: mixture-regressions.Rnw:670-674
+### code chunk number 9: mixture-regressions.Rnw:672-676
 ###################################################
 data("betablocker", package = "flexmix")
 betaGlm <- glm(cbind(Deaths, Total - Deaths) ~ Treatment, 
@@ -84,7 +86,7 @@ betaGlm
 
 
 ###################################################
-### code chunk number 10: mixture-regressions.Rnw:691-694
+### code chunk number 10: mixture-regressions.Rnw:693-696
 ###################################################
 betaMixFix <- stepFlexmix(cbind(Deaths, Total - Deaths) ~ 1 | Center,
   model = FLXMRglmfix(family = "binomial", fixed = ~ Treatment), 
@@ -92,26 +94,26 @@ betaMixFix <- stepFlexmix(cbind(Deaths, Total - Deaths) ~ 1 | Center,
 
 
 ###################################################
-### code chunk number 11: mixture-regressions.Rnw:703-704
+### code chunk number 11: mixture-regressions.Rnw:705-706
 ###################################################
 betaMixFix
 
 
 ###################################################
-### code chunk number 12: mixture-regressions.Rnw:711-713
+### code chunk number 12: mixture-regressions.Rnw:713-715
 ###################################################
 betaMixFix_3 <- getModel(betaMixFix, which = "BIC")
 betaMixFix_3 <- relabel(betaMixFix_3, "model", "Intercept")
 
 
 ###################################################
-### code chunk number 13: mixture-regressions.Rnw:726-727
+### code chunk number 13: mixture-regressions.Rnw:728-729
 ###################################################
 parameters(betaMixFix_3)
 
 
 ###################################################
-### code chunk number 14: mixture-regressions.Rnw:735-748
+### code chunk number 14: mixture-regressions.Rnw:737-750
 ###################################################
 library("grid")
 betablocker$Center <- with(betablocker, factor(Center, levels = Center[order((Deaths/Total)[1:22])]))
@@ -129,7 +131,7 @@ for (i in 1:3) {
 
 
 ###################################################
-### code chunk number 15: mixture-regressions.Rnw:767-773
+### code chunk number 15: mixture-regressions.Rnw:769-775
 ###################################################
 betaMix <- stepFlexmix(cbind(Deaths, Total - Deaths) ~ Treatment | Center,
   model = FLXMRglm(family = "binomial"), k = 3, nrep = 5, 
@@ -140,45 +142,45 @@ c(BIC(betaMixFix_3), BIC(betaMix))
 
 
 ###################################################
-### code chunk number 16: mixture-regressions.Rnw:793-794
+### code chunk number 16: mixture-regressions.Rnw:795-796
 ###################################################
 print(plot(betaMixFix_3, nint = 10, mark = 1, col = "grey", layout = c(3, 1)))
 
 
 ###################################################
-### code chunk number 17: mixture-regressions.Rnw:803-804
+### code chunk number 17: mixture-regressions.Rnw:805-806
 ###################################################
 print(plot(betaMixFix_3, nint = 10, mark = 2, col = "grey", layout = c(3, 1)))
 
 
 ###################################################
-### code chunk number 18: mixture-regressions.Rnw:818-819
+### code chunk number 18: mixture-regressions.Rnw:820-821
 ###################################################
 table(clusters(betaMix))
 
 
 ###################################################
-### code chunk number 19: mixture-regressions.Rnw:824-826
+### code chunk number 19: mixture-regressions.Rnw:826-828
 ###################################################
 predict(betaMix, 
   newdata = data.frame(Treatment = c("Control", "Treated")))
 
 
 ###################################################
-### code chunk number 20: mixture-regressions.Rnw:832-834
+### code chunk number 20: mixture-regressions.Rnw:834-836
 ###################################################
 betablocker[c(1, 23), ]
 fitted(betaMix)[c(1, 23), ]
 
 
 ###################################################
-### code chunk number 21: mixture-regressions.Rnw:844-845
+### code chunk number 21: mixture-regressions.Rnw:846-847
 ###################################################
 summary(refit(betaMix))
 
 
 ###################################################
-### code chunk number 22: mixture-regressions.Rnw:856-863
+### code chunk number 22: mixture-regressions.Rnw:858-865
 ###################################################
 ModelNested <- FLXMRglmfix(family = "binomial", nested = list(k = c(2, 1),
   formula = c(~ Treatment, ~ 0)))
@@ -190,13 +192,13 @@ c(BIC(betaMix), BIC(betaMixNested), BIC(betaMixFix_3))
 
 
 ###################################################
-### code chunk number 23: mixture-regressions.Rnw:874-875
+### code chunk number 23: mixture-regressions.Rnw:876-877
 ###################################################
 data("bioChemists", package = "flexmix")
 
 
 ###################################################
-### code chunk number 24: mixture-regressions.Rnw:906-910
+### code chunk number 24: mixture-regressions.Rnw:908-912
 ###################################################
 data("bioChemists", package = "flexmix")
 Model1 <- FLXMRglm(family = "poisson")
@@ -205,14 +207,14 @@ ff_1 <- getModel(ff_1, "BIC")
 
 
 ###################################################
-### code chunk number 25: mixture-regressions.Rnw:927-929
+### code chunk number 25: mixture-regressions.Rnw:929-931
 ###################################################
 print(plot(refit(ff_1), bycluster = FALSE, 
            scales = list(x = list(relation = "free"))))
 
 
 ###################################################
-### code chunk number 26: mixture-regressions.Rnw:936-940
+### code chunk number 26: mixture-regressions.Rnw:938-942
 ###################################################
 Model2 <- FLXMRglmfix(family = "poisson", fixed = ~ kid5 + mar + ment)
 ff_2 <- flexmix(art ~ fem + phd, data = bioChemists, 
@@ -221,13 +223,13 @@ c(BIC(ff_1), BIC(ff_2))
 
 
 ###################################################
-### code chunk number 27: mixture-regressions.Rnw:948-949
+### code chunk number 27: mixture-regressions.Rnw:950-951
 ###################################################
 summary(refit(ff_2))
 
 
 ###################################################
-### code chunk number 28: mixture-regressions.Rnw:956-960
+### code chunk number 28: mixture-regressions.Rnw:958-962
 ###################################################
 Model3 <- FLXMRglmfix(family = "poisson", fixed = ~ kid5 + mar + ment)
 ff_3 <- flexmix(art ~ fem, data = bioChemists, cluster = posterior(ff_2),
@@ -236,13 +238,13 @@ c(BIC(ff_2), BIC(ff_3))
 
 
 ###################################################
-### code chunk number 29: mixture-regressions.Rnw:968-969
+### code chunk number 29: mixture-regressions.Rnw:970-971
 ###################################################
 print(plot(refit(ff_3), bycluster = FALSE, scales = list(x = list(relation = "free"))))
 
 
 ###################################################
-### code chunk number 30: mixture-regressions.Rnw:979-985
+### code chunk number 30: mixture-regressions.Rnw:981-987
 ###################################################
 Model4 <- FLXMRglmfix(family = "poisson", fixed = ~ kid5 + mar + ment)
 ff_4 <- flexmix(art ~ 1, data = bioChemists, cluster = posterior(ff_2),
@@ -253,7 +255,7 @@ BIC(ff_4)
 
 
 ###################################################
-### code chunk number 31: mixture-regressions.Rnw:994-998
+### code chunk number 31: mixture-regressions.Rnw:996-1000
 ###################################################
 Model5 <- FLXMRglmfix(family = "poisson", fixed = ~ kid5 + ment + fem)
 ff_5 <- flexmix(art ~ 1, data = bioChemists, cluster = posterior(ff_2),
@@ -262,7 +264,7 @@ BIC(ff_5)
 
 
 ###################################################
-### code chunk number 32: mixture-regressions.Rnw:1004-1011
+### code chunk number 32: mixture-regressions.Rnw:1006-1013
 ###################################################
 pp <- predict(ff_5, newdata = data.frame(kid5 = 0, 
   mar = factor("Married", levels = c("Single", "Married")),
@@ -274,7 +276,7 @@ legend("topright", paste("Comp.", rep(1:2, each = 2), ":",
 
 
 ###################################################
-### code chunk number 33: mixture-regressions.Rnw:1361-1366
+### code chunk number 33: mixture-regressions.Rnw:1362-1367
 ###################################################
 data("dmft", package = "flexmix")
 Model <- FLXMRziglm(family = "poisson")
@@ -290,13 +292,13 @@ summary(refit(Fitted))
 
 
 ###################################################
-### code chunk number 35: mixture-regressions.Rnw:1395-1396
+### code chunk number 35: mixture-regressions.Rnw:1396-1397
 ###################################################
 print(plot(refit(Fitted), components = 2, box.ratio = 3))
 
 
 ###################################################
-### code chunk number 36: mixture-regressions.Rnw:1441-1448
+### code chunk number 36: mixture-regressions.Rnw:1442-1449
 ###################################################
 Concomitant <- FLXPmultinom(~ yb)
 MyConcomitant <- myConcomitant(~ yb)
@@ -308,14 +310,14 @@ m3 <- flexmix(. ~ x, data = NPreg, k = 2, model = list(Model_n, Model_p),
 
 
 ###################################################
-### code chunk number 37: mixture-regressions.Rnw:1450-1452
+### code chunk number 37: mixture-regressions.Rnw:1451-1453
 ###################################################
 summary(m2)
 summary(m3)
 
 
 ###################################################
-### code chunk number 38: mixture-regressions.Rnw:1457-1461
+### code chunk number 38: mixture-regressions.Rnw:1458-1462
 ###################################################
 determinePrior <- function(object) {
   object@concomitant@fit(object@concomitant@x, 
@@ -324,14 +326,14 @@ determinePrior <- function(object) {
 
 
 ###################################################
-### code chunk number 39: mixture-regressions.Rnw:1464-1466
+### code chunk number 39: mixture-regressions.Rnw:1465-1467
 ###################################################
 determinePrior(m2)
 determinePrior(m3)
 
 
 ###################################################
-### code chunk number 40: mixture-regressions.Rnw:1508-1512
+### code chunk number 40: mixture-regressions.Rnw:1509-1513
 ###################################################
 SI <- sessionInfo()
 pkgs <- paste(sapply(c(SI$otherPkgs, SI$loadedOnly), function(x) 
