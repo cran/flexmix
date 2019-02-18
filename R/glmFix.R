@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
-#  $Id: glmFix.R 5079 2016-01-31 12:21:12Z gruen $
+#  $Id: glmFix.R 5156 2019-02-12 08:11:16Z gruen $
 #
 
 FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
@@ -91,13 +91,21 @@ FLXMRglmfix <- function(formula=.~., fixed=~0, varFix = FALSE, nested = NULL,
 setMethod("refit_mstep", signature(object="FLXMRglmfix", newdata="missing"),
 function(object, newdata, weights, ...)
 {
-    z <- new("FLXRMRglmfix", design=object@design)
-    z@fitted <- object@refit(object@x,
-                             object@y,
-                             as.vector(weights))
-    z <- rep(list(z), nrow(object@design))
-    for (k in seq_len(nrow(object@design))) z[[k]]@design <- object@design[k,, drop=FALSE]
-    z
+  warning("Separate regression models are fitted using posterior weights.")
+  lapply(seq_len(ncol(weights)), function(k) {
+    x <- object@x[object@segment[, k],
+                  as.logical(object@design[k,]), drop = FALSE]
+    colnames(x) <- colnames(object@design)[as.logical(object@design[k,])]
+    y <- object@y[object@segment[, k],, drop = FALSE]
+    fit <- object@refit(x, y, weights[,k], ...)
+    fit <- c(fit,
+             list(formula = object@fullformula,
+                  terms = object@terms,
+                  contrasts = object@contrasts,
+                  xlevels = object@xlevels))
+    class(fit) <- c("glm", "lm")
+    fit
+  })
 })
 
 ###**********************************************************

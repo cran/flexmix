@@ -64,7 +64,7 @@
     G. Tadesse, Guillaume Cornu, Fidele Baya, Fabrice Benedet, Vincent
     Freycon, Sylvie Gourlet-Fleury and Nicolas Picard.
     Mixture of inhomogeneous matrix models for species-rich ecosystems.
-    \emph{Environmetrics}, in press.\cr
+    \emph{Environmetrics}, \bold{26}(1), 39-51, 2015.
     doi:10.1002/env.2320
 
 }

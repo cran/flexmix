@@ -12,11 +12,12 @@ importFrom("stats", "AIC", "as.formula", "BIC", "binomial",
            ".checkMFClasses", "coef", "cov.wt", "dbinom", "delete.response", "dexp", 
            "dgamma", "dlnorm", "dnorm", "dpois", "dweibull", "factanal", "Gamma", ".getXlevels",
            "glm.fit", "lm.wfit", "model.frame", "model.matrix", "model.response",
-           "na.omit", "optim", "pnorm", "poisson", "printCoefmat", "qnorm",
+           "na.omit", "optim", "pnorm", "poisson", "predict", "printCoefmat", "qnorm",
            "quantile", "rbinom", "residuals", "rgamma", "rmultinom", "rnorm",
            "rpois", "runif", "terms", "update", "update.formula", "var",
            "weighted.mean")
 importFrom("stats4", "logLik", "nobs", "plot", "summary")
+importFrom("utils", "getS3method")
 
 export(
        "ExLinear",

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 5079 2016-01-31 12:21:12Z gruen $
+%  $Id: flexmix-intro.Rnw 5156 2019-02-12 08:11:16Z gruen $
 %
 \documentclass[nojss]{jss}
 
@@ -729,8 +729,8 @@ library("flexmix")
 set.seed(1504)
 options(width=60)
 grDevices::ps.options(family="Times")
-require("ellipse")
-require("mvtnorm")
+suppressMessages(require("ellipse"))
+suppressMessages(require("mvtnorm"))
 source("mymclust.R")
 @
 

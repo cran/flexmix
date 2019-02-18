@@ -150,8 +150,8 @@ library("flexmix")
 set.seed(1504)
 options(width=60)
 grDevices::ps.options(family="Times")
-require("ellipse")
-require("mvtnorm")
+suppressMessages(require("ellipse"))
+suppressMessages(require("mvtnorm"))
 source("mymclust.R")
 
 

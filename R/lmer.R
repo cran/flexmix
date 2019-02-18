@@ -62,16 +62,18 @@ FLXMRlmer <- function(formula = . ~ ., random, weighted = TRUE,
     if (zero.weights) {
       ok <- w >= eps
       w <- w[ok]
-      lmod[["fr"]] <- lmod[["fr"]][ok,,drop=FALSE]
-      lmod[["X"]] <- lmod[["X"]][ok,,drop=FALSE]
-      lmod[["reTrms"]][["Zt"]] <- lmod[["reTrms"]][["Zt"]][,ok]
-      lmod[["reTrms"]][["flist"]] <- lmod[["reTrms"]][["flist"]][ok,,drop=FALSE]
+      lmod[["fr"]] <- lmod[["fr"]][ok, , drop = FALSE]
+      lmod[["X"]] <- lmod[["X"]][ok, , drop = FALSE]
+      lmod[["reTrms"]][["Zt"]] <- lmod[["reTrms"]][["Zt"]][, ok, drop = FALSE]
+      for (i in seq_along(lmod[["reTrms"]][["flist"]])) {
+          lmod[["reTrms"]][["flist"]][[i]] <- lmod[["reTrms"]][["flist"]][[i]][ok]
+      }
     }
     wts <- sqrt(w)
     lmod$X <- lmod$X * wts
     lmod$fr[[1]] <- lmod$fr[[1]] * wts
     devfun <- do.call(lme4::mkLmerDevfun, c(lmod, list(start = NULL, verbose = FALSE, 
-                                                 control = control)))
+                                                       control = control)))
     opt <- lme4::optimizeLmer(devfun, optimizer = control$optimizer, 
                               restart_edge = control$restart_edge, control = control$optCtrl, 
                               verbose = FALSE, start = NULL)
@@ -131,4 +133,19 @@ setMethod("FLXmstep", signature(model = "FLXMRlmer"),
 setMethod("FLXdeterminePostunscaled", signature(model = "FLXMRlmer"), function(model, components, ...) {
   sapply(components, function(x) x@logLik(model@x, model@y, model@lmod))
 })
+
+setMethod("rFLXM", signature(model = "FLXMRlmer", components="FLXcomponent"),
+          function(model, components, ...) {
+              sigma2 <- components@parameters$sigma2
+              z <- as.matrix(model@lmod$reTrms$Zt)
+              grouping <- model@lmod$reTrms$flist[[1]]
+              y <- matrix(0, nrow=nrow(model@x), ncol = 1)
+              for (i in seq_len(nlevels(grouping))) {
+                  index1 <- which(grouping == levels(grouping)[i])
+                  index2 <- rownames(z) %in% levels(grouping)[i]
+                  V <- crossprod(z[index2,index1,drop=FALSE], sigma2$Random) %*% z[index2, index1, drop=FALSE] + diag(length(index1)) * sigma2$Residual
+                  y[index1, 1] <- mvtnorm::rmvnorm(1, mean=components@predict(model@x[index1,,drop=FALSE], ...), sigma = V)
+              }
+              y
+          })
 

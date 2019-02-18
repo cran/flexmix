@@ -1,5 +1,8 @@
+setOldClass("gam.prefit")
+setClassUnion("listOrgam.prefit", c("list", "gam.prefit"))
+
 setClass("FLXMRmgcv",
-         representation(G = "list",
+         representation(G = "listOrgam.prefit",
                         control = "list"),
          contains="FLXMRglm")
 

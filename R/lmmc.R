@@ -560,3 +560,7 @@ setMethod("predict", signature(object="FLXMRlmc"), function(object, newdata, com
   lapply(components, function(comp) unlist(comp@predict(object@x, ...)))
 })
 
+setMethod("rFLXM", signature(model = "FLXMRlmc", components = "FLXcomponent"),
+          function(model, components, ...) {
+              stop("This model driver is not implemented yet.")
+          })

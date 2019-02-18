@@ -37,7 +37,7 @@ FLXMCdist1(formula = . ~ ., dist, ...)
     }
 }
 \value{
-  \code{FLXMCmvnorm} returns an object of class \code{FLXMC}.
+  \code{FLXMCdist1} returns an object of class \code{FLXMC}.
 }
 \author{Friedrich Leisch and Bettina Gruen}
 \references{

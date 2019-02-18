@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 5115 2017-04-07 08:18:13Z gruen $
+#  $Id: flexmix.R 5150 2018-10-11 05:04:23Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -365,13 +365,11 @@ groupFirst <- function(x) !duplicated(x)
 ## if we have a group variable, set the posterior to the product
 ## of all density values for that group (=sum in logarithm)
 groupPosteriors <- function(x, group)
-{    
-    for(g in levels(group)){
-        gok <- group==g
-        if(any(gok)){
-            x[gok,] <- matrix(colSums(x[gok,,drop=FALSE]),
-                              nrow=sum(gok), ncol=ncol(x), byrow=TRUE)
-        }
+{
+    if (length(group) > 0) {
+        group <- as.integer(group)
+        x.by.group <- unname(apply(x, 2, tapply, group, sum))
+        x <- x.by.group[group,, drop = FALSE]
     }
     x
 }

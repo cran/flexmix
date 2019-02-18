@@ -1,5 +1,18 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-15}{
+  \itemize{
+    \item Modified the internal function \code{groupPosteriors} to be
+    more efficient for a large number of groups. Thanks to Marnix Koops
+    for pointing the problem out.
+    \item Model driver \code{FLXMRlmer()} adapted for \pkg{lme4} (>=
+      1.1). Thanks to Mark Senior for pointing the problem out.
+    \item Model driver \code{FLXMRmgcv()} adapted for \pkg{mgcv} (>=
+      1.8-27). 
+    \item Data set \code{Catsup} is now loaded from package \pkg{Ecdat}
+      instead of \pkg{mlogit}.
+  }
+}    
 \section{Changes in flexmix version 2.3-14}{
   \itemize{
     \item A bug fixed for \code{FLXMRcondlogit()} to ensure that the

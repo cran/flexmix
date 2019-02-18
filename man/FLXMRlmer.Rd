@@ -15,6 +15,8 @@
 \alias{predict,FLXMRlmm-method}
 \alias{rFLXM,FLXMRlmm,FLXcomponent-method}
 \alias{rFLXM,FLXMRlmm,list-method}
+\alias{rFLXM,FLXMRlmc,FLXcomponent-method}
+\alias{rFLXM,FLXMRlmer,FLXcomponent-method}
 \title{FlexMix Interface to Linear Mixed Models}
 \description{
   This is a driver which allows fitting of mixtures of linear models
@@ -78,5 +80,17 @@ fitted <- flexmix(.~.|id, k = 2, model = FLXMRlmm(y ~ x, random = ~ 1),
                   data = sample, control = list(tolerance = 10^-3),
                   cluster = rep(rep(1:2, each = 10), 25))
 parameters(fitted)
+
+fitted1 <- flexmix(.~.|id, k = 2, model = FLXMRlmer(y ~ x, random = ~ 1),
+                  data = sample, control = list(tolerance = 10^-3),
+                  cluster = rep(rep(1:2, each = 10), 25))
+parameters(fitted1)
+
+fitted2 <- flexmix(.~.|id, k = 2,
+                   model = FLXMRlmm(y ~ 0 + x, random = ~ 1,
+                     lm.fit = "smooth.spline"),
+                  data = sample, control = list(tolerance = 10^-3),
+                  cluster = rep(rep(1:2, each = 10), 25))
+parameters(fitted2)
 }
 \keyword{models}
