@@ -14,7 +14,7 @@ library("graphics")
 library("flexmix")
 @ 
 \author{Bettina Gr{\"u}n\\
-  Johannes Kepler Universit{\"at} Linz \And
+  Wirtschaftsuniversit{\"a}t Wien \And
   Friedrich Leisch\\
   Universit\"at f\"ur Bodenkultur Wien} 
 
@@ -22,19 +22,18 @@ library("flexmix")
 
 \Address{
   Bettina Gr\"un\\
-  Institut f\"ur Angewandte Statistik / IFAS\\
-  Johannes Kepler Universit{\"at} Linz\\
-  Freist\"adter Stra\ss{}e 315\\
-  4040 Linz, Austria\\
-  E-mail: \email{Bettina.Gruen@jku.at}\\
+  Institute for Statistics and Mathematics\\
+  Wirtschaftsuniversit{\"a}t Wien\\
+  Welthandelsplatz 1\\
+  1020 Wien, Austria\\
+  E-mail: \email{Bettina.Gruen@R-project.org}\\
 
   Friedrich Leisch\\
   Institut f\"ur Angewandte Statistik und EDV\\
   Universit\"at f\"ur Bodenkultur Wien\\
   Peter Jordan Stra\ss{}e 82\\
   1190 Wien, Austria\\
-  E-mail: \email{Friedrich.Leisch@boku.ac.at}\\
-  URL: \url{http://www.statistik.lmu.de/~leisch/}
+  E-mail: \email{Friedrich.Leisch@boku.ac.at}
 }
 
 \Abstract{
@@ -63,6 +62,7 @@ library("flexmix")
 \setkeys{Gin}{width=0.8\textwidth}
 <<start, echo=false, results=hide>>=
 options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1802)
 library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)

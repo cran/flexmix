@@ -1,7 +1,7 @@
 ### R code from vignette source 'mixture-regressions.Rnw'
 
 ###################################################
-### code chunk number 1: mixture-regressions.Rnw:63-73
+### code chunk number 1: mixture-regressions.Rnw:62-72
 ###################################################
 options(width=60, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 library("graphics")
@@ -16,7 +16,7 @@ source("myConcomitant.R")
 
 
 ###################################################
-### code chunk number 2: mixture-regressions.Rnw:500-503
+### code chunk number 2: mixture-regressions.Rnw:499-502
 ###################################################
 par(mfrow=c(1,2))
 plot(yn~x, col=class, pch=class, data=NPreg)
@@ -24,8 +24,9 @@ plot(yp~x, col=class, pch=class, data=NPreg)
 
 
 ###################################################
-### code chunk number 3: mixture-regressions.Rnw:510-517
+### code chunk number 3: mixture-regressions.Rnw:509-517
 ###################################################
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1802)
 library("flexmix")
 data("NPreg", package = "flexmix")
@@ -302,7 +303,7 @@ print(plot(refit(Fitted), components = 2, box.ratio = 3))
 ###################################################
 Concomitant <- FLXPmultinom(~ yb)
 MyConcomitant <- myConcomitant(~ yb)
-
+set.seed(1234)
 m2 <- flexmix(. ~ x, data = NPreg, k = 2, model = list(Model_n, Model_p), 
   concomitant = Concomitant)
 m3 <- flexmix(. ~ x, data = NPreg, k = 2, model = list(Model_n, Model_p), 

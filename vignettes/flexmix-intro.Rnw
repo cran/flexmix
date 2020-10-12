@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 5156 2019-02-12 08:11:16Z gruen $
+%  $Id: flexmix-intro.Rnw 5187 2020-06-25 17:59:39Z gruen $
 %
 \documentclass[nojss]{jss}
 
@@ -20,8 +20,7 @@
   Universit\"at f\"ur Bodenkultur Wien\\
   Peter Jordan Stra\ss{}e 82\\
   1190 Wien, Austria\\
-  E-mail: \email{Friedrich.Leisch@boku.ac.at}\\
-  URL: \url{http://www.statistik.lmu.de/~leisch/}
+  E-mail: \email{Friedrich.Leisch@boku.ac.at}
 }
 
 \usepackage[utf8]{inputenc}
@@ -29,6 +28,7 @@
 \newcommand{\R}{\proglang{R}}
 
 <<echo=false,results=hide>>=
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1504)
 options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 grDevices::ps.options(family="Times")

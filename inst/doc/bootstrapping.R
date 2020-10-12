@@ -29,7 +29,7 @@ prettyPrint <- function(x, sep = " ", linebreak = "\n\t", width = getOption("wid
 
 
 ###################################################
-### code chunk number 2: bootstrapping.Rnw:95-100
+### code chunk number 2: bootstrapping.Rnw:94-99
 ###################################################
 cat(prettyPrint(gsub("boot_flexmix", "boot", 
                      prompt(flexmix:::boot_flexmix, 
@@ -39,7 +39,7 @@ cat(prettyPrint(gsub("boot_flexmix", "boot",
 
 
 ###################################################
-### code chunk number 3: bootstrapping.Rnw:195-200
+### code chunk number 3: bootstrapping.Rnw:194-199
 ###################################################
 library("flexmix")
 Component_1 <- list(Model_1 = list(coef = c(1, -2), sigma = sqrt(0.1)))
@@ -49,9 +49,10 @@ ArtEx.mix <- FLXdist(y ~ x, k = rep(0.5, 2),
 
 
 ###################################################
-### code chunk number 4: bootstrapping.Rnw:211-216
+### code chunk number 4: bootstrapping.Rnw:210-216
 ###################################################
 ArtEx.data <- data.frame(x = rep(0:1, each = 100/2))
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
 ArtEx.sim <- rflexmix(ArtEx.mix, newdata = ArtEx.data)
 ArtEx.data$y <- ArtEx.sim$y[[1]]
@@ -91,22 +92,34 @@ summary(ArtEx.refit)
 
 
 ###################################################
-### code chunk number 9: bootstrapping.Rnw:280-284
+### code chunk number 9: bootstrapping.Rnw:274-277 (eval = FALSE)
 ###################################################
-set.seed(123)
-ArtEx.bs <- boot(ArtEx.fit, R = 15, sim = "parametric")
-if ("boot-output.rda" %in% list.files()) load("boot-output.rda")
+## set.seed(123)
+## ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
+## ArtEx.bs
+
+
+###################################################
+### code chunk number 10: bootstrapping.Rnw:279-287
+###################################################
+if (file.exists("ArtEx.bs.rda")) {
+  load("ArtEx.bs.rda")
+} else {
+  set.seed(123)
+  ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
+  save(ArtEx.bs, file = "ArtEx.bs.rda")
+}
 ArtEx.bs
 
 
 ###################################################
-### code chunk number 10: bootstrapping.Rnw:300-301
+### code chunk number 11: bootstrapping.Rnw:303-304
 ###################################################
 print(plot(ArtEx.bs, ordering = "coef.x", col = Colors))
 
 
 ###################################################
-### code chunk number 11: bootstrapping.Rnw:318-331
+### code chunk number 12: bootstrapping.Rnw:321-334
 ###################################################
 require("diptest")
 parameters <- parameters(ArtEx.bs)
@@ -124,7 +137,7 @@ dip.values.art
 
 
 ###################################################
-### code chunk number 12: bootstrapping.Rnw:373-379
+### code chunk number 13: bootstrapping.Rnw:376-382
 ###################################################
 data("seizure", package = "flexmix")
 model <- FLXMRglm(family = "poisson", offset = log(seizure$Hours))
@@ -135,7 +148,7 @@ seizMix <- stepFlexmix(Seizures ~ Treatment * log(Day),
 
 
 ###################################################
-### code chunk number 13: bootstrapping.Rnw:387-392
+### code chunk number 14: bootstrapping.Rnw:390-395
 ###################################################
 par(mar = c(5, 4, 2, 0) + 0.1)
 plot(Seizures/Hours~Day, data=seizure, pch = as.integer(seizure$Treatment))
@@ -145,16 +158,34 @@ matplot(seizure$Day, fitted(seizMix)/seizure$Hours, type="l",
 
 
 ###################################################
-### code chunk number 14: bootstrapping.Rnw:414-418
+### code chunk number 15: bootstrapping.Rnw:415-418 (eval = FALSE)
 ###################################################
-set.seed(123)
-seizMix.bs <- boot(seizMix, R = 15, sim = "parametric")
-if ("boot-output.rda" %in% list.files()) load("boot-output.rda")
+## set.seed(123)
+## seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
+## seizMix.bs
+
+
+###################################################
+### code chunk number 16: bootstrapping.Rnw:420-428
+###################################################
+if (file.exists("seizMix.bs.rda")) {
+  load("seizMix.bs.rda")
+} else {
+  set.seed(123)
+  seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
+  save(seizMix.bs, file = "seizMix.bs.rda")
+}
+seizMix.bs
+
+
+###################################################
+### code chunk number 17: bootstrapping.Rnw:433-434
+###################################################
 print(plot(seizMix.bs, ordering = "coef.(Intercept)", col = Colors))
 
 
 ###################################################
-### code chunk number 15: bootstrapping.Rnw:425-430
+### code chunk number 18: bootstrapping.Rnw:441-446
 ###################################################
 parameters <- parameters(seizMix.bs)
 Ordering <- factor(as.vector(apply(matrix(parameters[,"coef.(Intercept)"], 
@@ -164,7 +195,7 @@ Comp2 <- parameters[Ordering == 2,]
 
 
 ###################################################
-### code chunk number 16: bootstrapping.Rnw:439-446
+### code chunk number 19: bootstrapping.Rnw:455-462
 ###################################################
 dip.values.art <- matrix(nrow = ncol(parameters), ncol = 3, 
   dimnames = list(colnames(parameters), 
@@ -173,15 +204,5 @@ dip.values.art[,"Aggregated"] <- apply(parameters, 2, dip)
 dip.values.art[,"Comp 1"] <- apply(Comp1, 2, dip)
 dip.values.art[,"Comp 2"] <- apply(Comp2, 2, dip)
 dip.values.art
-
-
-###################################################
-### code chunk number 17: bootstrapping.Rnw:461-466 (eval = FALSE)
-###################################################
-## set.seed(123)
-## ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
-## set.seed(123)
-## seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
-## save(ArtEx.bs, seizMix.bs, file = "boot-output.rda")
 
 

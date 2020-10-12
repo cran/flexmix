@@ -163,18 +163,23 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmm"),
 {
   formula_nogrouping <- RemoveGrouping(formula)
   if (identical(paste(deparse(formula_nogrouping), collapse = ""), paste(deparse(formula), collapse = ""))) stop("please specify a grouping variable")
-  model <- callNextMethod(model, data, formula, lhs)
+  model <- callNextMethod(model, data, formula, lhs) 
   model@fullformula <- update(model@fullformula,
-                                     paste(".~. |", .FLXgetGroupingVar(formula)))
+                              paste(".~. |", .FLXgetGroupingVar(formula)))
   mt1 <- terms(model@random, data=data)
   mf <- model.frame(delete.response(mt1), data=data, na.action = NULL)
   model@z <- model.matrix(attr(mf, "terms"), data)
   model@group <- grouping <- .FLXgetGrouping(formula, data)$group
+  rownames(model@z) <- rownames(model@x) <- rownames(model@y) <- NULL
   model@x <- matrix(lapply(unique(grouping), function(g) model@x[grouping == g, , drop = FALSE]), ncol = 1)
   if (lhs) model@y <- matrix(lapply(unique(grouping), function(g) model@y[grouping == g, , drop = FALSE]), ncol = 1)
   z <- lapply(unique(grouping), function(g) model@z[grouping == g, , drop = FALSE])
   z1 <- unique(z)
-  model@which <- sapply(z, function(y) which(sapply(z1, function(x) isTRUE(all.equal(x, y)))))
+  if (length(z) == length(z1)) {
+      model@which <- seq_along(z)
+  } else {
+      model@which <- sapply(z, function(y) which(sapply(z1, function(x) isTRUE(all.equal(x, y)))))
+  }
   model@z <- matrix(z1, ncol = 1)
   model
 })

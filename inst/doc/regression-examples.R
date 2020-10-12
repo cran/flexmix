@@ -12,6 +12,7 @@ library("flexmix")
 ### code chunk number 2: start
 ###################################################
 options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1802)
 library("lattice")
 ltheme <- canonical.theme("postscript", FALSE)

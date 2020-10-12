@@ -34,7 +34,7 @@ prettyPrint <- function(x, sep = " ", linebreak = "\n\t", width = getOption("wid
 }
 @ 
 \author{Bettina Gr{\"u}n\\
-  Johannes Kepler Universit{\"a}t Linz \And
+  Wirtschaftsuniversit{\"a}t Wien \And
   Friedrich Leisch\\
   Universit\"at f\"ur Bodenkultur Wien} 
 
@@ -42,19 +42,18 @@ prettyPrint <- function(x, sep = " ", linebreak = "\n\t", width = getOption("wid
 
 \Address{
   Bettina Gr\"un\\
-  Institut f\"ur Angewandte Statistik\\
-  Johannes Kepler Universit{\"a}t Linz\\
-  Altenbergerstra\ss{}e 69\\
-  4040 Linz, Austria\\
-  E-mail: \email{Bettina.Gruen@jku.at}
+  Institute for Statistics and Mathematics\\
+  Wirtschaftsuniversit{\"a}t Wien\\
+  Welthandelsplatz 1\\
+  1020 Wien, Austria\\
+  E-mail: \email{Bettina.Gruen@R-project.org}\\
 
   Friedrich Leisch\\
   Institut f\"ur Angewandte Statistik und EDV\\
   Universit\"at f\"ur Bodenkultur Wien\\
   Peter Jordan Stra\ss{}e 82\\
   1190 Wien, Austria\\
-  E-mail: \email{Friedrich.Leisch@boku.ac.at}\\
-  URL: \url{http://www.statistik.lmu.de/~leisch/}
+  E-mail: \email{Friedrich.Leisch@boku.ac.at}
 }
 
 \Abstract{ 
@@ -210,6 +209,7 @@ data used for fitting the mixture is used.
 
 <<>>=
 ArtEx.data <- data.frame(x = rep(0:1, each = 100/2))
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(123)
 ArtEx.sim <- rflexmix(ArtEx.mix, newdata = ArtEx.data)
 ArtEx.data$y <- ArtEx.sim$y[[1]]
@@ -271,16 +271,19 @@ by the argument \code{R}. Please note that the arguments are chosen to
 correspond to those for function \code{boot} in package \pkg{boot}
 \citep{mixtures:Davison+Hinkley:1997}.
 
-Only a few number of bootstrap samples are drawn to keep the amount of
-time needed to run the vignette within reasonable limits. However, for
-a sensible application of the bootstrap methods at least \code{R}
-equal to 100 should be used. If the output for this setting has been
-saved, it is loaded and used in the further analysis. Please see the
-appendix for the code for generating the saved \proglang{R} output.
-<<>>=
+<<eval=FALSE>>=
 set.seed(123)
-ArtEx.bs <- boot(ArtEx.fit, R = 15, sim = "parametric")
-if ("boot-output.rda" %in% list.files()) load("boot-output.rda")
+ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
+ArtEx.bs
+@ 
+<<echo=FALSE>>=
+if (file.exists("ArtEx.bs.rda")) {
+  load("ArtEx.bs.rda")
+} else {
+  set.seed(123)
+  ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
+  save(ArtEx.bs, file = "ArtEx.bs.rda")
+}
 ArtEx.bs
 @ 
 
@@ -409,12 +412,25 @@ good days from the treatement period and vice versa for the good days
 of the base period can be distinguished and indicate the slight
 identifiability problems of the fitted mixture.
 
+<<eval=FALSE>>=
+set.seed(123)
+seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
+seizMix.bs
+@ 
+<<echo=FALSE>>=
+if (file.exists("seizMix.bs.rda")) {
+  load("seizMix.bs.rda")
+} else {
+  set.seed(123)
+  seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
+  save(seizMix.bs, file = "seizMix.bs.rda")
+}
+seizMix.bs
+@ 
+
 \begin{figure}[h!]
   \centering
 <<fig=true>>=
-set.seed(123)
-seizMix.bs <- boot(seizMix, R = 15, sim = "parametric")
-if ("boot-output.rda" %in% list.files()) load("boot-output.rda")
 print(plot(seizMix.bs, ordering = "coef.(Intercept)", col = Colors))
 @ 
 \label{fig:plot.FLXboot-seiz}
@@ -456,15 +472,6 @@ own parameter and not for the other parameters. This suggests
 identifiability problems. 
 %%-------------------------------------------------------------------------
 %%-------------------------------------------------------------------------
-\appendix
-\section[Generation of saved R output]{Generation of saved \proglang{R} output}
-<<eval=false>>=
-set.seed(123)
-ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
-set.seed(123)
-seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
-save(ArtEx.bs, seizMix.bs, file = "boot-output.rda")
-@ 
 \bibliography{mixture}
 \end{document}
 

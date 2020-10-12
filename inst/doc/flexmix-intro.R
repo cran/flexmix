@@ -1,9 +1,9 @@
 ### R code from vignette source 'flexmix-intro.Rnw'
-### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: flexmix-intro.Rnw:31-37
+### code chunk number 1: flexmix-intro.Rnw:30-37
 ###################################################
+suppressWarnings(RNGversion("3.5.0"))
 set.seed(1504)
 options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 grDevices::ps.options(family="Times")

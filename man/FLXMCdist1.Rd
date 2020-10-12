@@ -28,12 +28,12 @@ FLXMCdist1(formula = . ~ ., dist, ...)
     Currently drivers for the following distributions are available:
     \enumerate{
         \item Lognormal (\code{"lnorm"})
-        \item inverse Gaussian (\code{"invGauss"} using \code{\link[SuppDists]{dinvGauss}})
+        \item inverse Gaussian (\code{"invGauss"} using \code{\link[SuppDists:invGauss]{dinvGauss}})
         \item gamma (\code{"gamma"})
         \item exponential (\code{"exp"})
         \item Weibull (\code{"weibull"})
-        \item Burr (\code{"burr"} using \code{\link[actuar]{dburr}})
-        \item Inverse Burr (\code{"invburr"} using \code{\link[actuar]{dinvburr}})
+        \item Burr (\code{"burr"} using \code{\link[actuar:Burr]{dburr}})
+        \item Inverse Burr (\code{"invburr"} using \code{\link[actuar:Burr]{dinvburr}})
     }
 }
 \value{

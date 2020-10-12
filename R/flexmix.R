@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmix.R 5150 2018-10-11 05:04:23Z gruen $
+#  $Id: flexmix.R 5184 2020-06-20 18:27:29Z gruen $
 #
 
 log_row_sums <- function(m) {
@@ -368,7 +368,7 @@ groupPosteriors <- function(x, group)
 {
     if (length(group) > 0) {
         group <- as.integer(group)
-        x.by.group <- unname(apply(x, 2, tapply, group, sum))
+        x.by.group <- matrix(unname(apply(x, 2, tapply, group, sum)), ncol = ncol(x))
         x <- x.by.group[group,, drop = FALSE]
     }
     x
@@ -494,7 +494,7 @@ function(object, newdata, ...) {
     groups <- .FLXgetGrouping(object@formula, newdata)
     nobs <- if (is(newdata, "data.frame")) nrow(newdata)
             else min(sapply(newdata, function(x) {
-              if (is(x, "matrix")) nrow(x) else length(x)
+              if (is.null(nrow(x))) length(x) else nrow(x)
             }))
     group <- if (length(groups$group)) groups$group else factor(seq_len(nobs))
     object@concomitant <- FLXgetModelmatrix(object@concomitant, data = newdata,

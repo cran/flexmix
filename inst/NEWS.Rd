@@ -1,5 +1,24 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-17}{
+  \itemize{
+    \item A model class for sparse model-based clustering added with
+    a suitable method to resolve the formula and extract the data.
+    \item There was a bug with dimensions being dropped if only a single
+    individual was used for grouping. Thanks to Adam Hulman for pointing
+    this issue out.
+    \item The \code{FLXgetModelmatrix} method for `\code{FLXMRlmm}'
+    objects has been improved. Thanks to Adam Hulman for pointing
+    out that this might be unnecessarily slow.
+  }
+}    
+\section{Changes in flexmix version 2.3-16}{
+  \itemize{
+    \item The vignette explaining model diagnostics using resampling
+    methods was modified to use more replications. Thanks to Eric Book
+    for pointing this issue out.
+  }
+}    
 \section{Changes in flexmix version 2.3-15}{
   \itemize{
     \item Modified the internal function \code{groupPosteriors} to be
@@ -375,7 +394,7 @@
     \item The package has now an introductionary vignette which can be
       accessed using the command vignette("flexmix-intro"). The vignette
       has been published in the Journal of Statistical Software, Volume
-      11, Issue 8 (\url{http://www.jstatsoft.org/v11/i08}), and the paper should be used as
+      11, Issue 8 (\url{https://www.jstatsoft.org/v11/i08}), and the paper should be used as
       citation for \pkg{flexmix}, run \code{citation("flexmix")} in \R 2.0.0 or newer
       for details.
     \item Several typos in help pages have been fixed.

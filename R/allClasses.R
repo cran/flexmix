@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
-#  $Id: allClasses.R 5079 2016-01-31 12:21:12Z gruen $
+#  $Id: allClasses.R 5185 2020-06-23 13:24:06Z gruen $
 #
 
 setClass("FLXcontrol",
@@ -46,7 +46,7 @@ setClass("FLXM",
                         formula="formula",
                         fullformula="formula",
                         x="matrix",
-                        y="matrix",
+                        y="ANY",
                         terms="ANY",
                         xlevels="ANY",
                         contrasts="ANY",
@@ -60,12 +60,14 @@ setClass("FLXM",
 
 ## model-based clustering
 setClass("FLXMC",
-         representation(dist="character"),
+         representation(y="matrix",
+                        dist="character"),
          contains = "FLXM")
 
 ## regression
 setClass("FLXMR",
-         representation(offset="ANY"),
+         representation(y="matrix",
+                        offset="ANY"),
          contains = "FLXM")
 
 setMethod("show", "FLXM",
@@ -73,11 +75,11 @@ function(object){
     cat("FlexMix model of type", object@name,"\n\nformula: ")
     print(object@formula)
     cat("Weighted likelihood possible:", object@weighted,"\n\n")
-    if(nrow(object@x)>0){
+    if(!is.null(object@x) && nrow(object@x)>0){
         cat("Regressors:\n")
         print(summary(object@x))
     }
-    if(nrow(object@y)>0){
+    if(!is.null(object@y) && nrow(object@y)>0){
         cat("Response:\n")
         print(summary(object@y))
     }
@@ -123,7 +125,7 @@ setMethod("show", "FLXP",
 function(object){
     cat("FlexMix concomitant model of type", object@name,"\n\nformula: ")
     print(object@formula)
-    if(nrow(object@x)>0){
+    if(!is.null(object@x) && nrow(object@x)>0){
         cat("\nRegressors:\n")
         print(summary(object@x))
     }

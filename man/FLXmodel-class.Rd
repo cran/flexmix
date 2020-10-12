@@ -1,12 +1,13 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmodel-class.Rd 5079 2016-01-31 12:21:12Z gruen $
+%  $Id: FLXmodel-class.Rd 5184 2020-06-20 18:27:29Z gruen $
 %
 \name{FLXM-class}
 \docType{class}
 \alias{FLXM-class}
 \alias{FLXMC-class}
 \alias{FLXMR-class}
+\alias{FLXMCsparse-class}
 \alias{show,FLXM-method}
 \title{Class "FLXM"}
 \description{FlexMix model specification.}
