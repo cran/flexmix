@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRziglm.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: FLXMRziglm.Rd 5229 2022-06-02 14:47:26Z gruen $
 %
 \name{FLXMRziglm}
 \alias{FLXMRziglm}
@@ -27,7 +27,7 @@ FLXMRziglm(formula = . ~ ., family = c("binomial", "poisson"), ...)
   \item{\dots}{passed to \code{FLXMRglm}}
 }
 \value{
-  Returns an object of class \code{FLXMRziglm}.
+  Returns an object of class \code{FLXMRziglm} inheriting from \code{FLXMRglm}.
 }
 \author{Friedrich Leisch and Bettina Gruen}
 \note{

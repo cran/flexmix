@@ -32,7 +32,7 @@ FLXMRlmmc(formula = . ~ ., random, censored, varFix, eps = 10^-6, ...)
 }
 \value{
   Returns an object of class \code{FLXMRlmmc}, \code{FLXMRlmmcfix},
-  \code{FLXMRlmc} or \code{FLXMRlmcfix}.
+  \code{FLXMRlmc} or \code{FLXMRlmcfix} inheriting from \code{FLXMR}.
 }
 \author{Bettina Gruen}
 \keyword{models}

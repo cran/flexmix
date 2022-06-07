@@ -57,7 +57,8 @@ FLXMRlmer(formula = . ~ ., random, weighted = TRUE,
   given for weighted ML estimation, i.e. where \code{weighted = TRUE}.
 }
 \value{
-  Returns an object of class \code{FLXMRlmer} and \code{FLXMRlmm}.
+  Returns an object of class \code{FLXMRlmer} and \code{FLXMRlmm}
+  inheriting from \code{FLXMRglm} and \code{FLXMR}, respectively.
 }
 \section{Warning}{
   For \code{FLXMRlmer} the weighted ML estimation is only correct if the

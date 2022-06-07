@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglmFix.Rd 5015 2015-01-17 11:12:29Z gruen $
+%  $Id: FLXglmFix.Rd 5229 2022-06-02 14:47:26Z gruen $
 %
 \name{FLXMRglmfix}
 \alias{FLXMRglmfix}
@@ -37,7 +37,8 @@ FLXMRglmfix(formula = . ~ ., fixed = ~0, varFix = FALSE, nested = NULL,
     component to be included in the linear predictor during fitting.}
 }
 \value{
-  Returns an object of class \code{FLXMRglmfix}.
+  Returns an object of class \code{FLXMRglmfix} 
+  inheriting from \code{FLXMRglm} and \code{FLXMRfix}.
 }
 \author{Friedrich Leisch and Bettina Gruen}
 \seealso{\code{FLXMRglm}}

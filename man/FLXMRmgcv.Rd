@@ -33,7 +33,7 @@ FLXMRmgcv(formula = . ~ ., family = c("gaussian", "binomial", "poisson"),
   \item{\dots}{Additional arguments to be pased to the GAM fitter.}
 }
 \value{
-  Returns an object of class \code{FLXMRmgcv}.
+  Returns an object of class \code{FLXMRmgcv} inheriting from \code{FLXMRglm}.
 }
 \author{
   Bettina Gruen

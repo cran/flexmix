@@ -8,14 +8,14 @@
 \alias{EIC,stepFlexmix-method}
 \title{Entropic Measure Information Criterion}
 \description{
-  Compute the Entropic measure Information criterion for model selection.
+  Compute the entropic measure information criterion for model selection.
 }
 \usage{
 \S4method{EIC}{flexmix}(object, \dots)
 \S4method{EIC}{stepFlexmix}(object, \dots)
 }
 \arguments{
-  \item{object}{see Methods section below}
+  \item{object}{See Methods section below}
   \item{\dots}{Some methods for this generic function may take additional,
           optional arguments. At present none do.}
 }

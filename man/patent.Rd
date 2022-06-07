@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: patent.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: patent.Rd 5220 2022-04-18 18:05:04Z gruen $
 %
 \name{patent}
 \alias{patent}
@@ -21,7 +21,7 @@
   }
 }
 \details{
-  The data is taken from the National Bureau of Economic Research R\&D Masterfile.
+  The data is taken from the National Bureau of Economic Research R&D Masterfile.
 }
 \source{
   P. Wang, I.M. Cockburn and M.L. Puterman. Analysis of Patent

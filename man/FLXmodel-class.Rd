@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmodel-class.Rd 5184 2020-06-20 18:27:29Z gruen $
+%  $Id: FLXmodel-class.Rd 5229 2022-06-02 14:47:26Z gruen $
 %
 \name{FLXM-class}
 \docType{class}
@@ -36,6 +36,15 @@
     \item{\code{preproc.y}:}{Function for preprocessing matrix \code{y}
       before the EM algorithm starts, by default the identity function.}
   }
+}
+\details{
+  The most generic class is the virtual class \code{FLXM}. The classes
+  \code{FLXMC} for model-based clustering and \code{FLXMR} for
+  clusterwise regression extend the virtual class. Both have further
+  more specific model classes which inherit from them.
+
+  Model class \code{FLXMCsparse} allows for model-based clustering with
+  a sparse matrix as data input.
 }
 \author{Friedrich Leisch and Bettina Gruen}
 \keyword{classes}

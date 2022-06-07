@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglm.Rd 5115 2017-04-07 08:18:13Z gruen $
+%  $Id: FLXglm.Rd 5229 2022-06-02 14:47:26Z gruen $
 %
 \name{FLXMRglm}
 \alias{FLXMRglm}
@@ -30,7 +30,7 @@ FLXMRglm(formula = . ~ .,
   See \code{\link{flexmix}} for examples.
 }
 \value{
-  Returns an object of class \code{FLXMRglm}.
+  Returns an object of class \code{FLXMRglm} inheriting from \code{FLXMR}.
 }
 \author{Friedrich Leisch and Bettina Gruen}
 \references{

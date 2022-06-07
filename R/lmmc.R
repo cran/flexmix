@@ -413,8 +413,8 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
                                                                            fit[[k]]))
         else {
             fit <- lapply(seq_len(ncol(w)), function(k)
-                          list(random = list(beta = lapply(W[[k]], function(i) rep(0, ncol(z[[i]]))),
-                                              Gamma = lapply(W[[k]], function(i) diag(ncol(z[[i]])))),
+                          list(random = list(beta = lapply(seq_along(W[[k]]), function(i) rep(0, ncol(z[[which[[k]][i]]]))),
+                                              Gamma = lapply(seq_along(W[[k]]), function(i) diag(ncol(z[[which[[k]][i]]])))),
                                censored = list(mu = lapply(seq_along(y[[k]]), function(i) y[[k]][[i]][C[[k]][[i]] == 1]),
                                                 Sigma = lapply(C[[k]], function(x) diag(1, nrow = sum(x)) * var(unlist(y[[k]]))),
                                                 psi = lapply(C[[k]], function(x) rep(0, sum(x))))))
@@ -537,6 +537,7 @@ setMethod("FLXgetModelmatrix", signature(model="FLXMRlmmc"),
   mt1 <- terms(model@random, data=data)
   mf1 <- model.frame(delete.response(mt1), data=data, na.action = NULL)
   model@z <- model.matrix(attr(mf1, "terms"), data)
+  rownames(model@z) <- NULL
   grouping <- .FLXgetGrouping(formula, data)$group
   z <- matrix(lapply(unique(grouping), function(g) model@z[grouping == g, , drop = FALSE]), ncol = 1)
   model@z <- unique(z)

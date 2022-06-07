@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRrobglm.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: FLXMRrobglm.Rd 5229 2022-06-02 14:47:26Z gruen $
 %
 \name{FLXMRrobglm}
 \alias{FLXMRrobglm}
@@ -30,7 +30,7 @@ FLXMRrobglm(formula = . ~ ., family = c("gaussian", "poisson"),
   \item{\dots}{passed to \code{FLXMRglm}}
 }
 \value{
-  Returns an object of class \code{FLXMRrobglm}.
+  Returns an object of class \code{FLXMRrobglm} inheriting from \code{FLXMRglm}.
 }
 \author{Friedrich Leisch and Bettina Gruen}
 \note{

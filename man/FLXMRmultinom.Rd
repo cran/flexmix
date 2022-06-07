@@ -19,7 +19,7 @@ FLXMRmultinom(formula = . ~ ., ...)
   The M-step is performed using \code{nnet.default}.
 }
 \value{
-  Returns an object of class \code{FLXMRmultinom}.
+  Returns an object of class \code{FLXMRmultinom} inheriting from \code{FLXMRglm}.
 }
 \references{
   Bettina Gruen and Friedrich Leisch. Identifiability of finite mixtures

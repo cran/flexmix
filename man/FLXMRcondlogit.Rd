@@ -22,7 +22,7 @@ FLXMRcondlogit(formula = . ~ ., strata)
   The M-step is performed using \code{coxph.fit}.
 }
 \value{
-  Returns an object of class \code{FLXMRcondlogit}.
+  Returns an object of class \code{FLXMRcondlogit} inheriting from \code{FLXMRglm}.
 }
 \references{
   Bettina Gruen and Friedrich Leisch. Identifiability of finite mixtures

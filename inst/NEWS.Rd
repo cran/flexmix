@@ -1,5 +1,14 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-18}{
+  \itemize{
+    \item The man page improved for the different general model classes
+    such as `\code{FLXM}', `\code{FLXMC}', `\code{FLXMR}' and
+    `\code{FLXMCsparse}'. Thanks to Jonas Hagenberg for pointing out
+    that the class structure is not well documented.
+    \item An issue fixed for `\code{FLXMRlmmc}' models.
+  }
+}    
 \section{Changes in flexmix version 2.3-17}{
   \itemize{
     \item A model class for sparse model-based clustering added with
@@ -394,7 +403,7 @@
     \item The package has now an introductionary vignette which can be
       accessed using the command vignette("flexmix-intro"). The vignette
       has been published in the Journal of Statistical Software, Volume
-      11, Issue 8 (\url{https://www.jstatsoft.org/v11/i08}), and the paper should be used as
+      11, Issue 8 (\doi{10.18637/jss.v011.i08}), and the paper should be used as
       citation for \pkg{flexmix}, run \code{citation("flexmix")} in \R 2.0.0 or newer
       for details.
     \item Several typos in help pages have been fixed.
