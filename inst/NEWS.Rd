@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-19}{
+  \itemize{
+    \item Internal function names were changed to avoid having them look like
+    S3 methods.
+    \item Updated CITATION to use \code{bibentry()}.
+  }
+}    
 \section{Changes in flexmix version 2.3-18}{
   \itemize{
     \item The man page improved for the different general model classes

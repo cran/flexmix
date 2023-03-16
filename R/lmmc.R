@@ -23,7 +23,7 @@ setMethod("allweighted", signature(model = "FLXMRlmc", control = "ANY", weights 
     model@weighted
 })
 
-update.Residual <- function(fit, w, z, C, which, random, censored) {
+update_Residual <- function(fit, w, z, C, which, random, censored) {
   index <- lapply(C, function(x) x == 1)
   W <- rep(w, sapply(which, function(x) nrow(z[[x]])))
   ZGammaZ <- sapply(seq_along(which), function(i) sum(diag(crossprod(z[[which[i]]]) %*% random$Gamma[[i]])))
@@ -34,7 +34,7 @@ update.Residual <- function(fit, w, z, C, which, random, censored) {
   (sum(W * residuals(fit)^2) + Residual + sum(w * ZGammaZ))/sum(W)
 }
 
-update.latent <- function(x, y, C, fit) {
+update_latent <- function(x, y, C, fit) {
   AnyMissing <- which(sapply(C, sum) > 0)
   index <- lapply(C, function(x) x == 1)
   Sig <- lapply(seq_along(x), function(i) fit$sigma2 * diag(nrow = nrow(x[[i]])))
@@ -67,7 +67,7 @@ update.latent <- function(x, y, C, fit) {
   list(censored = censored)
 }
 
-update.latent.random <- function(x, y, z, C, which, fit) {
+update_latent_random <- function(x, y, z, C, which, fit) {
   index <- lapply(C, function(x) x == 1)
   AnyMissing <- which(sapply(C, sum) > 0)
   Residual <- fit$sigma2$Residual
@@ -279,7 +279,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           W <- lapply(seq_len(ncol(w)), function(i) w[,i])
         }
         if ("coef" %in% names(fit[[1]]))
-          fit <- lapply(seq_len(ncol(w)), function(k) update.latent(X[[k]], y[[k]], C[[k]], fit[[k]]))
+          fit <- lapply(seq_len(ncol(w)), function(k) update_latent(X[[k]], y[[k]], C[[k]], fit[[k]]))
         else {
           fit <- lapply(seq_len(ncol(w)), function(k)
                         list(censored = list(mu = lapply(seq_along(y[[k]]), function(i) y[[k]][[i]][C[[k]][[i]] == 1]),
@@ -305,7 +305,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           C <- C[ok]
         }
         if ("coef" %in% names(fit)) {
-          fit <- update.latent(x, y, C, fit)
+          fit <- update_latent(x, y, C, fit)
         } else {
           fit$censored <- list(mu = lapply(seq_along(y), function(i) y[[i]][C[[i]] == 1]),
                                Sigma = lapply(C, function(x) diag(1, nrow = sum(x)) * var(unlist(y))))
@@ -409,7 +409,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           W <- lapply(seq_len(ncol(w)), function(i) w[,i])
         }
         if ("coef" %in% names(fit[[1]])) 
-          fit <- lapply(seq_len(ncol(w)), function(k) update.latent.random(X[[k]], y[[k]], z, C[[k]], which[[k]],
+          fit <- lapply(seq_len(ncol(w)), function(k) update_latent_random(X[[k]], y[[k]], z, C[[k]], which[[k]],
                                                                            fit[[k]]))
         else {
             fit <- lapply(seq_len(ncol(w)), function(k)
@@ -429,7 +429,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           for (k in seq_len(ncol(w))) fit[[k]]$sigma2$Random <- Psi
         }
         for (k in seq_len(ncol(w))) 
-          fit[[k]]$sigma2$Residual <- update.Residual(fit[[k]], W[[k]], z, C[[k]], which[[k]],
+          fit[[k]]$sigma2$Residual <- update_Residual(fit[[k]], W[[k]], z, C[[k]], which[[k]],
                                                       fit[[k]]$random, fit[[k]]$censored)
         if (varFix["Residual"]) {
           prior <- colMeans(w)
@@ -456,7 +456,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
           C <- C[ok]
           which <- which[ok]
         }
-        if ("coef" %in% names(fit)) fit <- update.latent.random(x, y, z, C, which, fit)
+        if ("coef" %in% names(fit)) fit <- update_latent_random(x, y, z, C, which, fit)
         else {
             fit <- list(random = list(beta = lapply(which, function(i) rep(0, ncol(z[[i]]))),
                             Gamma = lapply(which, function(i) diag(ncol(z[[i]])))),
@@ -466,7 +466,7 @@ FLXMRlmmc <- function(formula = . ~ ., random, censored, varFix, eps = 10^-6, ..
         }
         fit <- c(lmmc.wfit(x, y, w, z, C, which, fit$random, fit$censored),
                  random = list(fit$random), censored = list(fit$censored))
-        fit$sigma2$Residual <- update.Residual(fit, w, z, C, which, fit$random, fit$censored)
+        fit$sigma2$Residual <- update_Residual(fit, w, z, C, which, fit$random, fit$censored)
         n <- nrow(fit$sigma2$Random)
         object@defineComponent(
              list(coef = coef(fit),
