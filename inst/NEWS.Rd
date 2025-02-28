@@ -1,5 +1,12 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-20}{
+  \itemize{
+    \item Function \code{flxglht} added which allows to perform
+    simultaneous inference in finite mixtures of regression models to
+    assess zero coefficients or constant effects.
+  }
+}    
 \section{Changes in flexmix version 2.3-19}{
   \itemize{
     \item Internal function names were changed to avoid having them look like

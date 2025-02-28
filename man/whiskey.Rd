@@ -1,12 +1,12 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: whiskey.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: whiskey.Rd 5298 2025-02-26 14:50:01Z gruen $
 %
 \name{whiskey}
 \alias{whiskey}
 \alias{whiskey_brands}
 \docType{data}
-\title{Survey Data on Brands of Scotch whiskey Consumed}
+\title{Survey Data on Brands of Scotch Whiskey Consumed}
 \description{
   The data set is from Simmons Study of Media and Markets and contains
   the incidence matrix for scotch brands used in last year for those
