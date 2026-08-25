@@ -1,13 +1,11 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXconcomitant.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: FLXconcomitant.Rd 5346 2026-08-25 06:32:19Z gruen $
 %
 \name{FLXP}
 \docType{class}
 \alias{FLXPconstant}
 \alias{FLXPmultinom}
-\alias{FLXconstant}
-\alias{FLXmultinom}
 \alias{show,FLXP-method}
 \title{Creates the Concomitant Variable Model}
 \description{

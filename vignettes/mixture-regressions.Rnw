@@ -149,7 +149,7 @@ All computations and graphics in this paper have been done with
 \proglang{R} version \Sexpr{getRversion()} using Sweave
 \citep{mixtures:Leisch:2002}. The newest release version of \pkg{flexmix} is
 always available from the Comprehensive \proglang{R} Archive Network at
-\url{http://CRAN.R-project.org/package=flexmix}. An up-to-date version of this paper
+\url{https://CRAN.R-project.org/package=flexmix}. An up-to-date version of this paper
 is contained in the package as a vignette, giving full access to the \proglang{R} code
 behind all examples shown below. See \code{help("vignette")} or
   \cite{mixtures:Leisch:2003} for details on handling package vignettes.

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2008 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMRrobglm.Rd 5229 2022-06-02 14:47:26Z gruen $
+%  $Id: FLXMRrobglm.Rd 5346 2026-08-25 06:32:19Z gruen $
 %
 \name{FLXMRrobglm}
 \alias{FLXMRrobglm}
@@ -42,7 +42,7 @@ FLXMRrobglm(formula = . ~ ., family = c("gaussian", "poisson"),
   generalized linear regression models. In Paula Brito, editor, Compstat
   2008--Proceedings in Computational Statistics, 385--396. Physica
   Verlag, Heidelberg, Germany, 2008.\cr
-  Preprint available at http://epub.ub.uni-muenchen.de/6332/.
+  Preprint available at \url{https://epub.ub.uni-muenchen.de/6332/}.
 }
 \examples{
 ## Example from Compstat paper, see paper for detailed explanation:

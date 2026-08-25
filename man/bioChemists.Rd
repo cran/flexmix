@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: bioChemists.Rd 5193 2020-10-09 18:38:20Z gruen $
+%  $Id: bioChemists.Rd 5320 2026-03-31 17:30:23Z gruen $
 %
 \name{bioChemists}
 \alias{bioChemists}
@@ -26,10 +26,6 @@ data("bioChemists")
 \details{
   This data set is taken from package \pkg{pscl} provided by Simon
   Jackman.
-}
-\source{
-  found in Stata format at
-  \url{https://jslsoc.sitehost.iu.edu/stata/spex_data/couart2.dta}
 }
 \references{
   Long, J. Scott. The origins of sex difference in

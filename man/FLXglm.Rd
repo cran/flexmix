@@ -1,10 +1,9 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglm.Rd 5229 2022-06-02 14:47:26Z gruen $
+%  $Id: FLXglm.Rd 5346 2026-08-25 06:32:19Z gruen $
 %
 \name{FLXMRglm}
 \alias{FLXMRglm}
-\alias{FLXglm}
 \title{FlexMix Interface to Generalized Linear Models}
 \description{
   This is the main driver for FlexMix interfacing the \code{\link{glm}}

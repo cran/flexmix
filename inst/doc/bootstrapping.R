@@ -1,19 +1,28 @@
 ### R code from vignette source 'bootstrapping.Rnw'
 
 ###################################################
-### code chunk number 1: bootstrapping.Rnw:11-34
+### code chunk number 1: bootstrapping.Rnw:11-43
 ###################################################
 options(useFancyQuotes = FALSE)
 digits <- 3
 Colors <- c("#E495A5", "#39BEB1")
 critical_values <- function(n, p = "0.95") {
-  data("qDiptab", package = "diptest")
-  if (n %in% rownames(qDiptab)) {
-    return(qDiptab[as.character(n), p])
-  }else {
-    n.approx <- as.numeric(rownames(qDiptab)[which.min(abs(n - as.numeric(rownames(qDiptab))))])
-    return(sqrt(n.approx)/sqrt(n) * qDiptab[as.character(n.approx), p])
+  if (requireNamespace("diptest", quietly = TRUE)) {
+      data("qDiptab", package = "diptest")
+      if (n %in% rownames(qDiptab)) {
+          return(qDiptab[as.character(n), p])
+      }else {
+          n.approx <- as.numeric(rownames(qDiptab)[which.min(abs(n - as.numeric(rownames(qDiptab))))])
+          return(sqrt(n.approx)/sqrt(n) * qDiptab[as.character(n.approx), p])
+      }
+  } else {
+      return(NA_real_)
   }
+}
+if (requireNamespace("diptest", quietly = TRUE)) {
+    dip <- diptest::dip
+} else {
+    dip <- function(x, ...) NA_real_
 }
 library("graphics")
 library("flexmix")
@@ -29,7 +38,7 @@ prettyPrint <- function(x, sep = " ", linebreak = "\n\t", width = getOption("wid
 
 
 ###################################################
-### code chunk number 2: bootstrapping.Rnw:94-99
+### code chunk number 2: bootstrapping.Rnw:103-108
 ###################################################
 cat(prettyPrint(gsub("boot_flexmix", "boot", 
                      prompt(flexmix:::boot_flexmix, 
@@ -39,7 +48,7 @@ cat(prettyPrint(gsub("boot_flexmix", "boot",
 
 
 ###################################################
-### code chunk number 3: bootstrapping.Rnw:194-199
+### code chunk number 3: bootstrapping.Rnw:203-208
 ###################################################
 library("flexmix")
 Component_1 <- list(Model_1 = list(coef = c(1, -2), sigma = sqrt(0.1)))
@@ -49,7 +58,7 @@ ArtEx.mix <- FLXdist(y ~ x, k = rep(0.5, 2),
 
 
 ###################################################
-### code chunk number 4: bootstrapping.Rnw:210-216
+### code chunk number 4: bootstrapping.Rnw:219-225
 ###################################################
 ArtEx.data <- data.frame(x = rep(0:1, each = 100/2))
 suppressWarnings(RNGversion("3.5.0"))
@@ -60,7 +69,7 @@ ArtEx.data$class <- ArtEx.sim$class
 
 
 ###################################################
-### code chunk number 5: bootstrapping.Rnw:225-230
+### code chunk number 5: bootstrapping.Rnw:234-239
 ###################################################
 par(mar = c(5, 4, 2, 0) + 0.1)
 plot(y ~ x, data = ArtEx.data, pch = with(ArtEx.data, 2*class + x))
@@ -70,7 +79,7 @@ for (i in 1:2) apply(pars[[i]], 2, abline, col = Colors[i])
 
 
 ###################################################
-### code chunk number 6: bootstrapping.Rnw:238-241
+### code chunk number 6: bootstrapping.Rnw:247-250
 ###################################################
 set.seed(123)
 ArtEx.fit <- stepFlexmix(y ~ x, data = ArtEx.data, k = 2, nrep = 5, 
@@ -78,21 +87,21 @@ ArtEx.fit <- stepFlexmix(y ~ x, data = ArtEx.data, k = 2, nrep = 5,
 
 
 ###################################################
-### code chunk number 7: bootstrapping.Rnw:246-248
+### code chunk number 7: bootstrapping.Rnw:255-257
 ###################################################
 summary(ArtEx.fit)
 parameters(ArtEx.fit)
 
 
 ###################################################
-### code chunk number 8: bootstrapping.Rnw:256-258
+### code chunk number 8: bootstrapping.Rnw:265-267
 ###################################################
 ArtEx.refit <- refit(ArtEx.fit)
 summary(ArtEx.refit)
 
 
 ###################################################
-### code chunk number 9: bootstrapping.Rnw:274-277 (eval = FALSE)
+### code chunk number 9: bootstrapping.Rnw:283-286 (eval = FALSE)
 ###################################################
 ## set.seed(123)
 ## ArtEx.bs <- boot(ArtEx.fit, R = 200, sim = "parametric")
@@ -100,7 +109,7 @@ summary(ArtEx.refit)
 
 
 ###################################################
-### code chunk number 10: bootstrapping.Rnw:279-287
+### code chunk number 10: bootstrapping.Rnw:288-296
 ###################################################
 if (file.exists("ArtEx.bs.rda")) {
   load("ArtEx.bs.rda")
@@ -113,15 +122,14 @@ ArtEx.bs
 
 
 ###################################################
-### code chunk number 11: bootstrapping.Rnw:303-304
+### code chunk number 11: bootstrapping.Rnw:312-313
 ###################################################
 print(plot(ArtEx.bs, ordering = "coef.x", col = Colors))
 
 
 ###################################################
-### code chunk number 12: bootstrapping.Rnw:321-334
+### code chunk number 12: bootstrapping.Rnw:330-342
 ###################################################
-require("diptest")
 parameters <- parameters(ArtEx.bs)
 Ordering <- factor(as.vector(apply(matrix(parameters[,"coef.x"], 
   nrow = 2), 2, order)))
@@ -137,7 +145,7 @@ dip.values.art
 
 
 ###################################################
-### code chunk number 13: bootstrapping.Rnw:376-382
+### code chunk number 13: bootstrapping.Rnw:384-390
 ###################################################
 data("seizure", package = "flexmix")
 model <- FLXMRglm(family = "poisson", offset = log(seizure$Hours))
@@ -148,7 +156,7 @@ seizMix <- stepFlexmix(Seizures ~ Treatment * log(Day),
 
 
 ###################################################
-### code chunk number 14: bootstrapping.Rnw:390-395
+### code chunk number 14: bootstrapping.Rnw:398-403
 ###################################################
 par(mar = c(5, 4, 2, 0) + 0.1)
 plot(Seizures/Hours~Day, data=seizure, pch = as.integer(seizure$Treatment))
@@ -158,7 +166,7 @@ matplot(seizure$Day, fitted(seizMix)/seizure$Hours, type="l",
 
 
 ###################################################
-### code chunk number 15: bootstrapping.Rnw:415-418 (eval = FALSE)
+### code chunk number 15: bootstrapping.Rnw:423-426 (eval = FALSE)
 ###################################################
 ## set.seed(123)
 ## seizMix.bs <- boot(seizMix, R = 200, sim = "parametric")
@@ -166,7 +174,7 @@ matplot(seizure$Day, fitted(seizMix)/seizure$Hours, type="l",
 
 
 ###################################################
-### code chunk number 16: bootstrapping.Rnw:420-428
+### code chunk number 16: bootstrapping.Rnw:428-436
 ###################################################
 if (file.exists("seizMix.bs.rda")) {
   load("seizMix.bs.rda")
@@ -179,13 +187,13 @@ seizMix.bs
 
 
 ###################################################
-### code chunk number 17: bootstrapping.Rnw:433-434
+### code chunk number 17: bootstrapping.Rnw:441-442
 ###################################################
 print(plot(seizMix.bs, ordering = "coef.(Intercept)", col = Colors))
 
 
 ###################################################
-### code chunk number 18: bootstrapping.Rnw:441-446
+### code chunk number 18: bootstrapping.Rnw:449-454
 ###################################################
 parameters <- parameters(seizMix.bs)
 Ordering <- factor(as.vector(apply(matrix(parameters[,"coef.(Intercept)"], 
@@ -195,7 +203,7 @@ Comp2 <- parameters[Ordering == 2,]
 
 
 ###################################################
-### code chunk number 19: bootstrapping.Rnw:455-462
+### code chunk number 19: bootstrapping.Rnw:463-470
 ###################################################
 dip.values.art <- matrix(nrow = ncol(parameters), ncol = 3, 
   dimnames = list(colnames(parameters), 
@@ -204,5 +212,3 @@ dip.values.art[,"Aggregated"] <- apply(parameters, 2, dip)
 dip.values.art[,"Comp 1"] <- apply(Comp1, 2, dip)
 dip.values.art[,"Comp 2"] <- apply(Comp2, 2, dip)
 dip.values.art
-
-

@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: stepFlexmix.Rd 5115 2017-04-07 08:18:13Z gruen $
+%  $Id: stepFlexmix.Rd 5326 2026-04-01 13:18:03Z gruen $
 %
 \name{stepFlexmix}
 \alias{stepFlexmix}
@@ -119,6 +119,7 @@ stepFlexmix(..., k = NULL, nrep = 3, verbose = TRUE, drop = TRUE,
 \examples{
 data("Nclus", package = "flexmix")
 
+if (requireNamespace("mvtnorm", quietly = TRUE)) {
 ## try 2 times for k = 4
 set.seed(511)
 ex1 <- initFlexmix(Nclus~1, k = 4, model = FLXMCmvnorm(diagonal = FALSE),
@@ -152,6 +153,7 @@ ex3
 ## keep only maximum likelihood solution for each unique number of
 ## fitted clusters:
 unique(ex3)
+}
 }
 \keyword{cluster}
 \keyword{regression}

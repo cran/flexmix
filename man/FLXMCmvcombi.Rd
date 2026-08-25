@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2009 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXMCmvcombi.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: FLXMCmvcombi.Rd 5326 2026-04-01 13:18:03Z gruen $
 %
 \name{FLXMCmvcombi}
 \alias{FLXMCmvcombi}
@@ -45,6 +45,7 @@ x2 <- cbind(rnorm(300, mean = 2, sd = 0.5),
             sample(0:1, 300, replace = TRUE, prob = c(0.75, 0.25)))
 x <- rbind(x1, x2)
 
+if (requireNamespace("mvtnorm", quietly = TRUE)) {
 ## fit the model
 f1 <- flexmix(x ~ 1, k = 2, model = FLXMCmvcombi())
 ## should be similar to the original parameters
@@ -55,6 +56,6 @@ table(clusters(f1), rep(1:2, c(300,300)))
 x <- cbind(x, rnorm(600))
 f2 <- flexmix(x ~ 1, k = 2, model = FLXMCmvcombi())
 parameters(f2)
-table(clusters(f2), rep(1:2, c(300,300)))
-
+table(clusters(f2), rep(1:2, each = 300))
+}
 }

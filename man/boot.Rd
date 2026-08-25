@@ -65,7 +65,7 @@ LR_test(object, ...)
 \examples{
 data("NPreg", package = "flexmix")
 fitted <- initFlexmix(yn ~ x + I(x^2) | id2, data = NPreg, k = 2)
-\dontrun{
+\donttest{
 lrtest <- LR_test(fitted, alternative = "greater", R = 20,
                   verbose = 1)
 }

@@ -1,5 +1,24 @@
 \name{NEWS}
 \title{News for Package 'flexmix'}
+\section{Changes in flexmix version 2.3-21}{
+  \itemize{
+    \item Example code of \code{ExLinear} changed to avoid warning.
+    \item Example code of \code{boot} and \code{FLXMRglmfix} changed
+    to use donttest instead of dontrun.
+    \item Ensure that \code{FLXMRmgcv} gets the family function from
+    package \pkg{stats}. Thanks to Jürgen Claesen for pointing the issue
+    out.
+    \item Package \pkg{lattice} is not depended on, but only imported.
+    \item Modified examples and vignettes to run through smoothly even
+    if checked with _R_CHECK_DEPENDS_ONLY_=true.
+    \item Changed URLs to use \code{https} instead of \code{http}.
+    \item Changed documentation to avoid having exported functions
+    without usage information. 
+    \item A superfluous but incorrect argument specification for xlev in
+    the internal function modelMatrix() dropped. Thanks to Maximilian
+    Scholz for pointing the issue out. 
+  }
+}    
 \section{Changes in flexmix version 2.3-20}{
   \itemize{
     \item Function \code{flxglht} added which allows to perform

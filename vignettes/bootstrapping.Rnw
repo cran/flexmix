@@ -13,13 +13,22 @@ options(useFancyQuotes = FALSE)
 digits <- 3
 Colors <- c("#E495A5", "#39BEB1")
 critical_values <- function(n, p = "0.95") {
-  data("qDiptab", package = "diptest")
-  if (n %in% rownames(qDiptab)) {
-    return(qDiptab[as.character(n), p])
-  }else {
-    n.approx <- as.numeric(rownames(qDiptab)[which.min(abs(n - as.numeric(rownames(qDiptab))))])
-    return(sqrt(n.approx)/sqrt(n) * qDiptab[as.character(n.approx), p])
+  if (requireNamespace("diptest", quietly = TRUE)) {
+      data("qDiptab", package = "diptest")
+      if (n %in% rownames(qDiptab)) {
+          return(qDiptab[as.character(n), p])
+      }else {
+          n.approx <- as.numeric(rownames(qDiptab)[which.min(abs(n - as.numeric(rownames(qDiptab))))])
+          return(sqrt(n.approx)/sqrt(n) * qDiptab[as.character(n.approx), p])
+      }
+  } else {
+      return(NA_real_)
   }
+}
+if (requireNamespace("diptest", quietly = TRUE)) {
+    dip <- diptest::dip
+} else {
+    dip <- function(x, ...) NA_real_
 }
 library("graphics")
 library("flexmix")
@@ -319,7 +328,6 @@ identifiability problems are present, e.g.~due to intra-component
 label switching.
 
 <<>>=
-require("diptest")
 parameters <- parameters(ArtEx.bs)
 Ordering <- factor(as.vector(apply(matrix(parameters[,"coef.x"], 
   nrow = 2), 2, order)))

@@ -1,6 +1,6 @@
 #
 #  Copyright (C) 2004-2016 Friedrich Leisch and Bettina Gruen
-#  $Id: flexmixFix.R 5079 2016-01-31 12:21:12Z gruen $
+#  $Id: flexmixFix.R 5336 2026-07-16 19:55:26Z gruen $
 #
 
 setMethod("FLXcheckComponent", signature(model = "FLXMRfix"), function(model, k, cluster, ...) {
@@ -104,7 +104,7 @@ modelMatrix <- function(random, fixed, nested, data=list(), lhs, xlevels = NULL)
   randomfixed <- if(identical(paste(deparse(fixed), collapse = ""), "~0")) random
                  else update(random, paste("~.+", paste(deparse(fixed[[length(fixed)]]), collapse = "")))
   mf.randomfixed <- model.frame(randomfixed, data=data)
-  mm.randomfixed <- model.matrix(terms(mf.randomfixed), data=mf.randomfixed, xlev = xlevels[names(.getXlevels(terms(mf.randomfixed), mf))])
+  mm.randomfixed <- model.matrix(terms(mf.randomfixed), data=mf.randomfixed)
   mm.fixed <- mm.randomfixed[,!colnames(mm.randomfixed) %in% colnames(mm.random), drop=FALSE]
   xlevels.fixed <- .getXlevels(terms(mf.randomfixed), mf.randomfixed)
   all <- mm.all <- mm.nested <- xlevels.nested <- list()

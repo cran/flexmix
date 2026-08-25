@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: betablocker.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: betablocker.Rd 5345 2026-08-25 06:26:54Z gruen $
 %
 \name{betablocker}
 \alias{betablocker}
@@ -24,7 +24,7 @@
 \source{
   G. McLachlan and D. Peel. \emph{Finite Mixture Models}, 2000.
   John Wiley and Sons Inc.
-  \url{http://www.maths.uq.edu.au/~gjm/DATA/mmdata.html}
+  \url{https://people.smp.uq.edu.au/GeoffMcLachlan/DATA/mmdata.html}
 }
 
 \references{

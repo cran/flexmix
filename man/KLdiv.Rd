@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: KLdiv.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: KLdiv.Rd 5326 2026-04-01 13:18:03Z gruen $
 %
 \name{KLdiv}
 \alias{KLdiv,matrix-method}
@@ -69,12 +69,14 @@ y <- cbind(u = dunif(x), n = dnorm(x), t = dt(x, df = 10))
 matplot(x, y, type = "l")
 KLdiv(y)
 
-if (require("mlbench")) {
+if (requireNamespace("mlbench", quietly = TRUE) && requireNamespace("mvtnorm", quietly = TRUE)) {
 set.seed(2606)
-x <-  mlbench.smiley()$x
+x <-  mlbench::mlbench.smiley()$x
 model1 <- flexmix(x ~ 1, k = 9, model = FLXmclust(diag = FALSE),
                   control  =  list(minprior = 0))
-plotEll(model1, x)
+if (requireNamespace("ellipse", quietly = TRUE)) {
+    plotEll(model1, x)
+}
 KLdiv(model1)
 }
 }

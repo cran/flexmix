@@ -1,10 +1,9 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXglmFix.Rd 5229 2022-06-02 14:47:26Z gruen $
+%  $Id: FLXglmFix.Rd 5344 2026-08-25 06:23:09Z gruen $
 %
 \name{FLXMRglmfix}
 \alias{FLXMRglmfix}
-\alias{FLXglmFix}
 \title{FlexMix Interface to GLMs with Fixed Coefficients}
 \description{
   This implements a driver for FlexMix which interfaces the \code{glm}
@@ -52,7 +51,7 @@ ex.fix <- flexmix(yn ~ x | id2, data = NPreg,
                   model = FLXMRglmfix(nested = list(k = c(1, 1),
                                       formula = c(~0, ~I(x^2)))))
 summary(refit(ex))
-\dontrun{
+\donttest{
 summary(refit(ex.fix))
 }
 }

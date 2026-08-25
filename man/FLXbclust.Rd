@@ -1,10 +1,9 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXbclust.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: FLXbclust.Rd 5346 2026-08-25 06:32:19Z gruen $
 %
 \name{FLXMCmvbinary}
 \alias{FLXMCmvbinary}
-\alias{FLXbclust}
 \title{FlexMix Binary Clustering Driver}
 \description{
   This is a model driver for \code{\link{flexmix}} implementing

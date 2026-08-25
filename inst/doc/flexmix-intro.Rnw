@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2005 Friedrich Leisch
-%  $Id: flexmix-intro.Rnw 5187 2020-06-25 17:59:39Z gruen $
+%  $Id: flexmix-intro.Rnw 5324 2026-04-01 11:29:03Z gruen $
 %
 \documentclass[nojss]{jss}
 
@@ -32,9 +32,12 @@ suppressWarnings(RNGversion("3.5.0"))
 set.seed(1504)
 options(width=70, prompt = "R> ", continue = "+  ", useFancyQuotes = FALSE)
 grDevices::ps.options(family="Times")
-library("graphics")
 library("flexmix")
 data("NPreg")
+@
+
+<<echo=false, results=hide>>=
+run <- all(sapply(c("ellipse", "mvtnorm"), requireNamespace, quietly = TRUE))
 @
 
 \Abstract{ 
@@ -729,18 +732,21 @@ library("flexmix")
 set.seed(1504)
 options(width=60)
 grDevices::ps.options(family="Times")
-suppressMessages(require("ellipse"))
-suppressMessages(require("mvtnorm"))
 source("mymclust.R")
 @
 
 As a simple example we use the four 2-dimensional Gaussian clusters
 from data set \texttt{Nclus}. Fitting a wrong model with diagonal
 covariance matrix is done by
-<<>>=
+<<chunk1, eval=false>>=
 data("Nclus")
 m1 <- flexmix(Nclus ~ 1, k = 4, model = mymclust())
 summary(m1)
+@
+<<echo=false>>=
+if (run) {
+<<chunk1>>  
+}
 @
 
 The result can be seen in the left panel of Figure~\ref{fig:ell}, the
@@ -751,17 +757,30 @@ inferred from the low ratio statistics in the summary table (around
 left cluster has a much higher ratio of 0.85. Using the correct model
 with a full covariance matrix can be done by setting
 \texttt{diagonal=FALSE} in the call to our driver \texttt{mymclust()}:
-<<>>=
+<<chunk2, eval=false>>=
 m2 <- flexmix(Nclus ~ 1, k = 4, model = mymclust(diagonal = FALSE))
 summary(m2)
 @
+<<echo=false>>=
+if (run) {
+<<chunk2>>  
+}
+@
+
 
 \begin{figure}[htbp]
   \centering
 <<fig=true,echo=false,results=hide>>=
 par(mfrow=1:2)
-plotEll(m1, Nclus)
-plotEll(m2, Nclus)
+if (run) {  
+  plotEll(m1, Nclus)
+  plotEll(m2, Nclus)
+} else {
+  plot(0:1, 0:1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  box()
+  plot(0:1, 0:1, type = "n", axes = FALSE, xlab = "", ylab = "")
+  box()
+}
 @  
   \caption{Fitting a mixture model with diagonal covariance matrix (left) and full covariance matrix (right).}
   \label{fig:ell}

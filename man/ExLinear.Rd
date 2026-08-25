@@ -57,8 +57,7 @@ df2 <-  ExLinear(beta2, 100, sd = c(.5, 1),
 
 summary(df2)
 
-opar = par("mfrow")
-par(mfrow = 1:2)
+opar <- par(mfrow = 1:2)
 hist(df2$x1)
 hist(df2$x2)
 par(opar)

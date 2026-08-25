@@ -340,5 +340,3 @@ SI <- sessionInfo()
 pkgs <- paste(sapply(c(SI$otherPkgs, SI$loadedOnly), function(x) 
                      paste("\\\\pkg{", x$Package, "} ", 
                            x$Version, sep = "")), collapse = ", ")
-
-

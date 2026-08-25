@@ -49,7 +49,7 @@ FLXMCdist1(formula = . ~ ., dist, ...)
 \seealso{\code{\link{flexmix}}}
 \keyword{cluster}
 \examples{
-if (require("actuar")) {
+if (requireNamespace("actuar", quietly = TRUE)) {
     set.seed(123)
     y <- c(rexp(100, 10), rexp(100, 1))
     ex <- flexmix(y ~ 1, cluster = rep(1:2, each = 100), model = FLXMCdist1(dist = "exp"))    

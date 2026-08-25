@@ -1,6 +1,6 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: NregFix.Rd 5008 2015-01-13 20:30:25Z gruen $
+%  $Id: NregFix.Rd 5326 2026-04-01 13:18:03Z gruen $
 %  
 \name{NregFix}
 \alias{NregFix}
@@ -27,8 +27,7 @@ data("NregFix")
 }
 \examples{
 data("NregFix", package = "flexmix")
-library("lattice")
-xyplot(y ~ x1 | x2 * w, data = NregFix, groups = class)
+lattice::xyplot(y ~ x1 | x2 * w, data = NregFix, groups = class)
 Model <- FLXMRglmfix(~ 1, fixed = ~ x2, 
                      nested = list(k = c(2, 1),
                      formula = c(~x1, ~0)))

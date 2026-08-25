@@ -38,7 +38,7 @@ FLXMRcondlogit(formula = . ~ ., strata)
 }
 \seealso{\code{\link{FLXMRmultinom}}}
 \examples{
-if (require("Ecdat")) {
+if (requireNamespace("Ecdat", quietly = TRUE)) {
   data("Catsup", package = "Ecdat")
   ## To reduce the time needed for the example only a subset is used
   Catsup <- subset(Catsup, id \%in\% 1:100)
@@ -56,10 +56,12 @@ if (require("Ecdat")) {
   Catsup_long$selected <- with(Catsup_long, choice == brand)
   Catsup_long <- Catsup_long[, c("id", "selected", "experiment", vnames, "brand")]
   Catsup_long$brand <- relevel(factor(Catsup_long$brand), "hunts32")
-  set.seed(0808)
-  flx1 <- flexmix(selected ~ display + feature + price + brand | id,
-                  model = FLXMRcondlogit(strata = ~ experiment), 
-                  data = Catsup_long, k = 1)
+  if (requireNamespace("survival", quietly = TRUE)) {
+    set.seed(0808)
+    flx1 <- flexmix(selected ~ display + feature + price + brand | id,
+                    model = FLXMRcondlogit(strata = ~ experiment), 
+                    data = Catsup_long, k = 1)
+  }
 }
 }
 \keyword{regression}

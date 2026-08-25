@@ -1,11 +1,10 @@
 %
 %  Copyright (C) 2004-2015 Friedrich Leisch and Bettina Gruen
-%  $Id: FLXmclust.Rd 5115 2017-04-07 08:18:13Z gruen $
+%  $Id: FLXmclust.Rd 5346 2026-08-25 06:32:19Z gruen $
 %
 \name{FLXMCmvnorm}
 \alias{FLXMCmvnorm}
 \alias{FLXMCnorm1}
-\alias{FLXmclust}
 \title{FlexMix Clustering Demo Driver}
 \description{
   These are demo drivers for \code{\link{flexmix}} implementing
@@ -46,9 +45,10 @@ FLXMCnorm1(formula = . ~ .)
 \examples{
 data("Nclus", package = "flexmix")
 
-require("MASS")
-eqscplot(Nclus)
+if (requireNamespace("MASS", quietly = TRUE)) 
+    MASS::eqscplot(Nclus)
 
+if (requireNamespace("mvtnorm", quietly = TRUE)) {
 ## This model is wrong (one component has a non-diagonal cov matrix)
 ex1 <- flexmix(Nclus ~ 1, k = 4, model = FLXMCmvnorm())
 print(ex1)
@@ -74,6 +74,7 @@ clusters(ex2)[ok]
 \testonly{
   stopifnot(all.equal(max.col(p), clusters(ex2)[ok]))
 }
+}    
 ## Now try the univariate case
 plot(density(Nclus[, 1]))
 

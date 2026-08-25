@@ -70,6 +70,7 @@
 }
 
 \examples{
+if (requireNamespace("glmnet", quietly = TRUE)) {
     set.seed(12)
     p <- 10
     beta <- matrix(0, nrow = p + 1, ncol = 2)
@@ -89,6 +90,7 @@
                    model = FLXMRglmnet(foldid = fo),
                    control = list(iter.max = 2))
     parameters(ex1)
+}
 }
 \keyword{regression}
 \keyword{cluster}

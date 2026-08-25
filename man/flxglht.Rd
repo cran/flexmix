@@ -55,6 +55,7 @@ data("NPreg", package = "flexmix")
 ex1 <- flexmix(yn ~ x + I(x^2), data = NPreg, k = 2,
                control = list(verb = 5, iter = 100))
 
+if (requireNamespace("multcomp", quietly = TRUE)) {
 zero_effect <- flxglht(ex1, "zero")
 zero_effect
 summary(zero_effect)
@@ -62,6 +63,7 @@ summary(zero_effect)
 comp_effect <- flxglht(ex1, "tukey")
 comp_effect
 summary(comp_effect)
+}
 }
 \keyword{cluster}
 \keyword{regression}

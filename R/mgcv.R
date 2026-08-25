@@ -12,15 +12,16 @@ FLXMRmgcv <- function(formula = .~., family = c("gaussian", "binomial", "poisson
 {
   if (is.null(control)) control <- mgcv::gam.control()
   family <- match.arg(family)
-
-  am <- if (family == "gaussian" && get(family)()$link == "identity") TRUE else FALSE
+  stats <- as.environment("package:stats")
+  
+  am <- if (family == "gaussian" && get(family, envir = stats)()$link == "identity") TRUE else FALSE
   z <- new("FLXMRmgcv", FLXMRglm(formula = formula, family = family, offset = offset), 
            name=paste("FLXMRmgcv", family, sep=":"), control = control)
 
   scale <- if (family %in% c("binomial", "poisson")) 1 else -1
 
   gam_fit <- function(G, w) {
-    G$family <- get(family)()
+    G$family <- get(family, envir = stats)()
     G$am <- am
     G$w <- w
     G$conv.tol <- control$mgcv.tol
